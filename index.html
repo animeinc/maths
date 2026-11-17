@@ -281,8 +281,8 @@ const EXAM_MAP = [
 ];
 
 const SCHEDULE = [
-  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘 + 订正今年期中卷", null]]],
-  ["第 2 周", [["Day 1–3", "定积分计算：换元、分部、Wallis 递推", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
+  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘（期中卷订正待拿到卷后补）", null]]],
+  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", null], ["Day 3", "积分计算综合复盘", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "整理速查表 + 模拟卷 1（周末整块 2 小时）", null]]],
@@ -304,7 +304,7 @@ const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
   { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
   { id: "convex", title: "凸函数与拐点", lessons: ["c1"] },
-  { id: "int", title: "定积分计算", lessons: [], soon: true },
+  { id: "int", title: "定积分计算", lessons: ["i1"] },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
 ];
@@ -837,6 +837,101 @@ c1: {
       <p>记 $M=\max\{|k(u,x_0)|,|k(x_0,v)|\}$，则对 $x\in(u,v)$ 有 $|f(x)-f(x_0)|\le M|x-x_0|$，所以 $f$ 在 $x_0$ 处连续。</p>
       <p class="small muted">同样的夹逼说明 $k(x_0,x)$ 在 $x\to x_0^\pm$ 时单调有界，所以单侧导数存在，且 $f'_-(x_0)\le f'_+(x_0)$。闭区间端点处结论不成立：例如 $[0,1]$ 上 $f(0)=1$、其余 $f=0$ 是下凸的。</p>` }
   ]
+},
+/* ---------------- I1 ---------------- */
+i1: {
+  unit: "int", n: 1, title: "定积分：换元与分部",
+  goal: "会在换元时同步更换微分与上下限，会选择分部积分的 u、dv；掌握半角代换，并能写出换元公式的证明。30 分钟先完成概念题和三道核心题，延伸选做。",
+  sections: [
+    { id: "i1-s1", h: "1. 换元是在同时换变量、微分与端点", html: R`
+      <p>先记<b>牛顿–莱布尼兹公式</b>：$f$ 在 $[a,b]$ 连续，$F'=f$，则 $\int_a^bf(x)\,dx=F(b)-F(a)$。定积分的答案是数，<b>不写 $+C$</b>。$\int_b^af=-\int_a^bf$，端点可以反向。</p>
+      <p><b>第一类换元</b>：$f$ 在区间 $I$ 连续，$\varphi\in C^1([\alpha,\beta])$ 且取值在 $I$，则</p>
+      $$\int_\alpha^\beta f(\varphi(t))\varphi'(t)\,dt
+      =\int_{\varphi(\alpha)}^{\varphi(\beta)}f(u)\,du.$$
+      <p>证明的核心是 $(F\circ\varphi)'=f(\varphi)\varphi'$，再两边代端点；这个公式<b>不要求 $\varphi$ 单调</b>。但把 $x=\varphi(t)$ 当作反向代换时，要选择合适分支，保证原积分区间被正确覆盖。</p>
+      <p>操作固定为：写新变量 → 求微分 → 列端点对应 → 整体换掉。例：$u=x^2$，$du=2x\,dx$，所以</p>
+      $$\int_0^s\frac{2x}{1+x^2}\,dx=\int_0^{s^2}\frac{du}{1+u}=\ln(1+s^2),\qquad 0\le s\le1.$$
+      <p>下面拖动上端点，同时看原变量与新变量下的面积；图的横轴不同，面积值相同。</p>` },
+    { id: "i1-s2", h: "2. 分部积分：让下一次积分变简单", html: R`
+      <p>乘积求导 $(uv)'=u'v+uv'$ 给出：若 $u,v\in C^1([a,b])$，则</p>
+      $$\int_a^bu(x)v'(x)\,dx=[u(x)v(x)]_a^b-\int_a^bu'(x)v(x)\,dx.$$
+      <p>也写作 $\int u\,dv=uv-\int v\,du$。优先把<b>求导后变简单</b>的部分选为 $u$（如 $\ln x,\arctan x$、多项式），把<b>容易积分</b>的部分选为 $dv$（如 $e^x\,dx,\sin x\,dx$）。这是选择线索，要以剩余积分是否更简单为准。</p>
+      <p>例如 $\int_0^1xe^x\,dx$：取 $u=x,dv=e^x\,dx$，得 $[xe^x]_0^1-\int_0^1e^x\,dx=e-(e-1)=1$。</p>
+      <p><b>边界项必须保留到代值完成</b>。若端点处函数或原函数有奇性，先在内部截断再取极限，不直接把无意义的 $0\cdot\infty$ 当作零。Wallis 型递推放在下一课专练。</p>` },
+    { id: "i1-s3", h: "3. 三角有理式：半角代换与对称换元", html: R`
+      <p>出现 $\sin x,\cos x$ 的有理式，可试 $t=\tan(x/2)$：</p>
+      $$\sin x=\frac{2t}{1+t^2},\qquad\cos x=\frac{1-t^2}{1+t^2},\qquad dx=\frac{2\,dt}{1+t^2}.$$
+      <p>它把三角函数变成有理函数。$x\in[0,\pi)$ 对应 $t\in[0,+\infty)$；若原上端点为 $\pi$，先令 $x\le r\lt\pi$，最后 $r\to\pi^-$，新端点才趋于 $+\infty$。</p>
+      <p>别漏掉更省事的<b>对称换元</b>：令 $x=a+b-t$ 得</p>
+      $$\int_a^bf(x)\,dx=\int_a^bf(a+b-x)\,dx.$$
+      <p>上下限会颠倒，但 $dx=-dt$ 会再给一个负号。例如 $\int_0^{\pi/2}\frac{\sin x}{\sin x+\cos x}\,dx$，与反射后的余弦版本相加，分式和为 1，答案为 $\pi/4$。</p>` }
+  ],
+  widget: "substitutionPlot",
+  concepts: [
+    { id: "i1-c1", sec: "i1-s1", q: R`$u=x^2$ 时，$\int_0^2 2x\cos(x^2)\,dx$ 应变成：`,
+      opts: [R`$\int_0^2\cos u\,du$`, R`$\int_0^4\cos u\,du$`, R`$\int_0^4 2u\cos u\,du$`, R`$\int_0^4\cos u\,du+C$`], a: 1,
+      ex: R`$du=2x\,dx$，端点 $x=0,2$ 对应 $u=0,4$；定积分不写任意常数。` },
+    { id: "i1-c2", sec: "i1-s2", q: R`计算 $\int_0^1x\ln(1+x)\,dx$，最合适的首步是：`,
+      opts: [R`$u=x,\ dv=\ln(1+x)\,dx$`, R`$u=\ln(1+x),\ dv=x\,dx$`, R`把被积函数拆成两项积分相乘`, R`直接代入上下限到被积函数`], a: 1,
+      ex: R`对数求导后成为 $1/(1+x)$，$x\,dx$ 易积分；剩余的是有理函数。` },
+    { id: "i1-c3", sec: "i1-s3", q: R`令 $x=1-t$，则 $\int_0^1f(x)\,dx$ 等于：`,
+      opts: [R`$-\int_0^1f(1-t)\,dt$`, R`$\int_0^1f(1-t)\,dt$`, R`$f(1)-f(0)$`, R`只有 $f$ 单调时才能换元`], a: 1,
+      ex: R`$x=0,1$ 对应 $t=1,0$，且 $dx=-dt$；反向上下限与微分负号抵消。这里假定 $f$ 连续。` },
+    { id: "i1-c4", sec: "i1-s1", q: R`在讲解给定的连续与 $C^1$ 条件下，第一类换元公式还必须要求 $\varphi$ 单调吗？`,
+      opts: [R`必须严格递增`, R`必须严格递减`, R`不必，链式法则和代端点即可`, R`必须满足 $\varphi'(t)\ne0$`], a: 2,
+      ex: R`原函数 $F$ 存在时，$F(\varphi(t))$ 的导数就是被积函数。即使变量往返，带方向的积分会自动抵消。反向选参数分支时另须检查覆盖。` }
+  ],
+  methods: [
+    { id: "m-int-sub", title: "定积分换元：变量、微分、端点一起换", steps: [
+      R`看复合结构与内层导数，试 $u=g(x)$；根式或三角有理式则考虑反向代换并选好分支。`,
+      R`单独写 $du=g'(x)\,dx$ 或 $dx=\varphi'(t)\,dt$，再列上下限对应。`,
+      R`被积函数、微分和端点必须属于同一变量；端点颠倒时核对负号。`,
+      R`按新变量算出数值；若新端点无穷或变换在端点奇异，先截断、后取极限。`] },
+    { id: "m-int-parts", title: "分部积分：选 u、dv，再处理边界", steps: [
+      R`选求导后简化的部分为 $u$，易积分的部分为 $dv$；明确 $du$ 和 $v$。`,
+      R`写完整等式 $\int_a^bu\,dv=[uv]_a^b-\int_a^bv\,du$。`,
+      R`对剩余有理函数做除法；多项式乘指数可反复分部，直到多项式次数降为零。`,
+      R`独立代入边界，检查结果符号、大小；不定积分则可求导验算并补 $+C$。`] }
+  ],
+  problems: [
+    { id: "i1-p1", lv: "基础", src: "自编", stmt: R`计算：(1) $\displaystyle\int_0^1 2xe^{x^2}\,dx$；(2) $\displaystyle\int_0^1x\ln(1+x)\,dx$。`,
+      hints: [R`(1) 令 $u=x^2$；(2) 取 $u=\ln(1+x),dv=x\,dx$。`, R`(2) 得 $\frac12\ln2-\frac12\int_0^1\frac{x^2}{1+x}\,dx$。`, R`$\frac{x^2}{1+x}=x-1+\frac1{1+x}$。`],
+      method: "m-int-parts", sol: R`<p>(1) 令 $u=x^2,du=2x\,dx$，端点仍为 0、1，得 $\int_0^1e^u\,du=e-1$。</p><p>(2) 取 $u=\ln(1+x),dv=x\,dx$，于是 $du=dx/(1+x),v=x^2/2$：</p>
+      $$\int_0^1x\ln(1+x)\,dx=\frac12\ln2-\frac12\int_0^1\left(x-1+\frac1{1+x}\right)dx
+      =\frac12\ln2-\frac12\left(\frac12-1+\ln2\right)=\frac14.$$
+      <p>自检：被积函数非负，答案为正；换元题的原函数为 $e^{x^2}$，求导恢复 $2xe^{x^2}$。</p>` },
+    { id: "i1-p2", lv: "真题", src: "2023 秋期末 1(2)", stmt: R`叙述定积分的换元公式，并给出证明。可选择讲解中的连续函数与 $C^1$ 换元版本。`,
+      hints: [R`不要只写 $u=\varphi(t)$，先给出 $f$ 连续、$\varphi$ 为 $C^1$ 及取值范围条件。`, R`取 $f$ 的一个原函数 $F$，用链式法则求 $(F\circ\varphi)'$。`, R`两边用牛顿–莱布尼兹公式，得到相同的端点差。`],
+      method: "m-int-sub", sol: R`<p>设 $f$ 在区间 $I$ 上连续，$\varphi\in C^1([\alpha,\beta])$，且 $\varphi([\alpha,\beta])\subseteq I$。则</p>
+      $$\int_\alpha^\beta f(\varphi(t))\varphi'(t)\,dt=\int_{\varphi(\alpha)}^{\varphi(\beta)}f(u)\,du.$$
+      <p>证明：连续函数 $f$ 有原函数 $F$（可用 $F(u)=\int_{u_0}^uf(v)\,dv$ 构造）。链式法则给 $(F\circ\varphi)'(t)=f(\varphi(t))\varphi'(t)$，故左边等于 $F(\varphi(\beta))-F(\varphi(\alpha))$，右边由牛顿–莱布尼兹公式也等于这个数，证毕。</p><p>端点反向时按定向积分定义理解，$\varphi$ 不需单调。</p>` },
+    { id: "i1-p3", lv: "真题", src: "2021 秋期末 5(1)", stmt: R`给定实数 $a\gt b\gt0$，计算 $\displaystyle I=\int_0^\pi\frac{d\theta}{a-b\cos\theta}$。`,
+      hints: [R`令 $t=\tan(\theta/2)$，把 $\cos\theta$ 与 $d\theta$ 一起代换。`, R`分母化为 $(a-b)+(a+b)t^2$，分子为 $2\,dt$；新端点为 0 与 $+\infty$。`, R`再令 $s=t\sqrt{(a+b)/(a-b)}$，使用 $\int_0^{+\infty}ds/(1+s^2)=\pi/2$。`],
+      method: "m-int-sub", sol: R`<p>先把上限换成 $r\lt\pi$，令 $t=\tan(\theta/2)$，有 $\cos\theta=(1-t^2)/(1+t^2)$、$d\theta=2dt/(1+t^2)$。再令 $r\to\pi^-$，原被积函数连续且分母至少为 $a-b\gt0$，所以</p>
+      $$I=2\int_0^{+\infty}\frac{dt}{(a-b)+(a+b)t^2}.$$
+      <p>令 $s=t\sqrt{(a+b)/(a-b)}$，得到</p>
+      $$I=\frac{2}{\sqrt{(a-b)(a+b)}}\int_0^{+\infty}\frac{ds}{1+s^2}
+      =\frac{\pi}{\sqrt{a^2-b^2}}.$$
+      <p>自检：当 $b\to0^+$ 时答案趋于 $\pi/a$，与常数被积函数的情形一致；而 $\pi/(a+b)\le I\le\pi/(a-b)$，答案满足这个界。</p>` }
+  ],
+  variants: [
+    { id: "i1-v1", lv: "变种", src: "自编：换元后再分部", stmt: R`计算 $\displaystyle\int_0^1x\ln(1+x^2)\,dx$，并指出它与基础题 $\int_0^1x\ln(1+x)\,dx$ 的答案是否相同。`,
+      hints: [R`先令 $u=1+x^2$，$du=2x\,dx$，上下限变为 1、2。`, R`积分化为 $\frac12\int_1^2\ln u\,du$，对 $\ln u$ 分部。`, R`$\int\ln u\,du=u\ln u-u+C$。`],
+      method: "m-int-sub", sol: R`<p>令 $u=1+x^2$，得</p>
+      $$\int_0^1x\ln(1+x^2)\,dx=\frac12\int_1^2\ln u\,du
+      =\frac12[u\ln u-u]_1^2=\ln2-\frac12.$$
+      <p>这不等于基础题的 $1/4$。在 $0\lt x\lt1$ 上有 $x^2\lt x$，所以本题被积函数更小；数值 $\ln2-1/2\approx0.1931\lt0.25$，符号和大小都符合预期。</p>` }
+  ],
+  extensions: [
+    { id: "i1-e1", lv: "延伸", src: "2023 秋期末 6(1)", stmt: R`求不定积分 $\displaystyle\int e^{2x}\arctan\sqrt{e^x-1}\,dx$（在 $x\gt0$ 上计算；原函数可连续延至 $x=0$）。`,
+      hints: [R`令 $t=\sqrt{e^x-1}$，则 $e^x=1+t^2$，$dx=2t\,dt/(1+t^2)$。`, R`积分变为 $\int2t(1+t^2)\arctan t\,dt$。分部时可取 $v=(1+t^2)^2/2$。`, R`$\int\frac{(1+t^2)^2/2}{1+t^2}\,dt=\frac12\int(1+t^2)\,dt$。`],
+      method: "m-int-parts", sol: R`<p>令 $t=\sqrt{e^x-1}$，$e^x=1+t^2$，$dx=2t\,dt/(1+t^2)$，则原积分为 $\int2t(1+t^2)\arctan t\,dt$。</p><p>分部取 $u=\arctan t$、$dv=2t(1+t^2)\,dt$，可取 $v=(1+t^2)^2/2$，于是</p>
+      $$\int2t(1+t^2)\arctan t\,dt=\frac{(1+t^2)^2}{2}\arctan t-\frac12\int(1+t^2)\,dt
+      =\frac{(1+t^2)^2}{2}\arctan t-\frac t2-\frac{t^3}{6}+C.$$
+      <p>换回原变量：</p>
+      $$\frac{e^{2x}}2\arctan\sqrt{e^x-1}-\frac12\sqrt{e^x-1}-\frac16(e^x-1)^{3/2}+C.$$
+      <p>验算：在 $t$ 变量求导时，第一项多出的 $(1+t^2)/2$，恰由后两项导数抵消，剩下 $2t(1+t^2)\arctan t$；再乘 $dt/dx$ 即恢复原被积函数。</p>` }
+  ]
 }
 };
 
@@ -1171,7 +1266,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot })[LESSONS[v].widget](w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1619,6 +1714,38 @@ function lagrangeXi(mount) {
   xIn.addEventListener("input", draw); nIn.addEventListener("input", draw);
   draw();
 }
+
+/* ================= 交互图：换元前后的面积 ================= */
+function substitutionPlot(mount) {
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="sub-case">例子 <select id="sub-case"><option value="log">2x / (1+x²)</option><option value="exp">2x exp(x²)</option></select></label></div>
+    <div class="ctrl"><label for="sub-end">原上端点 s <input id="sub-end" type="range" min="0" max="1" step="0.01" value="0.7"></label><b class="mono" id="sub-value"></b></div>
+    <div id="sub-graph"></div><div class="readout" id="sub-out" aria-live="polite"></div>
+    <p class="small muted">代换 u=x²，微分 du=2x dx。横轴范围都为 0–1，纵轴使用相同尺度；两块阴影面积相等，形状可以不同。</p>
+  </div>`;
+  const mode = $("#sub-case", mount), end = $("#sub-end", mount);
+  function draw() {
+    const s = +end.value, u = s * s, exp = mode.value === "exp", ymax = exp ? 6 : 1.2;
+    const f = x => 2 * x * (exp ? Math.exp(x * x) : 1 / (1 + x * x));
+    const g = x => exp ? Math.exp(x) : 1 / (1 + x);
+    const integral = exp ? Math.expm1(u) : Math.log1p(u);
+    const px = x => 48 + 510 * x;
+    function panel(fun, upper, top, axis, color) {
+      const base = top + 115, py = y => base - 96 * y / ymax;
+      const path = Array.from({ length: 101 }, (_, i) => `${i ? "L" : "M"}${px(i / 100).toFixed(2)},${py(fun(i / 100)).toFixed(2)}`).join(" ");
+      const fill = `M${px(0)},${base} ` + Array.from({ length: 81 }, (_, i) => `L${px(upper * i / 80).toFixed(2)},${py(fun(upper * i / 80)).toFixed(2)}`).join(" ") + ` L${px(upper)},${base} Z`;
+      const tick = exp ? 3 : 1;
+      return `<text x="48" y="${top + 3}" style="fill:var(--ink);font:500 14px var(--f-sans)">${axis === "x" ? "原变量：f(x)" : "新变量：g(u)，u=x²"}</text><path d="${fill}" style="fill:var(${color});opacity:0.19"/><path d="${path}" style="fill:none;stroke:var(${color});stroke-width:2.5"/><path d="M48,${top + 12} V${base} H575" style="fill:none;stroke:var(--muted);stroke-width:1"/><line x1="${px(upper)}" y1="${base}" x2="${px(upper)}" y2="${py(fun(upper))}" style="stroke:var(${color});stroke-dasharray:4 3"/><text x="24" y="${base + 4}" style="fill:var(--muted);font:12px var(--f-mono)">0</text><text x="21" y="${py(tick) + 4}" style="fill:var(--muted);font:12px var(--f-mono)">${tick}</text><text x="553" y="${base + 19}" style="fill:var(--muted);font:12px var(--f-mono)">1</text><text x="580" y="${base + 4}" style="fill:var(--ink);font:13px var(--f-mono)">${axis}</text>`;
+    }
+    $("#sub-value", mount).textContent = `s = ${s.toFixed(2)}，s² = ${u.toFixed(4)}`;
+    $("#sub-graph", mount).innerHTML = `<svg viewBox="0 0 610 330" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="换元前后两幅曲线及等面积阴影，原上限 ${s.toFixed(2)}，新上限 ${u.toFixed(4)}">${panel(f, s, 10, "x", "--accent")}${panel(g, u, 175, "u", "--teal")}</svg>`;
+    $("#sub-out", mount).innerHTML = `<span>原积分：从 x=0 到 ${s.toFixed(2)}，被积函数 ${exp ? "2x exp(x²)" : "2x/(1+x²)"}。</span><span>新积分：从 u=0 到 ${u.toFixed(4)}，被积函数 ${exp ? "exp(u)" : "1/(1+u)"}。</span><span>两边的积分都为 ${exp ? "exp(s²)−1" : "ln(1+s²)"} = ${integral.toFixed(6)}。</span>`;
+  }
+  mode.addEventListener("change", draw);
+  end.addEventListener("input", draw);
+  draw();
+}
+
 
 renderNav();
 render();

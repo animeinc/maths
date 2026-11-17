@@ -282,7 +282,7 @@ const EXAM_MAP = [
 
 const SCHEDULE = [
   ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
-  ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", null], ["Day 4–5", "平面图、Euler 公式与染色", null], ["Day 6–7", "复盘", null]]],
+  ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", "h1"], ["Day 4–5", "平面图、Euler 公式与染色", null], ["Day 6–7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
   ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "速查表 + 模拟卷 1", null]]],
@@ -301,6 +301,8 @@ const MUST = [
   ["普吕弗", R`$d_T(v)=1+\#\{i:y_i=v\}$；还原 $x_i=\min[n]\setminus\{x_1,\dots,x_{i-1},y_i,\dots,y_{n-1}\}$，$y_{n-1}=n$`],
   ["Cayley", R`$[n]$ 上的标号树共 $n^{n-2}$ 棵`],
   ["指定度数", R`$\dfrac{(n-2)!}{(d_1-1)!\cdots(d_n-1)!}$ 棵`],
+  ["Hall", R`存在覆盖左侧 $A$ 的匹配 ⇔ 对每个 $S\subseteq A$，$|N(S)|\ge|S|$；左右等大时即完美匹配`],
+  ["正则二部图", R`正度 $d\gt0$：$d|S|\le d|N(S)|$ ⇒ Hall；$d=0$ 时不可约去度数`],
   ["Kruskal", R`按权升序，连接不同分支才加边；选满 $n-1$ 条；逆向算法按权降序，删后仍连通才删`],
   ["MST 换边", R`割上唯一最轻边必选；圈上唯一最重边必不选；并列时只能保证某棵 MST 作相应选择`],
   ["MST 唯一性", R`对每条非树边 $e=uv$，若 $w(e)\gt\max_{f\in P_T(u,v)}w(f)$，则 $T$ 为唯一 MST`],
@@ -310,7 +312,7 @@ const MUST = [
 const UNITS = [
   { id: "nt", title: "数论：中国剩余定理", lessons: ["n1"] },
   { id: "graph", title: "图论基础", lessons: ["g1", "g2"] },
-  { id: "mst", title: "生成树与匹配", lessons: ["mst1"] },
+  { id: "mst", title: "生成树与匹配", lessons: ["mst1", "h1"] },
   { id: "planar", title: "平面图与染色", lessons: [], soon: true },
   { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
 ];
@@ -726,6 +728,82 @@ mst1: {
       hints: [R`取 MST $T$ 的一条最重边 $e_*$，删它得到割。`, R`若某棵生成树所有边都严格轻于 $e_*$，它跨此割的边就可以替换 $e_*$，让总权更小。`, R`反例：三角形边权 $1,2,2$。三棵生成树的最大边权都是 2，但总权分别是 3、3、4。`],
       method: "m-mst-swap", sol: R`<p>先求一棵 MST $T$，设其最大边权为 $b=c(e_*)$。删去 $e_*$ 得割 $(S,V\setminus S)$。每条跨此割的边 $f$ 都满足 $c(f)\ge b$，否则 $T-e_*+f$ 的总权更小，与 MST 矛盾。任一生成树必跨此割，因此其最大边权至少为 $b$。$T$ 达到这个下界，故是最小瓶颈生成树。</p><p>逆命题不成立。三角形边权 $1,2,2$：任一生成树的瓶颈都是 2，但选择两条权为 2 的边，总权 4，大于最优总权 3。</p>` }
   ]
+},
+/* ---------------- H1 ---------------- */
+h1: {
+  unit: "mst", n: 2, title: "Hall 匹配：从邻点集合到完美匹配",
+  goal: "会检查 Hall 条件、用数边证明正则二部图有完美匹配，能把棋盘或代表元问题翻译成二部图。30 分钟先做概念题、基础题与 2022 期末第 3 题；变种和延伸留作复盘。",
+  sections: [
+    { id: "h1-s1", h: "1. 匹配与 Hall 条件：检查所有子集", html: R`
+      <p>本课图均为有限二部图 $G=(A\sqcup B,E)$，边只连接左右两侧。<b>匹配</b>是端点互不重复的一组边；覆盖 $A$ 是指 $A$ 中每个点恰好匹配一次；<b>完美匹配</b>覆盖全部顶点。$|A|=|B|$ 时，覆盖 $A$ 就等于完美匹配。</p>
+      <p>对 $S\subseteq A$，定义 $N(S)=\{b\in B:\text{存在 }a\in S,\ ab\in E\}$。这是邻点的<b>并集</b>，同一个邻点只计一次。</p>
+      <p><b>Hall 定理</b>：存在覆盖 $A$ 的匹配，当且仅当</p>
+      $$\text{对所有 }S\subseteq A,\qquad |N(S)|\ge|S|.$$
+      <p>必要性：$S$ 中各点必须分配到不同邻点。充分性并不只是贪心挑邻点，完整证明见延伸。空集条件自动成立。<b>仅检查单点、仅检查 $A$ 全集，都不够</b>；下面的缺口示例同时通过这两种检查，却没有完美匹配。</p>` },
+    { id: "h1-s2", h: "2. 证明 Hall：从 S 发出的边数，两头夹", html: R`
+      <p>最常用的情形：所有点的度数都为同一正整数 $d$。任取 $S\subseteq A$，从 $S$ 发出的边恰为 $d|S|$ 条，全部进入 $N(S)$；而 $N(S)$ 中各点的总度数合计 $d|N(S)|$，可能还包括来自 $A\setminus S$ 的边。因此</p>
+      $$d|S|=e(S,N(S))\le d|N(S)|.$$
+      <p>因为 $d\gt0$，可约掉 $d$，得到 Hall 条件。若左右等大，就有完美匹配。事实上正则且 $d\gt0$ 时，数全部边 $d|A|=d|B|$ 已可推出左右等大。</p>
+      <p><b>度不完全相同也可用</b>：若左侧最小度 $\ge r$，右侧最大度 $\le r$，$r\gt0$，则 $r|S|\le e(S,N(S))\le r|N(S)|$，仍能覆盖 $A$。</p>
+      <p><b>原卷条件提醒</b>：2022 秋期末 3(2) 写了“所有点同度”，没有明写 $d\gt0$。若允许 $d=0$ 且两侧非空，空边图就是反例。下面引用时明确补上正度条件，不在证明中悄悄除以零。</p>` },
+    { id: "h1-s3", h: "3. 建模与作答格式", html: R`
+      <ul><li><b>棋盘</b>：左侧是行，右侧是列，有棋子的格子对应一条边；“各选一个且不同行不同列”就是完美匹配。</li>
+      <li><b>不同代表元</b>：给集合 $X_1,\dots,X_m$ 各选不同的 $x_i\in X_i$。左侧是集合编号，右侧是可选元素；Hall 条件是 $\left|\bigcup_{i\in I}X_i\right|\ge|I|$ 对所有编号子集 $I$ 成立。</li>
+      <li><b>证明存在</b>：定义两侧与边 → 任取 $S$ → 用数边推出 $|N(S)|\ge|S|$ → 引 Hall → 翻译回题目。</li>
+      <li><b>证明不存在</b>：只需找一个坏子集 $S$，使 $|N(S)|\lt|S|$，不必列出所有可能的匹配。</li></ul>
+      <p>术语别混淆：<b>最大匹配</b>的边数最多；<b>极大匹配</b>只表示无法直接再加边，允许通过换边增大时它未必最大。</p>` }
+  ],
+  widget: "hallPlay",
+  concepts: [
+    { id: "h1-c1", sec: "h1-s1", q: R`为了证明存在覆盖 $A$ 的匹配，Hall 条件要检查：`,
+      opts: [R`只检查每个单点`, R`只检查 $S=A$`, R`所有 $S\subseteq A$`, R`只检查度最小的顶点`], a: 2,
+      ex: R`单点都有邻居、全部邻点也足够，仍可能有若干左点共用过少的邻点。必须对所有子集成立。` },
+    { id: "h1-c2", sec: "h1-s1", q: R`若 $|A|=3,|B|=4$ 且 Hall 条件成立，一定得到：`,
+      opts: [R`覆盖 $A$ 的 3 条匹配边`, R`覆盖全部 7 点的完美匹配`, R`4 条匹配边`, R`每条边都属于某个完美匹配`], a: 0,
+      ex: R`定理保证覆盖 $A$。右侧多一个点，不可能全部被匹配；7 个点也不可能由两两配对覆盖。` },
+    { id: "h1-c3", sec: "h1-s2", q: R`正则二部图证明中，为什么是 $e(S,N(S))\le d|N(S)|$，而不总取等号？`,
+      opts: [R`因为有自环`, R`$N(S)$ 的一些边可能来自 $A\setminus S$`, R`因为每条边要算两次`, R`因为 $S$ 必为空集`], a: 1,
+      ex: R`左边只计来自 $S$ 的边；右边计 $N(S)$ 的全部度数，包含可能来自其他左点的边。` },
+    { id: "h1-c4", sec: "h1-s2", q: R`两侧各有 $n\ge1$ 个点、每点度为 0 的二部图：`,
+      opts: [R`一定有完美匹配`, R`正则，所以可以约掉度数证明 Hall`, R`没有完美匹配，正则度的正性不可省`, R`不是二部图`], a: 2,
+      ex: R`取任意左侧单点 $S$，有 $|N(S)|=0\lt1$。度为零时，$0|S|\le0|N(S)|$ 推不出 Hall 条件。` }
+  ],
+  methods: [
+    { id: "m-hall", title: "Hall 存在性：任取子集，双向数边", steps: [
+      R`明确左侧 $A$、右侧 $B$ 和边的含义；先确定目标是覆盖哪一侧。`,
+      R`任取 $S\subseteq A$，把邻点并集记为 $N(S)$，不要重复计同一个邻点。`,
+      R`从 $S$ 数边给下界，从 $N(S)$ 的总度给上界；例如 $r|S|\le e(S,N(S))\le r|N(S)|$，其中 $r\gt0$。`,
+      R`得到所有子集的 Hall 条件，引用定理；若要完美匹配，再说明两侧等大。`] },
+    { id: "m-hall-deficit", title: "找反例或求最大匹配：寻找邻点缺口", steps: [
+      R`先找邻点高度重叠的一群左点，而非只找单个孤立点。`,
+      R`写出具体 $S,N(S)$，计算缺口 $|S|-|N(S)|$；正缺口即否定覆盖 $A$。`,
+      R`缺口为 $k$ 时，至少有 $k$ 个左点无法匹配；再构造达到此界的匹配，证明最大。`,
+      R`注意“当前贪心方案失败”不等于无解；应换边，或给出真正的 Hall 坏子集。`] }
+  ],
+  problems: [
+    { id: "h1-p1", lv: "基础", src: "自编", stmt: R`<p>给集合 $X_1=\{1,2\},X_2=\{2,3\},X_3=\{1,3,4\},X_4=\{3,4\}$ 各选一个互不相同的代表元。</p><p>若改成 $X_1=X_2=X_3=\{1,2\},X_4=\{3,4\}$，还能选出四个不同代表元吗？最多能选几个？</p>`,
+      hints: [R`第一组可直接构造，不一定要逐个检查 16 个子集。`, R`第二组看前三个集合的并集。`, R`前三个集合争两个元素，至少一个无法分配；再尝试构造 3 个代表元。`],
+      method: "m-hall-deficit", sol: R`<p>第一组可取 $(x_1,x_2,x_3,x_4)=(1,2,3,4)$，彼此不同且各在对应集合中。</p><p>第二组取编号子集 $I=\{1,2,3\}$，对应元素并集只有 $\{1,2\}$，有 $2\lt3$，违反 Hall。至少一个集合不能分配代表元。取 $x_1=1,x_2=2,x_4=3$ 达到 3 个，所以最多为 3。</p>` },
+    { id: "h1-p2", lv: "真题", src: "2022 秋期末 3(1)(2)（第 (2) 问补明正度条件）", stmt: R`<p>(1) 叙述 Hall 匹配定理。</p><p>(2) 设 $G=(A\sqcup B,E)$ 是二部图，$|A|=|B|=n$，每个顶点的度都等于同一正整数 $d$。证明 $G$ 存在完美匹配。</p>`,
+      hints: [R`(1) 必须说清“所有左侧子集”和“覆盖左侧”。`, R`(2) 任取 $S\subseteq A$，从左侧数出的边数是 $d|S|$。`, R`这些边全部进入 $N(S)$，所以 $d|S|\le d|N(S)|$，再用 $d\gt0$。`],
+      method: "m-hall", sol: R`<p>(1) 有限二部图 $G=(A\sqcup B,E)$ 存在覆盖 $A$ 的匹配，当且仅当对每个 $S\subseteq A$ 都有 $|N(S)|\ge|S|$。</p><p>(2) 任取 $S\subseteq A$。$S$ 中各点的 $d$ 条邻边都进入 $N(S)$，且在按左端点计数时每条边只计一次，故 $d|S|=e(S,N(S))\le\sum_{b\in N(S)}d(b)=d|N(S)|$。约去正数 $d$，得到 Hall 条件。由定理有覆盖 $A$ 的匹配；因两侧同为 $n$ 点，该匹配也覆盖 $B$，故为完美匹配。</p><p>若 $n\ge1$ 而允许 $d=0$，结论为假。这里已显式补上原卷漏写的必要条件。</p>` },
+    { id: "h1-p3", lv: "真题", src: "2022 秋期末 3(3)", stmt: R`在 $8\times8$ 棋盘放置 24 个兵，每个兵占一格，每行每列都恰有 3 个兵。证明可以选出 8 个兵，使它们彼此既不同行，也不同列。`,
+      hints: [R`左侧 8 个行顶点，右侧 8 个列顶点；格子里有兵才连边。`, R`每个顶点度数都是 3，上一道题已经证明正则二部图的结论。`, R`若不用上一问，直接对行集合 $S$ 写 $3|S|\le3|N(S)|$。`],
+      method: "m-hall", sol: R`<p>建立二部图：左侧是行 $r_1,\dots,r_8$，右侧是列 $c_1,\dots,c_8$；当第 $i$ 行、第 $j$ 列的格子有兵时连接 $r_ic_j$。每行每列恰有 3 个兵，故每个顶点度数为 3。</p><p>对任意行集合 $S$，其发出的 $3|S|$ 条边全部进入 $N(S)$，每个邻列至多接收 3 条，故 $3|S|\le3|N(S)|$。Hall 给出完美匹配，其中 8 条边对应 8 个兵。匹配边端点不重复，恰好说明所选兵不同行也不同列。</p>` }
+  ],
+  variants: [
+    { id: "h1-v1", lv: "变种", src: "自编：正则数边的推广", stmt: R`二部图 $G=(A\sqcup B,E)$ 中，$|A|=10,|B|=12$，左侧每点度数至少为 4，右侧每点度数至多为 4。证明能选出 10 条端点互不重复的边。能否称它为完美匹配？`,
+      hints: [R`不需要知道各点的精确度数。`, R`对 $S\subseteq A$，有 $4|S|\le e(S,N(S))\le4|N(S)|$。`, R`覆盖左侧的 10 条边只覆盖右侧 10 个点，右侧还有两个点。`],
+      method: "m-hall", sol: R`<p>任取 $S\subseteq A$，左侧度数下界给 $e(S,N(S))\ge4|S|$，右侧度数上界给 $e(S,N(S))\le4|N(S)|$，所以 Hall 条件成立。存在覆盖 $A$ 的匹配，包含 10 条边。</p><p>这不是完美匹配：右侧有 12 个点，必有两个未覆盖。实际上两侧不等大时不可能有覆盖全部顶点的匹配。</p>` }
+  ],
+  extensions: [
+    { id: "h1-e1", lv: "延伸", src: "Hall 定理的增广路证明", stmt: R`证明 Hall 条件的充分性。可从一个边数最大的匹配 $M$ 出发，反设左侧存在未匹配点 $a_0$。`,
+      hints: [R`从 $a_0$ 出发，左到右走非匹配边，右到左走匹配边，找交错道路可达的左集合 $S$ 与右集合 $T$。`, R`若可达右点未匹配，翻转到它的交错道路，就增加一条匹配边。`, R`所以 $T$ 全被匹配，且它们的匹配伙伴恰为 $S\setminus\{a_0\}$；还应证明 $N(S)=T$。`],
+      method: "m-hall-deficit", sol: R`<p>取最大匹配 $M$，若不覆盖 $A$，取未匹配左点 $a_0$。沿“左到右非匹配边、右到左匹配边”搜索，记可达左点为 $S$，可达右点为 $T$。</p><p>若 $T$ 有未匹配右点，取到它的一条最短交错道路，翻转沿路各边是否属于匹配，可得到多一条边的匹配，与最大性矛盾。因此 $T$ 全部匹配。</p><p>每个 $b\in T$ 的匹配伙伴可达，属于 $S\setminus\{a_0\}$；每个 $a\in S\setminus\{a_0\}$ 都是通过它的匹配边到达，故对应唯一的 $T$ 中伙伴。这给出双射，$|T|=|S|-1$。</p><p>又有 $N(S)=T$：非匹配邻边可以沿搜索到达；$S$ 中非起点的匹配邻点本就可达，起点没有匹配邻点。反向包含由可达右点必来自左邻点可知。于是 $|N(S)|=|S|-1$，与 Hall 条件矛盾。故 $M$ 覆盖 $A$。</p>` },
+    { id: "h1-e2", lv: "延伸", src: "自编：正则图的完美匹配分解", stmt: R`证明：任意有限 $d$-正则二部图（$d\ge1$）的边集可分解为 $d$ 个两两不相交的完美匹配。`,
+      hints: [R`先由数边得到两侧等大，再用 Hall 找一组完美匹配。`, R`删除这组匹配后，每个顶点都恰好少一条边。`, R`剩余图是 $(d-1)$-正则二部图，归纳；$d=1$ 时整个边集就是匹配。`],
+      method: "m-hall", sol: R`<p>对 $d$ 归纳。$d=1$ 时每点只有一条邻边，所有边即构成完美匹配。设 $d\ge2$。由 $d|A|=|E|=d|B|$ 得两侧等大，由 Hall 的数边证明得到一组完美匹配 $M_1$。</p><p>删去 $M_1$ 后，每点恰少一条边，剩余图仍为二部图且为 $(d-1)$-正则。由归纳假设，其边集可分解成 $d-1$ 组完美匹配。加上 $M_1$，得到所需的 $d$ 组；每组覆盖所有顶点，各组边互不相交。</p>` }
+  ]
 }
 };
 
@@ -1060,7 +1138,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay, mstPlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1431,6 +1509,67 @@ function mstPlay(mount) {
   $("#mst-next", mount).addEventListener("click", () => { slider.value = Math.min(ordered.length, +slider.value + 1); draw(); });
   $("#mst-reset", mount).addEventListener("click", () => { slider.value = 0; draw(); });
   rebuild();
+}
+
+
+/* ================= 交互工具：Hall 邻点集合 ================= */
+function hallPlay(mount) {
+  const samples = {
+    good: [[0, 1], [1, 2], [0, 2, 3], [2, 3]],
+    bad: [[0, 1], [0, 1], [0, 1], [2, 3]],
+    zero: [[], [], [], []]
+  };
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="hall-case">例图 <select id="hall-case"><option value="good">有完美匹配</option><option value="bad">单点与全集检查通过，仍有缺口</option><option value="zero">零度正则图</option></select></label></div>
+    <div class="ctrl" id="hall-subset">选左侧集合 S：${[0, 1, 2, 3].map(i => `<label><input type="checkbox" value="${i}"${i < 3 ? " checked" : ""}> a${i + 1}</label>`).join("")}</div>
+    <div class="ctrl"><button class="btn" id="hall-find" type="button">寻找 Hall 缺口</button><label><input id="hall-matching" type="checkbox"> 显示一组最大匹配</label></div>
+    <div id="hall-graph"></div><div class="readout" id="hall-out" aria-live="polite"></div>
+    <p class="small muted">紫色点：S；青色点：邻点并集 N(S)。最大匹配用粗线标出。工具穷举全部 16 个左侧子集；同一个右点只数一次。</p>
+  </div>`;
+  const mode = $("#hall-case", mount), checks = [...mount.querySelectorAll("#hall-subset input")], show = $("#hall-matching", mount);
+  let note = "";
+  function neighbors(S) { return new Set(S.flatMap(i => samples[mode.value][i])); }
+  function maximum() {
+    let best = [];
+    function visit(i, used, pairs) {
+      if (i === 4) { if (pairs.length > best.length) best = pairs.slice(); return; }
+      for (const j of samples[mode.value][i]) if (!used.has(j)) {
+        used.add(j); pairs.push([i, j]); visit(i + 1, used, pairs); pairs.pop(); used.delete(j);
+      }
+      visit(i + 1, used, pairs);
+    }
+    visit(0, new Set(), []);
+    return best;
+  }
+  function draw() {
+    const S = checks.filter(c => c.checked).map(c => +c.value), N = neighbors(S), pairs = maximum();
+    const good = N.size >= S.length, pairSet = new Set(pairs.map(([i, j]) => `${i}-${j}`));
+    const lines = samples[mode.value].flatMap((ns, i) => ns.map(j => {
+      const chosen = show.checked && pairSet.has(`${i}-${j}`), active = S.includes(i);
+      return `<line x1="100" y1="${40 + 70 * i}" x2="480" y2="${40 + 70 * j}" style="stroke:var(${chosen ? "--teal" : active ? "--accent" : "--line"});stroke-width:${chosen ? 5 : active ? 2.5 : 1.5}"/>`;
+    })).join("");
+    const dots = [0, 1].flatMap(side => [0, 1, 2, 3].map(i => {
+      const active = side ? N.has(i) : S.includes(i), x = side ? 480 : 100, y = 40 + 70 * i;
+      return `<g><circle cx="${x}" cy="${y}" r="20" style="fill:var(${active ? (side ? "--teal" : "--accent") : "--surface"});stroke:var(--ink);stroke-width:1.3"/><text x="${x}" y="${y + 5}" text-anchor="middle" style="fill:var(${active ? "--accent-ink" : "--ink"});font:600 15px var(--f-mono)">${side ? "b" : "a"}${i + 1}</text></g>`;
+    })).join("");
+    $("#hall-graph", mount).innerHTML = `<svg viewBox="0 0 580 290" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="Hall 二部图；左侧集合与右侧邻点的完整计数见下方">${lines}${dots}</svg>`;
+    const names = (xs, prefix) => xs.length ? `{${xs.map(i => prefix + (i + 1)).join(", ")}}` : "空集";
+    $("#hall-out", mount).innerHTML = `<span>S = ${names(S, "a")}，N(S) = ${names([...N].sort(), "b")}</span><span>|S| = ${S.length}，|N(S)| = ${N.size}；此子集${good ? "满足条件（还不能据此断言全部满足）" : `违反 Hall，缺口为 ${S.length - N.size}` }。</span><span>全图最大匹配 ${pairs.length} 条${pairs.length === 4 ? "，可覆盖全部顶点。" : `，至少 ${4 - pairs.length} 个左点无法匹配。`}${show.checked ? " 所示匹配：" + pairs.map(([i, j]) => `a${i + 1}–b${j + 1}`).join("，") : ""}</span>${note ? `<span>${note}</span>` : ""}`;
+  }
+  $("#hall-find", mount).addEventListener("click", () => {
+    let worst = [], deficit = 0;
+    for (let mask = 0; mask < 16; mask++) {
+      const S = [0, 1, 2, 3].filter(i => mask & (1 << i)), d = S.length - neighbors(S).size;
+      if (d > deficit) { deficit = d; worst = S; }
+    }
+    note = deficit ? `已检查 16 个子集，最大缺口 ${deficit}，上图已选出一个坏子集。` : "已检查全部 16 个子集，都满足 Hall 条件；存在完美匹配。";
+    if (deficit) checks.forEach((c, i) => { c.checked = worst.includes(i); });
+    draw();
+  });
+  mode.addEventListener("change", () => { note = ""; show.checked = false; draw(); });
+  checks.forEach(c => c.addEventListener("change", () => { note = ""; draw(); }));
+  show.addEventListener("change", draw);
+  draw();
 }
 
 
