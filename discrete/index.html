@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="清华《离散数学》期末复习：跟课程进度上线，含交互工具、概念检测、分层提示与作答记录。">
+<meta name="theme-color" content="#f5f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131116" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="离散冲刺">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>html,body{margin:0}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>离散数学期末冲刺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']], processEscapes: true },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg-full.js"></script>
+<style>
+/* Layout: left rail of units/lessons + one reading column; rail becomes a scrolling top strip on phones. */
+:root {
+  --bg: #f5f4f7;
+  --surface: #ffffff;
+  --ink: #1e1a24;
+  --muted: #6a6375;
+  --line: #e1dce8;
+  --accent: #6a2477;
+  --accent-ink: #ffffff;
+  --accent-soft: #f1e6f4;
+  --teal: #0f7480;
+  --good: #2c7a4b;
+  --good-soft: #e3f2e8;
+  --warn: #9c5c00;
+  --warn-soft: #fbefd9;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  --grid: #ece8f1;
+  --f-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --f-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131116; --surface: #1c1a21; --ink: #ece8f2; --muted: #a49dae; --line: #2f2a36;
+    --accent: #cf9fdc; --accent-ink: #1c1121; --accent-soft: #2d2234; --teal: #55c6d1;
+    --good: #72c793; --good-soft: #1d2f24; --warn: #e3a64c; --warn-soft: #33281a;
+    --bad: #f18c82; --bad-soft: #3a2220; --grid: #26222c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131116; --surface: #1c1a21; --ink: #ece8f2; --muted: #a49dae; --line: #2f2a36;
+  --accent: #cf9fdc; --accent-ink: #1c1121; --accent-soft: #2d2234; --teal: #55c6d1;
+  --good: #72c793; --good-soft: #1d2f24; --warn: #e3a64c; --warn-soft: #33281a;
+  --bad: #f18c82; --bad-soft: #3a2220; --grid: #26222c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.75; }
+a { color: var(--accent); }
+button, select, textarea, input { font: inherit; color: inherit; }
+button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100%; }
+.rail { border-right: 1px solid var(--line); padding-block: 28px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.brand { font-family: var(--f-display); font-size: 21px; font-weight: 700; letter-spacing: .02em; line-height: 1.3; }
+.brand small { display: block; font-family: var(--f-body); font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .06em; margin-top: 4px; }
+.sync { font-size: 12px; color: var(--muted); margin-top: 10px; display: flex; gap: 6px; align-items: center; }
+.sync i { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); display: inline-block; }
+.sync.on i { background: var(--good); }
+.nav { display: grid; gap: 2px; margin-top: 26px; }
+.nav .grp { font-size: 11.5px; letter-spacing: .12em; color: var(--muted); margin: 16px 0 4px; }
+.nav a { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; text-decoration: none; color: var(--ink); padding: 6px 10px; border-radius: 7px; font-size: 14px; }
+.nav a:hover { background: var(--accent-soft); }
+.nav a.cur { background: var(--accent); color: var(--accent-ink); }
+.nav a .pc { font-family: var(--f-mono); font-size: 11.5px; opacity: .75; }
+.nav a.soon { color: var(--muted); pointer-events: none; }
+main { min-width: 0; padding-block: 34px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 820px; margin: 0 auto; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.35; margin: 0; }
+h1 { font-size: 30px; }
+h2 { font-size: 22px; }
+h3 { font-size: 17.5px; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--accent); font-weight: 700; }
+.stack { display: grid; gap: 12px; }
+.prose { display: grid; gap: 12px; max-width: 68ch; }
+.prose ul, .prose ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px; display: grid; gap: 14px; min-width: 0; }
+.sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.sec-head .t { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; font-size: 12px; padding: 1px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.src { border-color: transparent; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.chip.lv-基础 { background: var(--good-soft); color: var(--good); border-color: transparent; }
+.chip.lv-真题 { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.lv-变种 { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.chip.lv-延伸 { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 5px 13px; cursor: pointer; font-size: 13.5px; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); color: var(--accent-ink); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; }
+td.yr { text-align: center; font-family: var(--f-mono); }
+td.yr .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); }
+td.yr .no { color: var(--line); }
+.stars { color: var(--warn); letter-spacing: 2px; font-size: 13px; white-space: nowrap; }
+.week { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 4px 14px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.week:last-child { border-bottom: 0; }
+.week .wk { font-family: var(--f-display); font-weight: 700; font-size: 16px; }
+.week .days { display: grid; gap: 3px; font-size: 14px; }
+.week .days span.live { color: var(--accent); font-weight: 500; }
+.week .days span.later { color: var(--muted); }
+.callout { border-left: 3px solid var(--teal); background: color-mix(in srgb, var(--teal) 8%, var(--surface)); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 14.5px; }
+.callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.method { border: 1px dashed var(--accent); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 8px; background: var(--surface); }
+.method h4 { margin: 0; font-family: var(--f-display); font-size: 15.5px; color: var(--accent); }
+.method ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.cmp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cmp > div { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; align-content: start; }
+.cmp b { font-family: var(--f-display); }
+.widget { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.widget canvas { width: 100%; height: 320px; display: block; border-radius: 6px; background: var(--bg); }
+.ctrl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 13.5px; }
+.ctrl label { display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+.ctrl label input[type=range] { flex: 1 1 auto; min-width: 0; }
+.ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+.ctrl select { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: 3px 6px; }
+.readout { font-family: var(--f-mono); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--muted); }
+.readout b { color: var(--ink); font-weight: 600; }
+.widget input[type=text], .widget input[type=number] { border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; background: var(--surface); width: 5.5em; }
+.crt-rows { display: grid; gap: 6px; }
+.legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.poly { overflow-x: auto; font-size: 14px; min-height: 2.2em; }
+.xi-line { position: relative; height: 54px; margin: 6px 12px; }
+.xi-line .bar { position: absolute; left: 0; right: 0; top: 24px; height: 2px; background: var(--line); }
+.xi-line .seg { position: absolute; top: 23px; height: 4px; background: var(--accent-soft); }
+.xi-line .pt { position: absolute; top: 17px; width: 2px; height: 16px; background: var(--muted); }
+.xi-line .pt span { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.xi-line .xi { position: absolute; top: 15px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--accent); transition: left .15s; }
+.xi-line .xi span { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--accent); font-weight: 700; white-space: nowrap; }
+.q { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 16px 18px; display: grid; gap: 10px; }
+.q .opts { display: grid; gap: 6px; }
+.q .opt { text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.q .opt:hover { border-color: var(--accent); }
+.q .opt.right { border-color: var(--good); background: var(--good-soft); }
+.q .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.verdict { font-size: 14px; padding: 8px 12px; border-radius: 8px; }
+.verdict.ok { background: var(--good-soft); color: var(--good); }
+.verdict.no { background: var(--bad-soft); color: var(--bad); }
+.verdict .ex { color: var(--ink); display: block; margin-top: 2px; }
+.prob { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); display: grid; min-width: 0; }
+.prob > header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.prob > header .pid { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.prob > header .st { margin-left: auto; font-size: 12.5px; }
+.prob .body { padding: 14px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.prob .stmt { overflow-x: auto; }
+.reveal { display: grid; gap: 8px; }
+.reveal .card { border-radius: 8px; padding: 10px 14px; font-size: 14.5px; overflow-x: auto; }
+.reveal .card.hint { background: var(--warn-soft); }
+.reveal .card.meth { background: var(--accent-soft); }
+.reveal .card.sol { background: var(--bg); border: 1px solid var(--line); }
+.reveal .card .lab { font-size: 12px; font-weight: 700; letter-spacing: .08em; display: block; margin-bottom: 2px; color: var(--muted); }
+.ans { display: grid; gap: 8px; }
+.ans textarea { width: 100%; min-height: 110px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); font-size: 14.5px; line-height: 1.6; }
+.ans .pv { font-size: 14.5px; border-left: 2px solid var(--line); padding-left: 12px; color: var(--ink); overflow-x: auto; }
+.ans .pv:empty { display: none; }
+.fb { background: var(--bg); border: 1px solid var(--teal); border-radius: 8px; padding: 10px 14px; font-size: 14.5px; white-space: pre-wrap; overflow-x: auto; }
+.fb .lab { font-size: 12px; font-weight: 700; color: var(--teal); letter-spacing: .08em; display: block; }
+.opt-zone > summary { cursor: pointer; font-weight: 500; color: var(--accent); }
+.opt-zone[open] > summary { margin-bottom: 12px; }
+.progress { height: 6px; background: var(--grid); border-radius: 99px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--accent); }
+.lesson-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.lesson-cards a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 8px; background: var(--surface); }
+.lesson-cards a:hover { border-color: var(--accent); }
+.lesson-cards .n { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.done-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 16px; }
+.mono { font-family: var(--f-mono); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+pre.md { white-space: pre-wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; font-family: var(--f-mono); font-size: 12.5px; max-height: 420px; overflow: auto; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding-block: 16px 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .nav { display: flex; overflow-x: auto; gap: 6px; margin-top: 12px; padding-bottom: 6px; }
+  .nav .grp { display: none; }
+  .nav a { white-space: nowrap; border: 1px solid var(--line); }
+  .lesson-cards, .cmp { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 25px; }
+  .widget canvas { height: 260px; }
+}
+/* 网格子元素允许收缩，长公式在自己的框里横向滚动，不把页面撑宽 */
+.col > *, .stack > *, .block > *, .prose > *, .prob .body > *, .widget > *, .q > *, .reveal > * { min-width: 0; }
+mjx-container.wide-math { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-block: 4px; }
+mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; margin: .5em 0 !important; padding-bottom: 2px; }
+.widget canvas { touch-action: pan-y; cursor: ew-resize; }
+.sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sync-card { border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 10px; align-content: start; background: var(--surface); }
+.sync-card h3 { font-size: 16px; }
+.sync-card textarea { width: 100%; min-height: 84px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); font-family: var(--f-mono); font-size: 12px; resize: vertical; }
+.note { font-size: 13px; padding: 8px 12px; border-radius: 8px; }
+.note.ok { background: var(--good-soft); color: var(--good); }
+.note.no { background: var(--bad-soft); color: var(--bad); }
+.stat-row { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; }
+.stat-row b { font-family: var(--f-mono); font-size: 18px; margin-right: 4px; }
+.pattern td:first-child { white-space: nowrap; }
+/* 平板 */
+@media (min-width: 861px) and (max-width: 1180px) {
+  .shell { grid-template-columns: 200px minmax(0, 1fr); }
+  .rail { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: 12px; }
+  main { padding-block: 26px 70px; }
+}
+/* 手机和竖屏平板：导航贴在顶部 */
+@media (max-width: 860px) {
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  .rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg); padding-block: 10px 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; }
+  .brand { font-size: 17px; }
+  .brand small { display: none; }
+  .sync { margin-top: 0; }
+  .nav { flex-basis: 100%; margin-top: 4px; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a.soon { display: none; }
+  main { padding-block: 20px 64px; }
+  .block { padding: 16px; }
+  .prob > header, .prob .body { padding-left: 14px; padding-right: 14px; }
+  .sync-grid { grid-template-columns: minmax(0, 1fr); }
+  .week { grid-template-columns: minmax(0, 1fr); }
+  .ctrl input[type=range] { width: 100%; }
+  .ctrl label { flex: 1 1 100%; }
+}
+/* 触屏：加大点击区域，输入框 16px 防止 iOS 自动放大 */
+@media (pointer: coarse) {
+  .btn { min-height: 42px; padding: 8px 15px; }
+  .q .opt { padding: 11px 14px; min-height: 44px; }
+  .nav a { padding: 9px 13px; }
+  textarea, select, input { font-size: 16px !important; }
+  .ctrl input[type=range] { height: 32px; }
+  .ctrl select { min-height: 38px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">离散数学 期末冲刺<small>2026 秋 · 离散数学</small></div>
+    <div class="sync" id="sync"><i></i><span>本浏览器保存</span></div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <main><div class="col" id="view"></div></main>
+</div>
+
+<script>
+/* ================= 内容数据 ================= */
+const R = String.raw;
+
+const EXAM_YEARS = ["2022 期末"];
+const EXAM_MAP = [
+  // topic, [2022 期末], stars, note
+  ["普吕弗序列：编码、还原、叶子数", [1], 5, "2022 期末 4、2024 期末 5 连续考，几乎必考"],
+  ["树的性质与生成树", [1], 5, "边数 n−1、加边成圈、删边不连通；2022 期末 1(2)、5(1)"],
+  ["连通分支与边数", [1], 4, "2022 期末 1(1)：n 点 m 个分支，边数最少 n−m"],
+  ["握手定理与按度数计数", [1], 4, "2022 期末 6：角的数目、无 4-圈图的边数上界"],
+  ["Hall 匹配定理、二部图", [1], 4, "2022 期末 3、7"],
+  ["平面图 Euler 公式、染色", [1], 4, "2022 期末 2"],
+  ["最便宜生成树", [1], 3, "2022 期末 5(2)，作业 7"],
+  ["欧拉路与欧拉圈", [0], 3, "本学期 11-17 刚讲，适合出小问"],
+  ["中国剩余定理", [0], 3, "数论多在期中考，但期末“考察所有内容”"]
+];
+
+const SCHEDULE = [
+  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", null], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
+  ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", null], ["Day 4–5", "平面图、Euler 公式与染色", null], ["Day 6–7", "复盘", null]]],
+  ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
+  ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
+  ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "速查表 + 模拟卷 1", null]]],
+  ["第 6 周", [["Day 1–5", "模拟卷 2、3 + 错题回炉", null], ["Day 6–7", "考前过速查表", null]]]
+];
+
+const MUST = [
+  ["中国剩余定理", R`$m_i$ 两两互素：$x\equiv\sum a_iN_iL_i\pmod M$，$N_i=M/m_i$，$L_i\equiv N_i^{-1}\pmod{m_i}$`],
+  ["孙子歌", R`模 3、5、7：$x\equiv70a+21b+15c\pmod{105}$`],
+  ["不互素合并", R`$x\equiv a\ (m)$、$x\equiv b\ (n)$ 有解 ⇔ $\gcd(m,n)\mid a-b$，模 $\operatorname{lcm}(m,n)$ 唯一`],
+  ["握手定理", R`$\sum_v d(v)=2e(G)$，奇度顶点有偶数个`],
+  ["连通与边数", R`连通 ⇒ $e\ge n-1$；一般 $\beta_0(G)\ge n-e(G)$`],
+  ["有圈的条件", R`每点度 $\ge2$；或有边且全偶度；或 $e\ge n$`],
+  ["Euler 定理", R`连通图有欧拉圈 ⇔ 0 个奇度点；有欧拉路 ⇔ 0 或 2 个（2 个时它们是两端）`],
+  ["树", R`连通无圈 ⇔ 连通且 $n-1$ 条边 ⇔ 无圈且 $n-1$ 条边 ⇔ 任两点恰一条简单道路；$n\ge2$ 时至少两个叶`],
+  ["普吕弗", R`$d_T(v)=1+\#\{i:y_i=v\}$；还原 $x_i=\min[n]\setminus\{x_1,\dots,x_{i-1},y_i,\dots,y_{n-1}\}$，$y_{n-1}=n$`],
+  ["Cayley", R`$[n]$ 上的标号树共 $n^{n-2}$ 棵`],
+  ["指定度数", R`$\dfrac{(n-2)!}{(d_1-1)!\cdots(d_n-1)!}$ 棵`],
+  ["补全森林", R`$k$ 个分支、大小 $s_1,\dots,s_k$：$n^{k-2}s_1\cdots s_k$ 棵；含指定边：$2n^{n-3}$ 棵`]
+];
+
+const UNITS = [
+  { id: "nt", title: "数论：中国剩余定理", lessons: ["n1"] },
+  { id: "graph", title: "图论基础", lessons: ["g1", "g2"] },
+  { id: "mst", title: "生成树与匹配", lessons: [], soon: true },
+  { id: "planar", title: "平面图与染色", lessons: [], soon: true },
+  { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
+];
+
+const LESSONS = {
+/* ---------------- N1 ---------------- */
+n1: {
+  unit: "nt", n: 1, title: "中国剩余定理",
+  goal: "会用 N_i、L_i、M_i 三步解同余方程组，会处理模数不互素的情形，会用 CRT 做存在性构造。",
+  sections: [
+    { id: "n1-s1", h: "1. 定理：取模映射是双射", html: R`
+      <p><b>中国剩余定理（CRT）</b>：设 $m_1,\dots,m_r\ge2$ <b>两两互素</b>，$M=m_1\cdots m_r$。则对任意 $a_1,\dots,a_r$，方程组 $x\equiv a_i\pmod{m_i}$（$i=1,\dots,r$）在模 $M$ 意义下<b>存在且唯一</b>解。</p>
+      <p>课上的说法：映射 $\Phi:\mathbb Z_M\to\mathbb Z_{m_1}\times\cdots\times\mathbb Z_{m_r}$，$[x]_M\mapsto([x]_{m_1},\dots,[x]_{m_r})$ 是环同构。证明分两步：</p>
+      <ul>
+        <li><b>单射</b>：若 $\Phi([x])=\Phi([y])$，则每个 $m_i\mid x-y$。两两互素 ⇒ $M\mid x-y$。（课上用素因子的幂次 $v_p$ 说明：每个素数 $p\mid M$ 只整除一个 $m_i$。）</li>
+        <li><b>满射</b>：两边元素个数都是 $M$，单射即满射。</li>
+      </ul>
+      <p>互素不能省：$4\mid12$、$6\mid12$，但 $24\nmid12$。</p>` },
+    { id: "n1-s2", h: "2. 构造解：N、L、M 三步", html: R`
+      <ol>
+        <li>$N_i=M/m_i$（其余模数之积）。</li>
+        <li>$L_i\equiv N_i^{-1}\pmod{m_i}$。$\gcd(N_i,m_i)=1$，用辗转相除求 $N_iL_i+m_iq_i=1$；模数小时直接试。</li>
+        <li>$M_i=N_iL_i$，它满足 $M_i\equiv1\pmod{m_i}$、$M_i\equiv0\pmod{m_j}$（$j\ne i$）。答案 $x\equiv\sum a_iM_i\pmod M$。</li>
+      </ol>
+      <p><b>孙子歌</b>：模 3、5、7 时 $M_1=70$、$M_2=21$、$M_3=15$，所以 $x\equiv70a+21b+15c\pmod{105}$。“三人同行七十稀，五树梅花廿一枝，七子团圆正半月，除百零五便得知。”</p>
+      <p><b>模数不互素</b>（课外但常用）：$x\equiv a\pmod m$、$x\equiv b\pmod n$ 有解 $\Leftrightarrow\gcd(m,n)\mid a-b$，有解时模 $\operatorname{lcm}(m,n)$ 唯一。做法是代入：$x=a+mt$，解关于 $t$ 的一次同余。</p>
+      <p><b>省事的观察</b>：余数和模数差一个常数时直接合并，例如 $x\equiv-6\pmod{11}$ 且 $x\equiv-6\pmod{13}$ ⇒ $x\equiv-6\pmod{143}$。</p>` },
+    { id: "n1-s3", h: "3. 用 CRT 做构造", html: R`
+      <p>CRT 最常见的考法不是解方程，而是证明“存在一个数同时满足很多条件”：</p>
+      <ul>
+        <li>给每个条件分配一个<b>不同的素数</b>（或素数幂），把条件写成同余式。</li>
+        <li>模数两两互素 ⇒ 由 CRT 有解；加上 $M$ 的倍数可以让解为正。</li>
+      </ul>
+      <p>课上的例子：任给 $n$，存在 $n\times n$ 的格点方阵，从原点看每个点都被挡住。对位置 $(i,j)$ 取不同素数 $p_{ij}$，要求 $X\equiv-i$、$Y\equiv-j\pmod{p_{ij}}$，则 $p_{ij}\mid\gcd(X+i,Y+j)$。$n=2$ 时可取 $X=174$、$Y=20$。</p>` }
+  ],
+  widget: "crtCalc",
+  concepts: [
+    { id: "n1-c1", sec: "n1-s2", q: R`孙子歌里“三人同行七十稀”的 70 满足：`,
+      opts: [R`$70\equiv1\pmod3$，且被 5、7 整除`, R`$70\equiv0\pmod3$，且模 5、7 余 1`, R`$70$ 是 3、5、7 的最小公倍数`, R`$70\equiv1\pmod{105}$`], a: 0,
+      ex: R`$M_1$ 要在模 3 下是 1、在模 5 和模 7 下是 0：$N_1=35\equiv2\pmod3$，$L_1=2$，$M_1=70$。` },
+    { id: "n1-c2", sec: "n1-s2", q: R`方程组 $x\equiv1\pmod4$、$x\equiv3\pmod6$：`,
+      opts: [R`模数不互素，所以无解`, R`有解，模 24 唯一`, R`有解，模 12 唯一，$x\equiv9$`, R`有解，模 12 有两个解`], a: 2,
+      ex: R`$\gcd(4,6)=2\mid3-1$，有解，模 $\operatorname{lcm}=12$ 唯一。$x=1+4t\equiv3\pmod6$ ⇒ $4t\equiv2\pmod 6$ ⇒ $t\equiv2\pmod3$，$x=9$。` },
+    { id: "n1-c3", sec: "n1-s1", q: R`CRT 证明“单射”时，为什么需要两两互素？`,
+      opts: [R`为了保证 $N_i$ 有逆元`, R`为了从“每个 $m_i\mid d$”推出“$M\mid d$”`, R`为了保证 $M$ 是素数`, R`为了让两边元素个数相等`], a: 1,
+      ex: R`元素个数相等不需要互素（两边都是 $M$ 个）。关键是各 $m_i$ 都整除 $d$ 推出乘积整除 $d$，这一步要互素。` }
+  ],
+  methods: [
+    { id: "m-crt", title: "解同余方程组（模数互素）", steps: [
+      R`先检查模数两两互素，写出 $M=\prod m_i$。`,
+      R`$N_i=M/m_i$，求 $L_i\equiv N_i^{-1}\pmod{m_i}$（先把 $N_i$ 模 $m_i$ 约小再试）。`,
+      R`$x\equiv\sum a_iN_iL_i\pmod M$，化成最小非负剩余。`,
+      R`<b>代回每个方程验算</b>。`] },
+    { id: "m-crt-merge", title: "逐个合并（模数不互素或想少算）", steps: [
+      R`两个方程 $x\equiv a\pmod m$、$x\equiv b\pmod n$：先看 $\gcd(m,n)\mid a-b$ 是否成立，不成立就无解。`,
+      R`代入 $x=a+mt$，解 $mt\equiv b-a\pmod n$：两边和模数同除以 $\gcd$ 再求逆。`,
+      R`得到 $x\equiv x_0\pmod{\operatorname{lcm}(m,n)}$，再和下一个方程合并。`,
+      R`余数与模数差同一个常数时（如都 $\equiv-6$），先整体合并。`] },
+    { id: "m-crt-build", title: "用 CRT 证明存在性", steps: [
+      R`把要满足的 $N$ 个条件逐个列出，每个条件配一个不同的素数（需要平方时用 $p^2$）。`,
+      R`把条件写成 $X\equiv c_k\pmod{p_k}$ 的形式。`,
+      R`模数两两互素 ⇒ CRT 给出解；加上模数乘积的倍数使解为正整数。`,
+      R`最后验证构造出的数确实满足每个条件。`] }
+  ],
+  problems: [
+    { id: "n1-p1", lv: "基础", src: "课件 11-17 · 《孙子算经》", stmt: R`一个数按 3、5、7 分组，依次余 2、3、2。求这个数的最小正整数值。`,
+      hints: [R`用孙子歌：$x\equiv70a+21b+15c\pmod{105}$。`, R`$a=2$，$b=3$，$c=2$。`, R`$140+63+30=233$，再模 105。`],
+      method: "m-crt", sol: R`<p>$x\equiv2\cdot70+3\cdot21+2\cdot15=233\equiv233-210=23\pmod{105}$。</p><p>验算：$23=7\cdot3+2=4\cdot5+3=3\cdot7+2$。最小正整数解是 $23$。</p>` },
+    { id: "n1-p2", lv: "基础", src: "自编", stmt: R`解同余方程组 $x\equiv2\pmod3$，$x\equiv3\pmod4$，$x\equiv1\pmod5$。`,
+      hints: [R`$M=60$，$N_1=20$，$N_2=15$，$N_3=12$。`, R`$20\equiv2\pmod3$，逆元 2；$15\equiv3\pmod4$，逆元 3；$12\equiv2\pmod5$，逆元 3。`, R`$M_1=40$，$M_2=45$，$M_3=36$。`],
+      method: "m-crt", sol: R`<p>$M=60$。$N_1=20\equiv2\pmod3$，$L_1=2$，$M_1=40$；$N_2=15\equiv3\pmod4$，$L_2=3$，$M_2=45$；$N_3=12\equiv2\pmod5$，$L_3=3$，$M_3=36$。</p>
+      <p>$x\equiv2\cdot40+3\cdot45+1\cdot36=251\equiv11\pmod{60}$。</p><p>验算：$11=3\cdot3+2=2\cdot4+3=2\cdot5+1$。</p>` },
+    { id: "n1-p3", lv: "基础", src: "课件 11-17 例", stmt: R`称第一象限的整点 $P=(u,v)$ 从原点看不可见，若开线段 $OP$ 上还有整点。证明：任给正整数 $n$，存在正整数 $X,Y$，使 $n\times n$ 方阵中的每个整点 $(X+i,Y+j)$（$0\le i,j\lt n$）从原点看都不可见。`,
+      hints: [R`先证明：$\gcd(u,v)=g\gt1$ ⇒ $P$ 不可见（看点 $(u/g,v/g)$）。`, R`对每个位置 $(i,j)$ 取一个素数 $p_{ij}$，$n^2$ 个素数互不相同。`, R`要求 $X\equiv-i$、$Y\equiv-j\pmod{p_{ij}}$，对 $X$ 和 $Y$ 分别用 CRT。`],
+      method: "m-crt-build", sol: R`<p><b>引理</b>：若 $g=\gcd(u,v)\gt1$，则 $(u/g,v/g)=\frac1gP$ 是整点，且在开线段 $OP$ 上，所以 $P$ 不可见。</p>
+      <p><b>构造</b>：取 $n^2$ 个互不相同的素数 $p_{ij}$（$0\le i,j\lt n$）。考虑</p>
+      $$X\equiv-i\pmod{p_{ij}},\qquad Y\equiv-j\pmod{p_{ij}}\qquad(0\le i,j\lt n).$$
+      <p>两组的模数都两两互素，由 CRT 分别有解；加上 $\prod p_{ij}$ 的倍数可使 $X,Y$ 为正。于是 $p_{ij}\mid X+i$ 且 $p_{ij}\mid Y+j$，$\gcd(X+i,Y+j)\ge p_{ij}\gt1$，由引理每个点都不可见。</p>` }
+  ],
+  variants: [
+    { id: "n1-v1", lv: "变种", src: "仿课件例", stmt: R`证明：对任意正整数 $n$，存在 $n$ 个连续正整数，其中每一个都能被某个大于 1 的完全平方数整除。`,
+      hints: [R`第 $i$ 个数 $x+i$ 配一个素数 $p_i$，要求 $p_i^2\mid x+i$。`, R`$x\equiv-i\pmod{p_i^2}$，$i=1,\dots,n$。`, R`不同素数的平方两两互素，CRT 给出解。`],
+      method: "m-crt-build", sol: R`<p>取 $n$ 个不同的素数 $p_1,\dots,p_n$，考虑 $x\equiv-i\pmod{p_i^2}$（$i=1,\dots,n$）。$p_i^2$ 两两互素，由 CRT 存在正整数解 $x$。于是 $p_i^2\mid x+i$，连续的 $n$ 个数 $x+1,\dots,x+n$ 满足要求。</p>` },
+    { id: "n1-v2", lv: "变种", src: "自编", stmt: R`一个正整数除以 7 余 3，除以 11 余 5，除以 13 余 7。求满足条件的最小正整数。`,
+      hints: [R`看余数和模数的差：$3=7-4$，$5=11-6$，$7=13-6$。`, R`后两个合并：$x\equiv-6\pmod{143}$，即 $x=143k-6$。`, R`$143\equiv3\pmod7$，解 $3k-6\equiv3\pmod7$。`],
+      method: "m-crt-merge", sol: R`<p>$x\equiv-6\pmod{11}$ 且 $x\equiv-6\pmod{13}$，所以 $x\equiv-6\pmod{143}$，写成 $x=143k-6$。</p>
+      <p>模 7：$143\equiv3$，$3k-6\equiv3$，$3k\equiv9$，$k\equiv3\pmod7$。取 $k=3$，$x=423$，通解 $x\equiv423\pmod{1001}$。</p>
+      <p>验算：$423=7\cdot60+3=11\cdot38+5=13\cdot32+7$。最小正整数是 $423$。</p>` },
+    { id: "n1-v3", lv: "变种", src: "模数不互素", stmt: R`(1) 解 $x\equiv3\pmod6$，$x\equiv5\pmod8$。(2) 说明 $x\equiv3\pmod6$，$x\equiv4\pmod8$ 无解。`,
+      hints: [R`$\gcd(6,8)=2$。(1) 中 $2\mid5-3$，(2) 中 $2\nmid4-3$。`, R`(1) 代入 $x=3+6t$，$6t\equiv2\pmod8$。`, R`两边和模数同除以 2：$3t\equiv1\pmod4$，$t\equiv3\pmod4$。`],
+      method: "m-crt-merge", sol: R`<p>(1) $x=3+6t$，$6t\equiv2\pmod8\Leftrightarrow3t\equiv1\pmod4\Leftrightarrow t\equiv3\pmod4$。$x=3+18=21$，解为 $x\equiv21\pmod{24}$。验算：$21=3\cdot6+3=2\cdot8+5$。</p>
+      <p>(2) 第一个方程说 $x$ 是奇数，第二个说 $x$ 是偶数，矛盾。一般地，$\gcd(6,8)=2\nmid4-3$。</p>` }
+  ],
+  extensions: [
+    { id: "n1-e1", lv: "延伸", src: "经典结论", stmt: R`设 $\gcd(m,n)=1$。用 CRT 证明 Euler 函数可乘：$\varphi(mn)=\varphi(m)\varphi(n)$。`,
+      hints: [R`$\varphi(k)$ 是 $\mathbb Z_k$ 中与 $k$ 互素的剩余类个数。`, R`$\gcd(x,mn)=1\Leftrightarrow\gcd(x,m)=1$ 且 $\gcd(x,n)=1$。`, R`CRT 的双射 $\Phi:\mathbb Z_{mn}\to\mathbb Z_m\times\mathbb Z_n$ 把“与 $mn$ 互素的类”恰好映到“两个坐标都互素的对”。`],
+      method: "m-crt-build", sol: R`<p>$\gcd(x,mn)=1$ 当且仅当 $x$ 与 $m$、$n$ 都没有公共素因子，即 $\gcd(x,m)=1$ 且 $\gcd(x,n)=1$。这个条件只依赖于 $x$ 模 $m$ 和模 $n$ 的余数。</p>
+      <p>由 CRT，$\Phi([x]_{mn})=([x]_m,[x]_n)$ 是双射，它把 $\{[x]_{mn}:\gcd(x,mn)=1\}$ 一一映到 $\{([a]_m,[b]_n):\gcd(a,m)=\gcd(b,n)=1\}$。前者有 $\varphi(mn)$ 个元素，后者有 $\varphi(m)\varphi(n)$ 个。</p>` },
+    { id: "n1-e2", lv: "延伸", src: "自编", stmt: R`同余方程 $x^2\equiv1\pmod{105}$ 在 $\{0,1,\dots,104\}$ 中有几个解？`,
+      hints: [R`由 CRT，$x^2\equiv1\pmod{105}$ ⇔ 模 3、5、7 各自成立。`, R`$p$ 为奇素数时，$x^2\equiv1\pmod p\Leftrightarrow p\mid(x-1)(x+1)\Leftrightarrow x\equiv\pm1$，恰 2 个解。`, R`三个模数各 2 种选择，组合起来。`],
+      method: "m-crt", sol: R`<p>由 CRT，$x$ 模 105 的类与 $(x\bmod3,x\bmod5,x\bmod7)$ 一一对应，且 $105\mid x^2-1$ ⇔ $3,5,7$ 都整除 $x^2-1$。</p>
+      <p>对奇素数 $p$，$p\mid(x-1)(x+1)$ ⇔ $x\equiv1$ 或 $x\equiv-1\pmod p$，且 $1\not\equiv-1$，恰 2 个解。三个坐标独立选择，共 $2^3=8$ 个解（例如 $1,104,29,34,\dots$）。</p>` }
+  ]
+},
+/* ---------------- G1 ---------------- */
+g1: {
+  unit: "graph", n: 1, title: "图的基本结构与欧拉路",
+  goal: "会用握手定理和“取最长道路”证明结论，会用分支计数估计边数，会判定欧拉路和欧拉圈。",
+  sections: [
+    { id: "g1-s1", h: "1. 基本概念与握手定理", html: R`
+      <ul>
+        <li>图 $G=(V,E)$，$E\subseteq\binom V2$（简单图：无自环、无重边）。$d(v)$ 为顶点 $v$ 的度。</li>
+        <li>补图 $\overline G=(V,\binom V2\setminus E)$。诱导子图 $G[V_1]$ 要保留两端都在 $V_1$ 中的<b>全部</b>边，子图可以只保留一部分。</li>
+        <li><b>道路</b>（walk）可以重复顶点；<b>简单道路</b>（path）顶点互不相同；<b>简单圈</b>（cycle）长度 $\ge3$，只有首尾重复。</li>
+        <li>从 $x$ 到 $y$ 的<b>最短</b>道路一定是简单道路（有重复顶点就能剪掉一段）。</li>
+      </ul>
+      <p><b>握手定理</b>：$\sum_{v}d(v)=2e(G)$。每条边被两个端点各数一次。推论：<b>奇度顶点的个数是偶数</b>。</p>` },
+    { id: "g1-s2", h: "2. 什么时候有圈；连通分支与边数", html: R`
+      <ul>
+        <li><b>每点度 $\ge2$ ⇒ 有圈</b>。证法：取最长的简单道路 $v_0,\dots,v_k$，$v_k$ 的另一个邻点 $x\ne v_{k-1}$ 必在路上（否则路能延长），$x=v_i$，$i\le k-2$，得到圈 $v_i,\dots,v_k,v_i$。</li>
+        <li><b>至少一条边且全为偶度 ⇒ 有圈</b>（删去孤立点后每点度 $\ge2$）。</li>
+        <li><b>$e(G)\ge|V(G)|$ ⇒ 有圈</b>（对 $n$ 归纳，每次删去一个度 $\le1$ 的点）。</li>
+        <li>“$x,y$ 之间有道路”是等价关系，等价类的诱导子图是<b>连通分支</b>，个数记 $\beta_0(G)$。</li>
+        <li><b>连通 ⇒ $e\ge n-1$</b>；一般地 $\beta_0(G)\ge n-e(G)$（对每个分支用 $e_i\ge n_i-1$ 再求和）。</li>
+      </ul>
+      <p>课上的糖果题（77 颗糖装袋，7 人或 11 人都能平分，至少 17 袋）就是把“袋”当成边、把“人”当成顶点，证明这个 18 点图连通，所以至少 17 条边。</p>` },
+    { id: "g1-s3", h: "3. 欧拉路与欧拉圈", html: R`
+      <p>允许重边。<b>欧拉路</b>：经过每条边恰好一次的道路；首尾相同叫<b>欧拉圈</b>。</p>
+      <p><b>Euler 定理</b>：设 $G$ 连通。$G$ 有欧拉圈 ⇔ 奇度顶点有 0 个；$G$ 有欧拉路 ⇔ 奇度顶点有 0 或 2 个，且有 2 个时，欧拉路的两端就是这两个点。</p>
+      <ul>
+        <li><b>必要性</b>：每经过一次中间顶点，进边和出边配成一对，贡献 2 度；只有起点和终点各多出 1。</li>
+        <li><b>充分性（全偶度）</b>：对边数归纳。取一个圈 $C$ 删去它的边，剩下每个分支仍全偶度，各有欧拉圈；每个分支都和 $C$ 有公共点，沿 $C$ 走，到公共点时插入该分支的欧拉圈。</li>
+        <li><b>两个奇度点 $x,y$</b>：临时加一条边 $xy$，全偶度，取欧拉圈，再删掉这条边。</li>
+      </ul>
+      <p>七桥图的四块陆地度数为 $3,3,3,5$，有 4 个奇度点，所以没有欧拉路。<b>别忘了先检查连通</b>。</p>` }
+  ],
+  widget: null,
+  concepts: [
+    { id: "g1-c1", sec: "g1-s1", q: R`是否存在一个简单图，各顶点的度依次为 $3,3,2,2,1$？`,
+      opts: [R`存在`, R`不存在：度数和是奇数`, R`不存在：度为 1 的点不能和度为 3 的点相邻`, R`要看顶点是否有标号`], a: 1,
+      ex: R`$3+3+2+2+1=11$ 是奇数，与握手定理 $\sum d(v)=2e$ 矛盾。` },
+    { id: "g1-c2", sec: "g1-s2", q: R`7 个顶点、4 条边的图至少有几个连通分支？`,
+      opts: [R`1`, R`2`, R`3`, R`4`], a: 2,
+      ex: R`$\beta_0\ge n-e=3$。一条 5 个顶点的简单道路加两个孤立点恰好 3 个分支。` },
+    { id: "g1-c3", sec: "g1-s3", q: R`连通图 $G$ 恰有两个奇度顶点 $x,y$。下面正确的是：`,
+      opts: [R`$G$ 有欧拉圈`, R`$G$ 有欧拉路，且它必以 $x,y$ 为两端`, R`$G$ 有欧拉路，可以从任意顶点出发`, R`$G$ 没有欧拉路`], a: 1,
+      ex: R`必要性的配对论证说明：欧拉路首尾不同时，奇度点恰好是两端。` },
+    { id: "g1-c4", sec: "g1-s2", q: R`用“取最长简单道路 $v_0,\dots,v_k$”证明有圈时，关键的一步是：`,
+      opts: [R`$v_k$ 的所有邻点都在这条路上，否则能延长`, R`$v_0$ 的度最大`, R`最长路一定经过所有顶点`, R`$v_k$ 的度为 1`], a: 0,
+      ex: R`这是“极端原理”：最长路的端点没有路外的邻点。再加上 $d(v_k)\ge2$，就能找到路上较远的邻点，围成圈。` }
+  ],
+  methods: [
+    { id: "m-hand", title: "握手定理与按度数计数", steps: [
+      R`$\sum d(v)=2e$：用来求边数、推出奇度点个数为偶数、否定不可能的度数序列。`,
+      R`数“以某点为顶点的结构”时按顶点求和，例如角的个数 $S=\sum_v\binom{d(v)}2$。`,
+      R`需要不等式时配合 Cauchy–Schwarz：$n\sum d_i^2\ge(\sum d_i)^2=4e^2$。`] },
+    { id: "m-extremal", title: "极端原理：取最长 / 最短道路", steps: [
+      R`要找圈、要找叶：取一条<b>最长</b>的简单道路，看端点的邻点。`,
+      R`要证明道路是简单的、或两点距离性质：取<b>最短</b>道路，有重复就能剪短。`,
+      R`写清楚“若 $x$ 不在路上，则路可延长，矛盾”。`] },
+    { id: "m-comp", title: "连通分支与边数", steps: [
+      R`把图拆成分支 $G_1,\dots,G_b$，每个分支连通 ⇒ $e_i\ge n_i-1$。`,
+      R`求和得 $e\ge n-b$，即 $\beta_0\ge n-e$。`,
+      R`证明“图连通”可以用：任取一个分支，用题目条件（整除、计数）说明它包含全部顶点。`] },
+    { id: "m-euler", title: "判定欧拉路 / 欧拉圈", steps: [
+      R`先检查连通（孤立点可以忽略）。`,
+      R`数奇度顶点：0 个 ⇒ 欧拉圈；2 个 ⇒ 欧拉路，以这两点为端点；更多 ⇒ 都没有。`,
+      R`“最少几笔画完”：$2k$ 个奇度点至少要 $k$ 笔，加 $k$ 条辅助边可以做到。`] }
+  ],
+  problems: [
+    { id: "g1-p1", lv: "真题", src: "2022 秋期末 1(1)", stmt: R`设 $G$ 是 $n$ 个顶点的简单图，且共有 $m$ 个连通分支。求 $G$ 的边数的最小值。`,
+      hints: [R`每个分支连通，边数至少比顶点数少 1。`, R`求和：$e=\sum e_i\ge\sum(n_i-1)=n-m$。`, R`构造取等：一条 $n-m+1$ 个顶点的简单道路加 $m-1$ 个孤立点。`],
+      method: "m-comp", sol: R`<p>设分支 $G_i$ 有 $n_i$ 个顶点、$e_i$ 条边。$G_i$ 连通 ⇒ $e_i\ge n_i-1$。所以 $e(G)=\sum_{i=1}^me_i\ge\sum(n_i-1)=n-m$。</p>
+      <p>取等：一条有 $n-m+1$ 个顶点的简单道路（$n-m$ 条边）加上 $m-1$ 个孤立点，恰有 $m$ 个分支。最小值为 $n-m$。</p>` },
+    { id: "g1-p2", lv: "真题", src: "2022 秋期末 1(2)", stmt: R`设 $n$ 阶连通简单图 $G$ 中每个顶点的度都是 2。请确定 $G$。`,
+      hints: [R`每点度 $\ge2$ ⇒ 有简单圈 $C$。`, R`$C$ 上每个顶点的两条边都已经在 $C$ 上了，所以没有边离开 $C$。`, R`连通 ⇒ $V(G)=V(C)$，$G$ 就是 $n$ 阶圈图 $C_n$（$n\ge3$）。`],
+      method: "m-extremal", sol: R`<p>每点度为 2，由成圈条件 $G$ 中有简单圈 $C$。$C$ 上每个顶点在 $C$ 上已有两条边，而它的度恰为 2，所以 $C$ 上的顶点没有其他边。</p>
+      <p>若 $V(C)\ne V(G)$，由连通性存在一条边连接 $C$ 内一点和 $C$ 外一点，矛盾。所以 $V(G)=V(C)$，$E(G)=E(C)$，$G=C_n$（简单图要求 $n\ge3$）。</p>` },
+    { id: "g1-p3", lv: "基础", src: "课件 11-17 例", stmt: R`主人有 77 颗糖，先装成若干非空袋。不论来 7 个还是 11 个小朋友，都要能把糖整袋分完、每人一样多。最少要装多少袋？`,
+      hints: [R`7 人分法记为 $X_1,\dots,X_7$（每人 11 颗），11 人分法记为 $Y_1,\dots,Y_{11}$（每人 7 颗）。每袋在两种分法中各属于一人：在 $X_i,Y_j$ 之间连一条边。`, R`取一个连通分支，含 $k$ 个 $X$ 点和 $\ell$ 个 $Y$ 点，两侧数糖：$11k=7\ell$。`, R`$7\mid k\le7$，$11\mid\ell\le11$，所以分支包含全部 18 点，图连通，至少 17 条边。构造：把 77 颗排成一列，在 7 的倍数和 11 的倍数处都切开。`],
+      method: "m-comp", sol: R`<p><b>建图</b>：顶点 $X_1,\dots,X_7,Y_1,\dots,Y_{11}$，每袋糖对应一条边（连接它在两种分法里的归属），可能有重边。</p>
+      <p><b>连通</b>：取一个分支，含 $k$ 个 $X$ 点、$\ell$ 个 $Y$ 点。分支里的边就是一些袋，从两侧数糖得 $11k=7\ell$。$k,\ell\ge1$，$\gcd(7,11)=1$ ⇒ $7\mid k$，$11\mid\ell$，所以 $k=7$，$\ell=11$。图连通。</p>
+      <p><b>下界</b>：合并重边后仍是 18 点连通图，至少 17 条边，所以至少 17 袋。</p>
+      <p><b>构造</b>：把糖排成一列，在 $11,22,\dots,66$ 和 $7,14,\dots,70$ 处切开，共 $6+10=16$ 个不同切点（7 和 11 的公倍数只有 77），得到 17 袋：$7,4,3,7,1,6,5,2,7,2,5,6,1,7,3,4,7$。最少 17 袋。</p>` },
+    { id: "g1-p4", lv: "基础", src: "自编", stmt: R`完全图 $K_n$（$n\ge2$）什么时候有欧拉圈？什么时候有欧拉路但没有欧拉圈？`,
+      hints: [R`$K_n$ 连通，每点度为 $n-1$。`, R`$n$ 奇数时全为偶度。`, R`$n$ 偶数时 $n$ 个点都是奇度，只有 $n=2$ 时奇度点恰 2 个。`],
+      method: "m-euler", sol: R`<p>$K_n$ 连通，每点度 $n-1$。$n$ 为奇数时全为偶度，有欧拉圈。$n$ 为偶数时 $n$ 个顶点全是奇度：$n=2$ 时恰 2 个，有欧拉路（就是那一条边）而无欧拉圈；$n\ge4$ 时奇度点多于 2 个，欧拉路也没有。</p>` }
+  ],
+  variants: [
+    { id: "g1-v1", lv: "变种", src: "2022 秋期末 6(1)", stmt: R`在简单图 $G$ 中，称有公共顶点的两条边 $AB$、$AC$ 构成一个“角”，$A$ 为角的顶点。设 $G$ 的各顶点度数为 $d_1,\dots,d_n$，求角的总数 $S$。`,
+      hints: [R`按角的顶点分类计数。`, R`以 $v$ 为顶点的角，就是从 $v$ 的 $d(v)$ 条边中选 2 条。`, R`$S=\sum_i\binom{d_i}2$。`],
+      method: "m-hand", sol: R`<p>每个角恰有一个顶点。以 $v_i$ 为顶点的角由 $v_i$ 的两条不同的边决定，共 $\binom{d_i}2$ 个。所以 $S=\sum_{i=1}^n\binom{d_i}2=\frac12\sum d_i(d_i-1)$。</p>` },
+    { id: "g1-v2", lv: "变种", src: "一笔画", stmt: R`连通图 $G$ 恰有 $2k$ 个奇度顶点（$k\ge1$）。证明：$G$ 的边可以分成 $k$ 条边不重复的道路，且 $k$ 是最少的条数。`,
+      hints: [R`下界：每条道路只让两端的度数“变奇”。`, R`把边分成 $t$ 条道路后，每个奇度点至少是一条道路的端点，而端点一共 $2t$ 个。`, R`上界：把奇度点两两配对，加 $k$ 条新边，得到全偶度连通图，取欧拉圈，再删掉新边，圈断成 $k$ 段。`],
+      method: "m-euler", sol: R`<p><b>下界</b>：设边分成 $t$ 条边不重复的道路。顶点 $v$ 每次作为某条道路的中间点出现，贡献 2 度；只有作为某条道路的起点或终点时才贡献 1 度（一条闭合道路的首尾在同一点，合起来贡献 2）。所以 $v$ 是奇度点 ⇒ $v$ 是某条非闭合道路的端点。$t$ 条道路至多 $2t$ 个端点，故 $2t\ge2k$，$t\ge k$。</p>
+      <p><b>上界</b>：把 $2k$ 个奇度点配成 $k$ 对，每对之间加一条新边（允许重边），得到连通的全偶度图 $G'$，取它的欧拉圈。每个奇度点恰是一条新边的端点，所以 $k$ 条新边两两没有公共顶点，在欧拉圈中互不相邻。删去这 $k$ 条新边，欧拉圈恰好断成 $k$ 段非空的道路，它们边不重复，覆盖 $G$ 的全部边。</p>` }
+  ],
+  extensions: [
+    { id: "g1-e1", lv: "延伸", src: "课件 11-17 · Ramsey", stmt: R`证明：任意 6 个人中，或者有 3 人两两相识，或者有 3 人两两不相识。并说明 5 个人时结论不成立。`,
+      hints: [R`把 $K_6$ 的边染两色（相识 / 不相识）。任取一点 $A$，它的 5 条边中至少 3 条同色，设通向 $B,C,D$。`, R`看 $BC,BD,CD$：若有一条和这三条同色，就和 $A$ 组成同色三角形；否则 $B,C,D$ 两两之间都是另一色。`, R`5 人：把 $K_5$ 的边分成一个五边形 $C_5$ 和它的补图（也是五边形）。`],
+      method: "m-extremal", sol: R`<p>把认识的两人连蓝边、不认识的连紫边，得到 $K_6$ 的二染色。任取 $A$，它的 5 条边中至少 3 条同色（抽屉原理），不妨为蓝色，通向 $B,C,D$。若 $BC,BD,CD$ 中有一条蓝边，比如 $BC$，则 $A,B,C$ 两两相识；否则三条都是紫边，$B,C,D$ 两两不相识。</p>
+      <p>5 人反例：$1\text{-}2\text{-}3\text{-}4\text{-}5\text{-}1$ 相邻的人相识，其余不相识。相识关系是 $C_5$，不相识关系也是一个五边形 $1\text{-}3\text{-}5\text{-}2\text{-}4\text{-}1$，都没有三角形。</p>` },
+    { id: "g1-e2", lv: "延伸", src: "经典结论", stmt: R`设简单图 $G$ 中每个顶点的度都 $\ge k$（$k\ge2$）。证明：$G$ 中有长度至少为 $k+1$ 的简单圈。`,
+      hints: [R`取最长的简单道路 $v_0,v_1,\dots,v_\ell$。`, R`$v_\ell$ 的所有邻点都在路上，而且至少有 $k$ 个。`, R`取 $v_\ell$ 的邻点中下标最小的 $v_i$，则 $i\le\ell-k$。圈 $v_i,v_{i+1},\dots,v_\ell,v_i$ 的长度为 $\ell-i+1\ge k+1$。`],
+      method: "m-extremal", sol: R`<p>取最长的简单道路 $v_0,\dots,v_\ell$。若 $v_\ell$ 有不在路上的邻点，路可延长，矛盾；所以 $v_\ell$ 的 $\ge k$ 个邻点都在 $\{v_0,\dots,v_{\ell-1}\}$ 中。</p>
+      <p>这些邻点的下标互不相同且 $\le\ell-1$，其中最小的下标 $i$ 满足 $i\le\ell-k$。于是 $v_i,v_{i+1},\dots,v_\ell,v_i$ 是简单圈，长度 $\ell-i+1\ge k+1$。</p>` }
+  ]
+},
+/* ---------------- G2 ---------------- */
+g2: {
+  unit: "graph", n: 2, title: "树与普吕弗编码",
+  goal: "熟记树的等价刻画；会手算普吕弗编码和还原（期末必考）；会用编码数树：Cayley 公式、指定度数、补全森林。",
+  sections: [
+    { id: "g2-s1", h: "1. 树的等价刻画", html: R`
+      <p><b>树</b>：连通且无圈的简单图。森林：每个分支都是树。<b>叶</b>：度为 1 的点。对 $n$ 个顶点的图，下面几条互相等价：</p>
+      <ul>
+        <li>$T$ 是树（连通、无圈）；</li>
+        <li>$T$ 连通，且删掉任何一条边都不连通（<b>极小连通</b>）；</li>
+        <li>$T$ 无圈，且加上任何一条新边都产生圈（<b>极大无圈</b>）；</li>
+        <li>$T$ 连通，且有 $n-1$ 条边；$T$ 无圈，且有 $n-1$ 条边；</li>
+        <li>任意两点之间有且只有一条简单道路；</li>
+        <li>$T$ 可以从一个点出发，每次添一个叶得到。</li>
+      </ul>
+      <p>$n\ge2$ 的树<b>至少有两个叶</b>：度数和 $2n-2$，若至多一个叶，则度数和 $\ge1+2(n-1)$。归纳证明树的命题时，标准动作是<b>删去一个叶</b>。</p>` },
+    { id: "g2-s2", h: "2. 普吕弗编码：删最小的叶，记它的邻点", html: R`
+      <p><b>编码</b>：设 $V(T)=[n]$，$n\ge2$。重复 $n-2$ 次：删去当前标号最小的叶 $x_i$，记下它的邻点 $y_i$。输出 $P(T)=(y_1,\dots,y_{n-2})$。（再删一次，最后剩下的一定是 $n$，所以 $y_{n-1}=n$ 不用记。）</p>
+      <p><b>两个关键事实</b>：</p>
+      <ul>
+        <li><b>度数公式</b>：$d_T(v)=1+(v\text{ 在 }P(T)\text{ 中出现的次数})$。所以叶恰好是<b>没在序列里出现</b>的标号，叶数 $=n-|\{y_i\}|$。</li>
+        <li><b>还原规则</b>：先补 $y_{n-1}=n$，再从左到右填 $x_i=\min\big([n]\setminus\{x_1,\dots,x_{i-1},y_i,\dots,y_{n-1}\}\big)$，即“排除左边已填的 $x$ 和下面从当前列到最右的 $y$，取剩下最小的”。边就是 $x_iy_i$。</li>
+      </ul>
+      <p>例（课件）：$n=6$，$P=(2,2,1,1)$。补 $y_5=6$，依次得 $x=(3,4,2,5,1)$，边 $23,24,12,15,16$。下面的工具可以输入任意序列，逐步看删叶过程。</p>` },
+    { id: "g2-s3", h: "3. 用编码数树", html: R`
+      <ul>
+        <li><b>Cayley 公式</b>：编码是 $\{[n]\text{ 上的树}\}\to[n]^{n-2}$ 的双射，所以标号树有 $n^{n-2}$ 棵。$f(3)=3$，$f(4)=16$（12 条链 + 4 个星）。</li>
+        <li><b>指定度数</b>：$d_T(i)=d_i$ ⇔ $i$ 在序列中恰出现 $d_i-1$ 次，树数 $=\frac{(n-2)!}{(d_1-1)!\cdots(d_n-1)!}$。</li>
+        <li><b>只指定一个点的度</b>：例如 $[6]$ 上要求 $d(1)=4$：序列长 4，恰有 3 个 1，其余一个位置填非 1 的标号，$\binom41\cdot5=20$ 棵。</li>
+        <li><b>补全森林</b>：$[n]$ 上的森林有 $k\ge2$ 个分支、大小 $s_1,\dots,s_k$，包含它的树有 $n^{k-2}s_1\cdots s_k$ 棵。特例：包含指定一条边的树有 $2n^{n-3}$ 棵。</li>
+        <li><b>随机树</b>：独立均匀地抽 $Y_1,\dots,Y_{n-2}\in[n]$ 再还原，得到均匀分布的随机标号树。</li>
+      </ul>` }
+  ],
+  widget: "pruferPlay",
+  concepts: [
+    { id: "g2-c1", sec: "g2-s2", q: R`$[6]$ 上的树 $T$ 满足 $P(T)=(3,3,3,3)$。$T$ 是：`,
+      opts: [R`一条简单道路`, R`以 3 为中心的星形树`, R`以 6 为中心的星形树`, R`不唯一确定`], a: 1,
+      ex: R`$d(3)=1+4=5$，其余点的度都是 1。6 个点、5 条边，3 和其余每个点相邻。` },
+    { id: "g2-c2", sec: "g2-s2", q: R`$P(T)=(2,5,2,7,5,2)$，$n=8$。$T$ 有几个叶？`,
+      opts: [R`3`, R`4`, R`5`, R`6`], a: 2,
+      ex: R`序列中出现的标号是 $\{2,5,7\}$，叶数 $=8-3=5$（叶为 1、3、4、6、8）。` },
+    { id: "g2-c3", sec: "g2-s1", q: R`$n$ 个顶点的简单图连通，且有 $n-1$ 条边。它：`,
+      opts: [R`一定是树`, R`可能有一个圈`, R`一定是一条简单道路`, R`不一定连通所有点`], a: 0,
+      ex: R`若有圈，删去圈上一条边仍连通，得到 $n-2$ 条边的连通图，与“连通 ⇒ $e\ge n-1$”矛盾。` },
+    { id: "g2-c4", sec: "g2-s3", q: R`顶点集为 $[5]$ 的标号树一共有几棵？`,
+      opts: [R`$60$`, R`$120$`, R`$125$`, R`$625$`], a: 2,
+      ex: R`Cayley 公式 $5^{5-2}=125$。` }
+  ],
+  methods: [
+    { id: "m-tree", title: "证明某个图是树 / 用树的性质", steps: [
+      R`挑最方便的等价条件：“连通 + $n-1$ 条边”或“无圈 + $n-1$ 条边”最常用。`,
+      R`证明“删边不连通”“加边成圈”时，用“任两点恰一条简单道路”。`,
+      R`对树归纳：删去一个叶（$n\ge2$ 时至少两个叶），剩下的仍是树。`,
+      R`判断叶、度数时用握手定理：$\sum d(v)=2n-2$。`] },
+    { id: "m-prufer", title: "手算普吕弗编码与还原", steps: [
+      R`<b>编码</b>：每步删当前<b>标号最小的叶</b>，记下它的<b>邻点</b>；做 $n-2$ 步。删完后要更新哪些点变成了叶。`,
+      R`<b>还原</b>：先补 $y_{n-1}=n$。第 $i$ 列填 $x_i$ = 不在“左边已填的 $x$”也不在“下面从第 $i$ 列到最右的 $y$”中的最小标号；边为 $x_iy_i$。`,
+      R`<b>自检</b>：$d(v)=1+$ 出现次数；叶 = 没出现的标号；边数 $=n-1$。`,
+      R`一般 $n$ 的题（如 $(1,\dots,m-1,1,\dots,m-1)$）：先取 $m=3,4$ 算表找规律，再写一般形式。`] },
+    { id: "m-treecount", title: "用编码数树", steps: [
+      R`把树的条件翻译成序列的条件：度数 ⇔ 出现次数，叶 ⇔ 不出现。`,
+      R`数满足条件的序列：多重集排列 $\frac{(n-2)!}{\prod(d_i-1)!}$，或“选位置 × 选标号”。`,
+      R`含指定边 / 森林：用公式 $n^{k-2}s_1\cdots s_k$，或对称性双计数。`] }
+  ],
+  problems: [
+    { id: "g2-p1", lv: "基础", src: "自编", stmt: R`求顶点集为 $[7]$、边为 $14,24,35,45,56,67$ 的树的普吕弗序列。`,
+      hints: [R`初始的叶：1、2、3、7。先删 1，记邻点 4。`, R`删 2 后，4 只剩邻点 5，变成叶。此时叶为 3、4、7。`, R`共做 $n-2=5$ 步。自检：$d(4)=3$、$d(5)=3$，各应出现 2 次。`],
+      method: "m-prufer", sol: R`<p>依次删除（括号里是删后新出现的叶）：</p>
+      <ul><li>删 1，记 4；</li><li>删 2，记 4（4 变成叶）；</li><li>删 3，记 5；</li><li>删 4，记 5（5 变成叶）；</li><li>删 5，记 6。剩下 6—7。</li></ul>
+      <p>$P(T)=(4,4,5,5,6)$。自检：$d(4)=3=1+2$，$d(5)=3=1+2$，$d(6)=2=1+1$，叶 1、2、3、7 都没出现。</p>` },
+    { id: "g2-p2", lv: "基础", src: "自编", stmt: R`顶点集为 $[7]$ 的树 $T$ 的普吕弗序列为 $(5,1,1,4,4)$。求 $T$ 的边。`,
+      hints: [R`补 $y_6=7$。第 1 列排除 $\{5,1,4,7\}$，$x_1=2$。`, R`第 2 列排除 $\{2\}\cup\{1,4,7\}$，$x_2=3$；第 3 列排除 $\{2,3\}\cup\{1,4,7\}$，$x_3=5$。`, R`继续得 $x_4=1$，$x_5=6$，$x_6=4$。`],
+      method: "m-prufer", sol: R`<p>补 $y_6=7$，逐列填：</p>
+      <div class="table-wrap"><table><tbody><tr><td>$i$</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr><tr><td>$x_i$</td><td>2</td><td>3</td><td>5</td><td>1</td><td>6</td><td>4</td></tr><tr><td>$y_i$</td><td>5</td><td>1</td><td>1</td><td>4</td><td>4</td><td>7</td></tr></tbody></table></div>
+      <p>边为 $25,13,15,14,46,47$。自检：$d(1)=3$，$d(4)=3$，$d(5)=2$，叶为 2、3、6、7；6 条边。</p>` },
+    { id: "g2-p3", lv: "真题", src: "2022 秋期末 4", stmt: R`<p>考虑以 $[n]$ 为顶点集的树 $T$，$P(T)=(y_1,\dots,y_{n-2})$ 是它的普吕弗序列。</p><p>(1) 令 $Y=\{y_1,\dots,y_{n-2}\}$（作为集合）。证明：$T$ 的叶的数目等于 $n-|Y|$。</p><p>(2) 设 $n=2m$（$m\ge2$），已知 $P(T)=(1,2,\dots,m-1,1,2,\dots,m-1)$。请确定树 $T$。</p>`,
+      hints: [R`(1) 用度数公式：$d(v)=1+v$ 在序列中出现的次数。`, R`(2) 先算 $m=3$：$P=(1,2,1,2)$，$n=6$，还原得边 $31,42,51,12,26$。`, R`一般地：前 $m-1$ 列填 $m,m+1,\dots,2m-2$；第 $m$ 列填 $2m-1$；之后填 $1,2,\dots,m-2$，最后一列填 $m-1$。`],
+      method: "m-prufer", sol: R`<p><b>(1)</b> 编码过程中，$v$ 每被记一次邻点，就失去一条边；$v$ 自己最后要么作为某个 $x_i$ 被删（再失去 1 条边），要么是剩下的 $n$（与 $x_{n-1}$ 相连的那 1 条边）。所以 $d_T(v)=1+\#\{i:y_i=v\}$。$v$ 是叶 ⇔ $d_T(v)=1$ ⇔ $v\notin Y$，叶数为 $n-|Y|$。</p>
+      <p><b>(2)</b> 补 $y_{n-1}=2m$，按还原规则：</p>
+      <ul>
+        <li>第 $i$ 列（$1\le i\le m-1$）：下方还有 $1,\dots,m-1$ 和 $2m$，左边已用 $m,\dots,m+i-2$，所以 $x_i=m+i-1$，边 $(m+i-1)\,i$。</li>
+        <li>第 $m$ 列（$y=1$）：已用 $m,\dots,2m-2$，下方有 $1,\dots,m-1,2m$，所以 $x=2m-1$，边 $(2m-1)\,1$。</li>
+        <li>第 $m+j-1$ 列（$y=j$，$2\le j\le m-1$）：下方只剩 $j,\dots,m-1,2m$，左边已用 $1,\dots,j-2$ 和 $m,\dots,2m-1$，所以 $x=j-1$，边 $(j-1)\,j$。</li>
+        <li>最后一列（$y=2m$）：只剩 $m-1$ 没用，边 $(m-1)\,(2m)$。</li>
+      </ul>
+      <p>所以 $T$ 是：一条链 $1-2-\cdots-(m-1)$，每个 $i$ 挂一个叶 $m+i-1$；另外 $1$ 再挂叶 $2m-1$，$m-1$ 再挂叶 $2m$。共 $(m-1)+1+(m-2)+1=2m-1$ 条边。自检：$1,\dots,m-1$ 的度都是 3，其余 $m+1$ 个点是叶。$m=2$ 时是以 1 为中心的星形树。</p>` },
+    { id: "g2-p4", lv: "真题", src: "2024 秋期末 5（课件 11-17）", stmt: R`给定 $n=3m+2$（$m$ 为正整数）。顶点集为 $[n]$ 的树 $T$ 的普吕弗序列为 $(1,1,1,2,2,2,\dots,m,m,m)$。请画出（描述）树 $T$。`,
+      hints: [R`度数：$1,\dots,m$ 的度都是 4，其余 $2m+2$ 个点是叶。`, R`取 $m=3$，$n=11$：$x=(4,5,6,1,7,8,2,9,10,3)$。`, R`一般地：第一组填 $m+1,m+2,m+3$；第 $j$ 组（$2\le j\le m$）填 $j-1,\ m+2j,\ m+2j+1$；末列填 $m$。`],
+      method: "m-prufer", sol: R`<p>补 $y_{3m+1}=n$。按三列一组还原：</p>
+      <ul>
+        <li>第一组（$y=1$）：下方始终有 $1,\dots,m$ 和 $n$，依次填 $m+1,m+2,m+3$。</li>
+        <li>第 $j$ 组（$y=j$，$2\le j\le m$）：开始时左边已用 $1,\dots,j-2$ 和 $m+1,\dots,m+2j-1$，下方需排除 $j,\dots,m,n$，所以依次填 $j-1,\ m+2j,\ m+2j+1$。</li>
+        <li>末列：除 $m$、$n$ 外都已用过，填 $m$，边 $m\,n$。</li>
+      </ul>
+      <p>所以 $T$ 是一条链 $1-2-\cdots-m$；$1$ 挂叶 $m+1,m+2,m+3$；$j$（$2\le j\le m$）挂叶 $m+2j$、$m+2j+1$；$m$ 再连 $n=3m+2$。自检：$1,\dots,m$ 的度都是 4，边数 $3+3(m-1)+1=3m+1=n-1$。$m=1$ 时是以 1 为中心、叶为 2、3、4、5 的星形树。</p>` }
+  ],
+  variants: [
+    { id: "g2-v1", lv: "变种", src: "2022 秋作业 6 · 1(1)", stmt: R`设 $G$ 是连通的 $n$ 阶图，且边数为 $n-1$。证明：$G$ 是树。`,
+      hints: [R`只需证无圈。反设有圈 $C$。`, R`删去 $C$ 上一条边 $e=xy$，$C$ 上剩下的边仍连接 $x,y$。`, R`得到 $n-2$ 条边的连通图，与“连通 ⇒ 至少 $n-1$ 条边”矛盾。`],
+      method: "m-tree", sol: R`<p>反设 $G$ 有简单圈 $C$，取 $C$ 上一条边 $e=xy$。$C-e$ 是从 $x$ 到 $y$ 的道路，原来经过 $e$ 的道路都可以改走它，所以 $G-e$ 仍连通。但 $G-e$ 有 $n$ 个顶点、$n-2$ 条边，与连通图边数 $\ge n-1$ 矛盾。所以 $G$ 无圈，是树。</p>` },
+    { id: "g2-v2", lv: "变种", src: "2022 秋作业 6 · 1(2)", stmt: R`设 $T$ 是 $n$ 阶树（$n\ge2$），且恰好有两个度为 1 的顶点。证明：$T$ 是一条长为 $n-1$ 的简单道路。`,
+      hints: [R`度数和 $2n-2$。两个叶贡献 2，其余 $n-2$ 个点的度都 $\ge2$，和为 $2n-4$，所以都恰为 2。`, R`取最长的简单道路，它的两端都是叶。`, R`若有点不在这条路上，由连通性它通过某条边连到路上的点，而路上中间点的度已经是 2、端点是叶，矛盾。`],
+      method: "m-tree", sol: R`<p>$\sum d(v)=2n-2$，两个叶贡献 2，其余 $n-2$ 个点每个度 $\ge2$（树中非叶点度 $\ge2$，$n\ge2$ 时没有度 0 的点），和恰为 $2n-4$，所以都恰为 2。</p>
+      <p>取最长简单道路 $P=v_0,\dots,v_k$。端点的邻点都在路上；若 $v_0$ 有 $v_1$ 以外的邻点 $v_i$，就形成圈，矛盾，所以 $v_0$、$v_k$ 是叶，中间点在 $P$ 上已有 2 个邻点。若存在不在 $P$ 上的点，由连通性有一条边连接 $P$ 上的点和 $P$ 外的点，但 $P$ 上每个点的度都已用完，矛盾。所以 $V(T)=V(P)$，$k=n-1$，且 $T$ 的 $n-1$ 条边就是 $P$ 的边。</p>` },
+    { id: "g2-v3", lv: "变种", src: "仿课件“指定度数”", stmt: R`顶点集为 $[7]$ 的标号树中，满足 $d(1)=3$ 且 $d(2)=3$ 的有多少棵？`,
+      hints: [R`序列长 $5$。$d(1)=3$ ⇔ 1 出现 2 次；$d(2)=3$ ⇔ 2 出现 2 次。`, R`剩下 1 个位置填 $3,\dots,7$ 中的一个，5 种。`, R`排列数 $\frac{5!}{2!\,2!\,1!}=30$。`],
+      method: "m-treecount", sol: R`<p>由度数公式，条件等价于：长为 5 的序列中 1 恰出现 2 次、2 恰出现 2 次，剩下一项属于 $\{3,4,5,6,7\}$。</p>
+      <p>剩下那一项有 5 种选法，五项的排列有 $\frac{5!}{2!2!1!}=30$ 种。共 $5\times30=150$ 棵。</p>` }
+  ],
+  extensions: [
+    { id: "g2-e1", lv: "延伸", src: "课件 11-17 · 补全森林特例", stmt: R`证明：顶点集为 $[n]$（$n\ge2$）的标号树中，包含指定边 $\{1,2\}$ 的有 $2n^{n-3}$ 棵。`,
+      hints: [R`双计数：数“(树 $T$，$T$ 的一条边)”这样的对。`, R`每棵树有 $n-1$ 条边，共 $n^{n-2}(n-1)$ 对。`, R`由对称性，$\binom n2$ 条可能的边，每条被同样多的树包含。`],
+      method: "m-treecount", sol: R`<p>数对 $(T,e)$，$T$ 是 $[n]$ 上的树，$e\in E(T)$。按树数：$n^{n-2}\cdot(n-1)$。按边数：对 $[n]$ 做标号置换会把含边 $\{1,2\}$ 的树一一变成含边 $\{a,b\}$ 的树，所以每条边被同样多（记为 $N$）的树包含，总数为 $\binom n2N$。</p>
+      $$N=\frac{n^{n-2}(n-1)}{n(n-1)/2}=2n^{n-3}.$$
+      <p>这和补全森林公式 $n^{k-2}s_1\cdots s_k$ 在 $k=n-1$、分支大小 $2,1,\dots,1$ 时的结果一致。</p>` },
+    { id: "g2-e2", lv: "延伸", src: "经典结论", stmt: R`顶点集为 $[n]$（$n\ge3$）的标号树中，顶点 1 是叶的有多少棵？随机取一棵标号树，1 是叶的概率在 $n\to\infty$ 时趋于多少？`,
+      hints: [R`1 是叶 ⇔ 1 不在普吕弗序列中出现。`, R`每一项都从 $n-1$ 个标号中选。`, R`概率 $\left(\frac{n-1}n\right)^{n-2}=\left(1-\frac1n\right)^{n-2}$。`],
+      method: "m-treecount", sol: R`<p>由度数公式，1 是叶 ⇔ 1 不出现在序列中。长为 $n-2$、每项取自 $[n]\setminus\{1\}$ 的序列有 $(n-1)^{n-2}$ 个，所以这样的树有 $(n-1)^{n-2}$ 棵。</p>
+      <p>概率为 $\frac{(n-1)^{n-2}}{n^{n-2}}=\left(1-\frac1n\right)^{n-2}\to e^{-1}$。</p>` }
+  ]
+}
+};
+
+/* ================= 状态与存储 ================= */
+const IN_CLAUDE = !!(window.claude && window.claude.use);
+const LS_KEY = "ls1-progress-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch (e) { state = {}; }
+let db = null;
+const chains = {};
+function cacheLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function save(id, patch) {
+  state[id] = Object.assign({}, state[id] || {}, patch, { updatedAt: Date.now() });
+  cacheLocal();
+  refreshNavProgress();
+  if (!db) return;
+  const body = JSON.parse(JSON.stringify(state[id]));
+  chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {});
+}
+function setSync(on, text) {
+  const el = document.getElementById("sync");
+  el.classList.toggle("on", on);
+  el.querySelector("span").textContent = text;
+}
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  try { db = await window.claude.use("db"); } catch (e) { db = null; }
+  if (!db) return;
+  setSync(false, "正在连接云端…");
+  const timer = setTimeout(() => setSync(false, "云端暂时连不上，先存在本浏览器"), 10000);
+  db.collection("progress").onSnapshot(snap => {
+    if (!snap.metadata.fromCache) { clearTimeout(timer); setSync(true, "已同步到云端"); }
+    for (const d of snap.docs) {
+      const cur = state[d.id];
+      const inc = d.data();
+      if (!cur || (inc.updatedAt || 0) >= (cur.updatedAt || 0)) state[d.id] = JSON.parse(JSON.stringify(inc));
+    }
+    cacheLocal();
+    refreshNavProgress();
+    syncVisible();
+  }, () => { clearTimeout(timer); db = null; setSync(false, "云端不可用，存在本浏览器"); });
+})();
+
+/* ================= 工具函数 ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* 行内公式比所在段落还宽时（手机上常见），改成可横向滑动的独立一行，避免撑宽整页 */
+function fixWide(root) {
+  root.querySelectorAll("mjx-container:not([display])").forEach(c => {
+    c.classList.remove("wide-math");
+    let host = c.parentElement;
+    while (host && host !== root && getComputedStyle(host).display.startsWith("inline") && !/^(BUTTON)$/.test(host.tagName)) host = host.parentElement;
+    if (host && host.clientWidth > 0 && c.getBoundingClientRect().width > host.clientWidth + 1) c.classList.add("wide-math");
+  });
+}
+document.addEventListener("toggle", e => { if (e.target.open) fixWide(e.target); }, true);
+let wideTimer;
+window.addEventListener("resize", () => { clearTimeout(wideTimer); wideTimer = setTimeout(() => fixWide(document.getElementById("view")), 200); });
+function typeset(el) {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([el]).then(() => fixWide(el)).catch(() => {});
+  } else {
+    setTimeout(() => typeset(el), 300);
+  }
+}
+function textOf(html) { const d = document.createElement("div"); d.innerHTML = html; return d.textContent.replace(/\s+\n/g, "\n").trim(); }
+function allItems(L) { return [...L.problems, ...L.variants, ...L.extensions]; }
+function lessonStats(lid) {
+  const L = LESSONS[lid];
+  const items = allItems(L);
+  const core = L.problems;
+  const doneCore = core.filter(p => ["solved", "partial", "failed"].includes((state[p.id] || {}).status)).length;
+  const concepts = L.concepts.filter(c => (state[c.id] || {}).picked != null).length;
+  return { total: core.length + L.concepts.length, done: doneCore + concepts, finished: !!(state["lesson-" + lid] || {}).done, items };
+}
+const methodById = {};
+for (const L of Object.values(LESSONS)) for (const m of L.methods) methodById[m.id] = m;
+
+/* ================= 导航 ================= */
+function renderNav() {
+  const nav = $("#nav");
+  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>进度与同步</span></a>`;
+  for (const u of UNITS) {
+    h += `<span class="grp">${esc(u.title)}</span>`;
+    if (u.soon) { h += `<a class="soon"><span>待生成</span></a>`; continue; }
+    for (const lid of u.lessons) {
+      const L = LESSONS[lid];
+      h += `<a href="#${lid}" data-v="${lid}"><span>第 ${L.n} 课</span><span class="pc" data-pc="${lid}"></span></a>`;
+    }
+  }
+  nav.innerHTML = h;
+  refreshNavProgress();
+}
+function refreshNavProgress() {
+  document.querySelectorAll("[data-pc]").forEach(el => {
+    const s = lessonStats(el.dataset.pc);
+    el.textContent = s.finished ? "✓" : `${s.done}/${s.total}`;
+  });
+  document.querySelectorAll("[data-lp]").forEach(el => {
+    const s = lessonStats(el.dataset.lp);
+    el.style.width = Math.round(100 * s.done / Math.max(1, s.total)) + "%";
+  });
+}
+function markNav(v) {
+  let cur = null;
+  document.querySelectorAll("#nav a[data-v]").forEach(a => { const on = a.dataset.v === v; a.classList.toggle("cur", on); if (on) cur = a; });
+  const nav = $("#nav");
+  if (cur && nav.scrollWidth > nav.clientWidth + 4) nav.scrollTo({ left: cur.offsetLeft - nav.clientWidth / 2 + cur.offsetWidth / 2, behavior: "smooth" });
+}
+const LIVE = UNITS.filter(u => !u.soon).flatMap(u => u.lessons);
+function unitOf(lid) { return UNITS.find(u => u.lessons.includes(lid)); }
+
+/* ================= 首页 ================= */
+function viewHome() {
+  const yrs = EXAM_YEARS;
+  const rows = EXAM_MAP.map(([t, ys, s, note]) => `<tr><td>${esc(t)}${note ? `<div class="small muted">${esc(note)}</div>` : ""}</td>${ys.map(y => `<td class="yr">${y ? '<span class="dot" title="考了"></span>' : '<span class="no">·</span>'}</td>`).join("")}<td><span class="stars">${"★".repeat(s)}${"☆".repeat(5 - s)}</span></td></tr>`).join("");
+  const weeks = SCHEDULE.map(([w, days]) => `<div class="week"><div class="wk">${w}</div><div class="days">${days.map(([d, t, l]) => l ? `<span class="live">${d} · <a href="#${l}">${esc(t)}</a></span>` : `<span class="later">${d} · ${esc(t)}</span>`).join("")}</div></div>`).join("");
+  const tl = LIVE.map(lid => { const L = LESSONS[lid]; return `<a href="#${lid}"><span class="n">${esc(unitOf(lid).title)} · 第 ${L.n} 课</span><b>${esc(L.title)}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`; }).join("");
+  return `
+  <section class="stack">
+    <span class="eyebrow">2026 秋 · 离散数学 · 期末复习</span>
+    <h1>六周，每天 30 分钟</h1>
+    <p class="lede">这一页先跟上课程进度（新讲的模块当天上线），再按往年期末卷的考点补齐前面的内容。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
+  </section>
+  <section class="stack"><div class="sec-head"><h2>已上线的课</h2><span class="t">按日程顺序，每课约 30 分钟</span></div><div class="lesson-cards">${tl}</div></section>
+  <section class="block">
+    <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">据 2022 秋艾颖华班期末卷整理</span></div>
+    <div class="table-wrap"><table><thead><tr><th>考点</th>${yrs.map(y => `<th style="text-align:center">${y}</th>`).join("")}<th>优先级</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted">2024 秋期末第 5 题（普吕弗序列）来自本学期课件。史灵生班 2015–2022 的期末卷、2024 小班手稿还没逐题计入。期末占 70%，考察所有内容。</p>
+  </section>
+  <section class="block">
+    <div class="sec-head"><h2>六周日程</h2><span class="t">紫色 = 已上线，灰色 = 待生成</span></div>
+    <div>${weeks}</div>
+    <p class="small muted">模拟卷每套 2 小时，没法拆进 30 分钟，安排在周末做。</p>
+  </section>
+  <section class="block">
+    <div class="sec-head"><h2>怎么用这一页</h2></div>
+    <div class="prose"><ol>
+      <li><b>概念题先做</b>。错了就点“回到讲解”，看懂再往下。</li>
+      <li><b>做题时提示一层一层点</b>。先自己想 3 分钟，卡住再点提示 1；“方法步骤”是这一类题的通用套路；最后才看完整解答。</li>
+      <li><b>作答写在框里</b>，可以用 <span class="mono">$...$</span> 写公式，下方实时预览。${IN_CLAUDE ? "写完点“AI 批改”当场打分，或者回到对话里跟 Claude 说“批改我的作答”。" : "写完到“导出作答”复制 Markdown，发给 Claude 批改。"}</li>
+      <li><b>方法卡</b>汇总在“速查表”里。如果期末允许带 cheatsheet，就照着它抄。</li>
+    </ol></div>
+  </section>`;
+}
+
+/* ================= 速查表 ================= */
+function mustTable() {
+  return `<div class="table-wrap"><table><tbody>${MUST.map(([f, e]) => `<tr><td style="white-space:nowrap"><b>${f}</b></td><td>${e}</td></tr>`).join("")}</tbody></table></div>`;
+}
+function viewSheet() {
+  const cards = Object.values(LESSONS).flatMap(L => L.methods.map(m => methodCard(m, L)));
+  return `<section class="stack"><span class="eyebrow">速查表</span><h1>方法卡汇总</h1><p class="lede">每一课的解题套路都汇总在这里。考试允许带 cheatsheet 的话，按这一页抄。</p></section>
+  <section class="block"><div class="sec-head"><h2>必背结论</h2></div>${mustTable()}</section>
+  <section class="stack">${cards.join("")}</section>`;
+}
+function methodCard(m, L) {
+  return `<div class="method"><h4>${m.title}${L ? `<span class="small muted" style="font-family:var(--f-body);font-weight:400"> · 第 ${L.n} 课</span>` : ""}</h4><ol>${m.steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`;
+}
+
+/* ================= 导出 ================= */
+function buildMarkdown() {
+  let md = "# 离散数学期末冲刺：我的作答\n";
+  for (const [lid, L] of Object.entries(LESSONS)) {
+    md += `\n## 第 ${L.n} 课 ${textOf(L.title)}\n`;
+    const wrongC = L.concepts.filter(c => state[c.id] && state[c.id].picked != null && state[c.id].picked !== c.a);
+    if (wrongC.length) md += `\n概念题答错：${wrongC.map(c => c.id).join("、")}\n`;
+    for (const p of allItems(L)) {
+      const r = state[p.id] || {};
+      if (!r.answer && !r.status) continue;
+      md += `\n### ${p.id}（${p.lv} · ${p.src}）\n**题目**：${textOf(p.stmt)}\n\n**状态**：${statusLabel(r.status)}，用了 ${r.hints || 0} 层提示${r.sawSol ? "，看过解答" : ""}\n\n**我的作答**：\n${r.answer || "（未写）"}\n`;
+      if (r.feedback) md += `\n**AI 批改**：\n${r.feedback}\n`;
+    }
+  }
+  return md;
+}
+/* ---------- 跨设备同步：文件 + 同步码，按每条记录的修改时间合并 ---------- */
+const META_KEY = "ls1-meta-v1";
+function getMeta() { try { return JSON.parse(localStorage.getItem(META_KEY) || "{}") || {}; } catch (e) { return {}; } }
+function setMeta(p) { try { localStorage.setItem(META_KEY, JSON.stringify(Object.assign(getMeta(), p))); } catch (e) {} }
+function snapshot() { return { app: "ls1", v: 1, exportedAt: Date.now(), state }; }
+function putRecord(id, rec) {
+  state[id] = JSON.parse(JSON.stringify(rec));
+  if (db) { const body = state[id]; chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {}); }
+}
+function mergeIn(obj) {
+  if (!obj || obj.app !== "ls1" || typeof obj.state !== "object") throw new Error("不是这个页面导出的进度");
+  let added = 0, updated = 0, kept = 0;
+  for (const [id, inc] of Object.entries(obj.state)) {
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !inc || typeof inc !== "object") continue;
+    const cur = state[id];
+    if (!cur) { putRecord(id, inc); added++; }
+    else if ((inc.updatedAt || 0) > (cur.updatedAt || 0)) { putRecord(id, inc); updated++; }
+    else kept++;
+  }
+  cacheLocal(); refreshNavProgress();
+  return { added, updated, kept };
+}
+function b64FromBytes(u8) { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+function bytesFromB64(b) { const s = atob(b); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+async function encodeCode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if (window.CompressionStream) {
+    const gz = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer());
+    return "GW1z." + b64FromBytes(gz);
+  }
+  return "GW1." + b64FromBytes(bytes);
+}
+async function decodeCode(code) {
+  code = code.replace(/\s+/g, "");
+  let bytes;
+  if (code.startsWith("GW1z.")) {
+    if (!window.DecompressionStream) throw new Error("这个浏览器太旧，解不开压缩的同步码");
+    bytes = new Uint8Array(await new Response(new Blob([bytesFromB64(code.slice(5))]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
+  } else if (code.startsWith("GW1.")) bytes = bytesFromB64(code.slice(4));
+  else throw new Error("同步码应以 GW1 开头，请完整复制");
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function ago(t) { if (!t) return "从未"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "刚刚" : m < 60 ? `${m} 分钟前` : m < 1440 ? `${Math.round(m / 60)} 小时前` : `${Math.round(m / 1440)} 天前`; }
+function viewExport() {
+  const md = buildMarkdown();
+  const recs = Object.keys(state).length;
+  const answered = Object.values(state).filter(r => r && r.answer).length;
+  const last = Math.max(0, ...Object.values(state).map(r => (r && r.updatedAt) || 0));
+  const meta = getMeta();
+  const fileCard = IN_CLAUDE ? "" : `<div class="sync-card"><h3>进度文件</h3><p class="small muted">导出一个 .json 文件，用 AirDrop、iCloud 或微信传到另一台设备，再在那边“导入文件”。</p><div class="row"><button class="btn primary" id="expFile">导出进度文件</button><label class="btn" for="impFile">导入文件</label><input id="impFile" type="file" accept=".json,application/json" hidden></div></div>`;
+  return `<section class="stack"><span class="eyebrow">进度与同步</span><h1>在几台设备之间接着做</h1>
+    <p class="lede">${IN_CLAUDE ? "在 Claude 里打开时，进度会自动同步到云端，登录同一账号的手机、平板都能接着做。要和 GitHub 版互通，用下面的同步码。" : "进度自动保存在这个浏览器里。换设备时，先在旧设备导出，再到新设备导入。合并时每道题保留较新的那份记录，不会把另一台设备上的作答清空。"}</p></section>
+  <section class="block"><div class="stat-row"><span><b>${recs}</b>条记录</span><span><b>${answered}</b>道题写了作答</span><span>最后修改：${ago(last)}</span><span>上次导出：${ago(meta.lastExport)}</span></div><div id="syncMsg"></div></section>
+  <section class="sync-grid">
+    ${fileCard}
+    <div class="sync-card"><h3>同步码</h3><p class="small muted">把整份进度压缩成一段文字。点“复制”，发给自己（微信文件传输助手、备忘录），在另一台设备粘贴进来点“导入”。</p>
+      <div class="row"><button class="btn primary" id="copyCode">复制同步码</button></div>
+      <label for="codeIn" class="small muted">粘贴同步码：</label><textarea id="codeIn" placeholder="GW1z.H4sI…"></textarea>
+      <div class="row"><button class="btn" id="impCode">导入同步码</button></div></div>
+  </section>
+  <section class="stack"><div class="sec-head"><h2>作答汇总（Markdown）</h2><span class="t">发给 Claude 批改用</span></div><div class="row"><button class="btn" id="copyMd">复制 Markdown</button><span class="small muted" id="copyMsg"></span></div><pre class="md" id="mdBox">${esc(md)}</pre></section>`;
+}
+function syncNote(ok, text) { const el = $("#syncMsg"); if (el) el.innerHTML = `<div class="note ${ok ? "ok" : "no"}">${esc(text)}</div>`; }
+function mergedText(r) { return `导入完成：新增 ${r.added} 条，更新 ${r.updated} 条，本机较新而保留 ${r.kept} 条。`; }
+async function copyText(text, fallbackEl) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) { if (fallbackEl) { fallbackEl.value = text; fallbackEl.focus(); fallbackEl.select(); } return false; }
+}
+document.addEventListener("change", e => {
+  if (e.target.id !== "impFile") return;
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { const r = mergeIn(JSON.parse(rd.result)); render(); syncNote(true, mergedText(r)); } catch (err) { syncNote(false, "导入失败：" + (err.message || "文件格式不对")); } };
+  rd.onerror = () => syncNote(false, "读不了这个文件，换一个试试。");
+  rd.readAsText(file);
+  e.target.value = "";
+});
+
+/* ================= 课程页 ================= */
+const STATUS = [["", "未做"], ["solved", "做出来了"], ["partial", "做了一部分"], ["failed", "没做出来"]];
+function statusLabel(s) { return (STATUS.find(x => x[0] === (s || "")) || STATUS[0])[1]; }
+function conceptHTML(c) {
+  const r = state[c.id] || {};
+  const picked = r.picked;
+  const opts = c.opts.map((o, i) => {
+    let cls = "opt";
+    if (picked != null) { if (i === c.a) cls += " right"; else if (i === picked) cls += " wrong"; }
+    return `<button class="${cls}" data-c="${c.id}" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`;
+  }).join("");
+  let verdict = "";
+  if (picked != null) {
+    const ok = picked === c.a;
+    verdict = `<div class="verdict ${ok ? "ok" : "no"}">${ok ? "答对了。" : `答错了，正确答案是 ${String.fromCharCode(65 + c.a)}。<a href="#" data-goto="${c.sec}">回到讲解</a>`}<span class="ex">${c.ex}</span></div>`;
+  }
+  return `<div class="q" id="q-${c.id}"><div>${c.q}</div><div class="opts">${opts}</div>${verdict}</div>`;
+}
+function probHTML(p) {
+  const r = state[p.id] || {};
+  const nh = r.hints || 0;
+  const hintCards = p.hints.slice(0, nh).map((h, i) => `<div class="card hint"><span class="lab">提示 ${i + 1}</span>${h}</div>`).join("");
+  const meth = r.sawMethod && p.method ? `<div class="card meth"><span class="lab">方法步骤 · ${methodById[p.method].title}</span><ol style="margin:0;padding-left:1.2em">${methodById[p.method].steps.map(s => `<li>${s}</li>`).join("")}</ol></div>` : "";
+  const sol = r.sawSol ? `<div class="card sol"><span class="lab">完整解答</span>${p.sol}</div>` : "";
+  const fb = r.feedback ? `<div class="fb"><span class="lab">AI 批改</span><span data-fbt>${esc(r.feedback)}</span></div>` : "";
+  return `<article class="prob" id="p-${p.id}">
+    <header><span class="chip lv-${p.lv}">${p.lv}</span><span class="chip src">${esc(p.src)}</span><span class="pid">${p.id}</span>
+      <select class="st" data-st="${p.id}" aria-label="做题状态">${STATUS.map(([v, l]) => `<option value="${v}"${(r.status || "") === v ? " selected" : ""}>${l}</option>`).join("")}</select></header>
+    <div class="body">
+      <div class="stmt">${p.stmt}</div>
+      <div class="row">
+        <button class="btn" data-hint="${p.id}"${nh >= p.hints.length ? " disabled" : ""}>${nh >= p.hints.length ? "提示已全部展开" : `提示 ${nh + 1}`}</button>
+        <button class="btn" data-meth="${p.id}"${r.sawMethod ? " disabled" : ""}>方法步骤</button>
+        <button class="btn" data-sol="${p.id}"${r.sawSol ? " disabled" : ""}>看解答</button>
+      </div>
+      <div class="reveal">${hintCards}${meth}${sol}</div>
+      <div class="ans">
+        <textarea id="ans-${p.id}" data-ans="${p.id}" placeholder="写下你的解答。公式用 $...$，例如 $f''(\\xi)=\\frac{f(a)+f(-a)}{a^2}$">${esc(r.answer || "")}</textarea>
+        <div class="pv" data-pv="${p.id}"></div>
+        ${IN_CLAUDE ? `<div class="row"><button class="btn primary" data-grade="${p.id}">AI 批改</button><span class="small muted" data-gmsg="${p.id}"></span></div>` : ""}
+        ${fb}
+      </div>
+    </div>
+  </article>`;
+}
+function viewLesson(lid) {
+  const L = LESSONS[lid];
+  const secs = L.sections.map(s => `<section class="stack" id="${s.id}"><h3>${s.h}</h3><div class="prose">${s.html === "__MUST__" ? mustTable() + R`<p class="small muted">$\tan x$、$\arctan x$ 可由前几个推出；$\frac1{1-x}$ 是等比级数。$\sin$ 只有奇次项、$\cos$ 只有偶次项，所以余项能多写一阶。</p>` : s.html}</div>${L.widget && s === L.sections[0] ? `<div id="widget"></div>` : ""}</section>`).join("");
+  const concepts = L.concepts.map(conceptHTML).join("");
+  const probs = L.problems.map(probHTML).join("");
+  const vars = L.variants.length ? `<details class="opt-zone" open><summary>变种题（${L.variants.length}）：换个外形，同一个套路</summary><div class="stack">${L.variants.map(probHTML).join("")}</div></details>` : "";
+  const exts = L.extensions.length ? `<details class="opt-zone"><summary>延伸题（${L.extensions.length}，选做）：防超纲</summary><div class="stack">${L.extensions.map(probHTML).join("")}</div></details>` : "";
+  const fin = (state["lesson-" + lid] || {}).done;
+  const next = LIVE[LIVE.indexOf(lid) + 1];
+  return `
+  <section class="stack"><span class="eyebrow">${esc(unitOf(lid).title)} · 第 ${L.n} 课 · 约 30 分钟</span><h1>${L.title}</h1><p class="lede">${L.goal}</p></section>
+  <section class="block"><div class="sec-head"><h2>讲解</h2><span class="t">约 8 分钟</span></div>${secs}</section>
+  <section class="stack"><div class="sec-head"><h2>概念检测</h2><span class="t">约 5 分钟 · 先做这里</span></div>${concepts}</section>
+  <section class="stack"><div class="sec-head"><h2>做题</h2><span class="t">约 15 分钟 · 基础 → 真题</span></div>${probs}${vars}${exts}</section>
+  <section class="stack"><div class="sec-head"><h2>本课方法卡</h2><span class="t">抄进速查表</span></div>${L.methods.map(m => methodCard(m)).join("")}</section>
+  <div class="done-row"><button class="btn${fin ? "" : " primary"}" id="finish">${fin ? "已完成本课 ✓（点击取消）" : "完成本课"}</button>${next ? `<a href="#${next}">下一课：${textOf(LESSONS[next].title)} →</a>` : `<a href="#home">回到日程 →</a>`}</div>`;
+}
+
+/* ================= 交互 ================= */
+let currentView = null;
+function render() {
+  const v = (location.hash || "#home").slice(1);
+  const view = $("#view");
+  let html;
+  if (LESSONS[v]) html = viewLesson(v);
+  else if (v === "sheet") html = viewSheet();
+  else if (v === "export") html = viewExport();
+  else html = viewHome();
+  currentView = LESSONS[v] ? v : (["sheet", "export"].includes(v) ? v : "home");
+  view.innerHTML = html;
+  markNav(currentView);
+  refreshNavProgress();
+  if (LESSONS[v] && LESSONS[v].widget) {
+    const w = $("#widget");
+    if (w) ({ crtCalc, pruferPlay })[LESSONS[v].widget](w);
+  }
+  view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
+  typeset(view);
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", render);
+
+function syncVisible() {
+  if (!LESSONS[currentView]) return;
+  for (const p of allItems(LESSONS[currentView])) {
+    const ta = document.getElementById("ans-" + p.id);
+    const r = state[p.id] || {};
+    if (ta && document.activeElement !== ta && ta.value !== (r.answer || "")) { ta.value = r.answer || ""; updatePreview(p.id); }
+    const st = document.querySelector(`[data-st="${p.id}"]`);
+    if (st && document.activeElement !== st) st.value = r.status || "";
+  }
+}
+
+const pvTimers = {};
+function updatePreview(id, now) {
+  clearTimeout(pvTimers[id]);
+  const run = () => {
+    const ta = document.getElementById("ans-" + id), pv = document.querySelector(`[data-pv="${id}"]`);
+    if (!ta || !pv) return;
+    pv.innerHTML = ta.value.trim() ? esc(ta.value).replace(/\n/g, "<br>") : "";
+    if (pv.innerHTML) typeset(pv);
+  };
+  if (now) run(); else pvTimers[id] = setTimeout(run, 500);
+}
+const saveTimers = {};
+document.addEventListener("input", e => {
+  const id = e.target.dataset && e.target.dataset.ans;
+  if (!id) return;
+  updatePreview(id);
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => save(id, { answer: e.target.value }), 1200);
+});
+document.addEventListener("focusout", e => {
+  const id = e.target.dataset && e.target.dataset.ans;
+  if (!id) return;
+  clearTimeout(saveTimers[id]);
+  if ((state[id] || {}).answer !== e.target.value) save(id, { answer: e.target.value });
+});
+document.addEventListener("change", e => {
+  const id = e.target.dataset && e.target.dataset.st;
+  if (id) save(id, { status: e.target.value });
+});
+
+function findProb(id) { for (const L of Object.values(LESSONS)) for (const p of allItems(L)) if (p.id === id) return p; return null; }
+function findConcept(id) { for (const L of Object.values(LESSONS)) for (const c of L.concepts) if (c.id === id) return c; return null; }
+function rerenderProb(id) {
+  const el = document.getElementById("p-" + id);
+  if (!el) return;
+  const ta = document.getElementById("ans-" + id);
+  const draft = ta ? ta.value : null;
+  el.outerHTML = probHTML(findProb(id));
+  const fresh = document.getElementById("p-" + id);
+  if (draft != null) document.getElementById("ans-" + id).value = draft;
+  updatePreview(id, true);
+  typeset(fresh);
+}
+const solArm = {};
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button, a");
+  if (!t) return;
+  const d = t.dataset;
+  if (d.goto) { e.preventDefault(); const s = document.getElementById(d.goto); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (d.c != null && d.i != null) {
+    const c = findConcept(d.c);
+    if ((state[c.id] || {}).picked != null) return;
+    save(c.id, { picked: Number(d.i), correct: Number(d.i) === c.a });
+    const box = document.getElementById("q-" + c.id);
+    box.outerHTML = conceptHTML(c);
+    typeset(document.getElementById("q-" + c.id));
+    return;
+  }
+  if (d.hint) { const p = findProb(d.hint); const n = Math.min(p.hints.length, ((state[p.id] || {}).hints || 0) + 1); save(p.id, { hints: n }); rerenderProb(p.id); return; }
+  if (d.meth) { save(d.meth, { sawMethod: true }); rerenderProb(d.meth); return; }
+  if (d.sol) {
+    if (!solArm[d.sol]) { solArm[d.sol] = true; t.textContent = "确定先看解答？再点一次"; setTimeout(() => { solArm[d.sol] = false; if (document.body.contains(t)) t.textContent = "看解答"; }, 4000); return; }
+    save(d.sol, { sawSol: true }); rerenderProb(d.sol); return;
+  }
+  if (d.grade) { gradeProb(d.grade, t); return; }
+  if (t.id === "finish") {
+    const lid = currentView;
+    const fin = !(state["lesson-" + lid] || {}).done;
+    save("lesson-" + lid, { done: fin });
+    t.textContent = fin ? "已完成本课 ✓（点击取消）" : "完成本课";
+    t.classList.toggle("primary", !fin);
+    return;
+  }
+  if (t.id === "expFile") {
+    const blob = new Blob([JSON.stringify(snapshot(), null, 1)], { type: "application/json" });
+    const a = document.createElement("a");
+    const d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = `离散进度_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}_${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    setMeta({ lastExport: Date.now() });
+    syncNote(true, "已导出进度文件。到另一台设备上点“导入文件”选择它。");
+    return;
+  }
+  if (t.id === "copyCode") {
+    try {
+      const code = await encodeCode(snapshot());
+      const ok = await copyText(code, $("#codeIn"));
+      setMeta({ lastExport: Date.now() });
+      syncNote(true, ok ? `同步码已复制（${Math.ceil(code.length / 1024)} KB 文字）。` : "浏览器不让直接复制，同步码已放进下面的框里并选中，请手动复制。");
+    } catch (err) { syncNote(false, "生成同步码失败：" + (err.message || err)); }
+    return;
+  }
+  if (t.id === "impCode") {
+    const code = ($("#codeIn").value || "").trim();
+    if (!code) { syncNote(false, "先把同步码粘贴到框里。"); return; }
+    try { const r = mergeIn(await decodeCode(code)); render(); syncNote(true, mergedText(r)); }
+    catch (err) { syncNote(false, "导入失败：" + (err.message || "同步码不完整")); }
+    return;
+  }
+  if (t.id === "copyMd") {
+    const md = buildMarkdown();
+    const msg = $("#copyMsg");
+    try { await navigator.clipboard.writeText(md); msg.textContent = "已复制。"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents($("#mdBox")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "浏览器不让直接复制，已帮你选中，按 ⌘C / Ctrl+C。"; }
+  }
+});
+
+/* ================= AI 批改 ================= */
+let samplePromise = null;
+function getSample() {
+  if (!samplePromise) samplePromise = (window.claude && window.claude.use) ? window.claude.use("sample").catch(() => null) : Promise.resolve(null);
+  return samplePromise;
+}
+const SAMPLE_MSG = { not_granted: "你没有允许这一页调用 Claude，批改功能已关闭。可以回到对话里让 Claude 批改。", sampling_disabled: "这个账号暂时不能在页面里调用 Claude。", rate_limited: "调用太频繁了，过一会儿再试。", session_expired: "登录过期了，刷新后再试。", refused: "这次没有得到批改结果，换个写法再试。", empty_completion: "没有得到批改结果，再试一次。" };
+async function gradeProb(id, btn) {
+  const p = findProb(id);
+  const ta = document.getElementById("ans-" + id);
+  const msg = document.querySelector(`[data-gmsg="${id}"]`);
+  const answer = (ta.value || "").trim();
+  if (!answer) { msg.textContent = "先写一点作答再批改。"; return; }
+  save(id, { answer: ta.value });
+  const sample = await getSample();
+  if (!sample) { msg.textContent = "这里调用不了 Claude。作答已保存，回到对话里说“批改我的离散作答”即可。"; return; }
+  btn.disabled = true;
+  msg.textContent = "批改中，通常要 10–40 秒…";
+  const prompt = `你是清华大学《离散数学》的阅卷助教，批改一道期末复习题。\n\n【题目】\n${textOf(p.stmt)}\n\n【参考解答】\n${textOf(p.sol)}\n\n【学生作答】\n${answer}\n\n请按以下格式用中文回答，简洁，公式用 $...$：\n得分：x/10\n问题：逐条列出逻辑漏洞或计算错误（特别检查：中值点或极值点的存在依据、介值定理是否在自变量区间上使用、o(·) 运算是否合法、需要证明的存在性是否证明了、特殊情形是否漏掉）。没有问题就写“无”。\n建议：一条最关键的改进建议。`;
+  let out = "";
+  try {
+    const { text } = await sample(prompt, { cache: false, onText: ({ text }) => { out = text; msg.textContent = "批改中…"; } });
+    out = text;
+    save(id, { feedback: out, gradedAt: Date.now() });
+    rerenderProb(id);
+  } catch (err) {
+    const code = err && err.code;
+    if (code === "cancelled") { msg.textContent = ""; }
+    else msg.textContent = SAMPLE_MSG[code] || "批改中断了，稍后再试。";
+    if (err && err.text) { save(id, { feedback: err.text + "\n（批改中断）" }); rerenderProb(id); }
+  } finally {
+    const b = document.querySelector(`[data-grade="${id}"]`);
+    if (b) b.disabled = false;
+  }
+}
+
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+
+/* ================= 交互工具：中国剩余定理 ================= */
+function crtCalc(mount) {
+  const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+  const inv = (a, m) => { let [r0, r1, s0, s1] = [((a % m) + m) % m, m, 1, 0]; while (r1) { const q = Math.floor(r0 / r1); [r0, r1] = [r1, r0 - q * r1]; [s0, s1] = [s1, s0 - q * s1]; } return r0 === 1 ? ((s0 % m) + m) % m : null; };
+  const mod = (a, m) => ((a % m) + m) % m;
+  let rows = [[2, 3], [3, 5], [2, 7]];
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><span>输入 $x\\equiv a_i\\pmod{m_i}$，模数 2–999，至多 5 个方程。</span></div>
+    <div id="crow" class="crt-rows"></div>
+    <div class="ctrl"><button class="btn" id="cadd" type="button">＋ 加一个方程</button><button class="btn" id="cdel" type="button">－ 删最后一个</button><button class="btn" id="cdemo" type="button">换成例题</button></div>
+    <div class="table-wrap" id="ctab"></div>
+    <div class="readout" id="cout"></div>
+  </div>`;
+  const demos = [[[2, 3], [3, 5], [2, 7]], [[2, 3], [3, 4], [1, 5]], [[3, 7], [5, 11], [7, 13]], [[3, 6], [5, 8]], [[3, 6], [4, 8]]];
+  let di = 0;
+  const box = $("#crow", mount);
+  function renderRows() {
+    box.innerHTML = rows.map(([a, m], i) => `<div class="ctrl"><label>x ≡ <input type="number" data-i="${i}" data-k="0" value="${a}" aria-label="第 ${i + 1} 个余数"></label><label>(mod <input type="number" data-i="${i}" data-k="1" value="${m}" min="2" max="999" aria-label="第 ${i + 1} 个模数">)</label></div>`).join("");
+    box.querySelectorAll("input").forEach(el => el.addEventListener("input", () => { rows[+el.dataset.i][+el.dataset.k] = Math.trunc(+el.value || 0); calc(); }));
+    calc();
+  }
+  function calc() {
+    const out = $("#cout", mount), tab = $("#ctab", mount);
+    if (rows.some(([, m]) => !(m >= 2 && m <= 999))) { tab.innerHTML = ""; out.innerHTML = "<span>模数要在 2 到 999 之间。</span>"; return; }
+    const bad = [];
+    for (let i = 0; i < rows.length; i++) for (let j = i + 1; j < rows.length; j++) { const g = gcd(rows[i][1], rows[j][1]); if (g > 1) bad.push([i, j, g]); }
+    if (!bad.length) {
+      const M = rows.reduce((s, [, m]) => s * BigInt(m), 1n);
+      let x = 0n;
+      const tr = rows.map(([a, m]) => { const N = M / BigInt(m), Nm = Number(N % BigInt(m)), L = inv(Nm, m), Mi = N * BigInt(L); x += BigInt(mod(a, m)) * Mi; return `<tr><td>${m}</td><td>${mod(a, m)}</td><td>${N}</td><td>${Nm}</td><td>${L}</td><td>${Mi}</td></tr>`; }).join("");
+      x %= M;
+      tab.innerHTML = `<table><thead><tr><th>m<sub>i</sub></th><th>a<sub>i</sub></th><th>N<sub>i</sub> = M/m<sub>i</sub></th><th>N<sub>i</sub> mod m<sub>i</sub></th><th>L<sub>i</sub> = 逆元</th><th>M<sub>i</sub> = N<sub>i</sub>L<sub>i</sub></th></tr></thead><tbody>${tr}</tbody></table>`;
+      out.innerHTML = `<span>M = <b>${M}</b></span><span>x ≡ Σ a<sub>i</sub>M<sub>i</sub> ≡ <b>${x}</b> (mod ${M})</span><span>验算：${rows.map(([, m]) => `${x} mod ${m} = ${Number(x % BigInt(m))}`).join("，")}</span>`;
+      return;
+    }
+    // 模数不互素：逐个合并
+    let [a0, m0] = [mod(rows[0][0], rows[0][1]), rows[0][1]], steps = [], ok = true;
+    for (let i = 1; i < rows.length && ok; i++) {
+      const [b, n] = [mod(rows[i][0], rows[i][1]), rows[i][1]], g = gcd(m0, n);
+      if ((b - a0) % g) { steps.push(`合并第 ${i + 1} 个：gcd(${m0}, ${n}) = ${g} 不整除 ${b} − ${a0}，<b>无解</b>`); ok = false; break; }
+      const n1 = n / g, m1 = m0 / g, c = (b - a0) / g;
+      const t = n1 === 1 ? 0 : mod(c * inv(m1 % n1, n1), n1), l = m1 * n;
+      if (l > 1e12) { steps.push("模数太大，停止合并。"); ok = false; break; }
+      const na = mod(a0 + m0 * t, l);
+      steps.push(`合并第 ${i + 1} 个：x = ${a0} + ${m0}t，${m0}t ≡ ${b - a0} (mod ${n})，t ≡ ${t} (mod ${n / g})，得 x ≡ ${na} (mod ${l})`);
+      [a0, m0] = [na, l];
+    }
+    tab.innerHTML = `<div class="prose small"><p>模数不两两互素（${bad.map(([i, j, g]) => `m<sub>${i + 1}</sub>, m<sub>${j + 1}</sub> 的公因数 ${g}`).join("；")}），不能直接用 N、L、M 公式，改用逐个合并：</p><ol>${steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`;
+    out.innerHTML = ok ? `<span>x ≡ <b>${a0}</b> (mod ${m0})</span><span>验算：${rows.map(([, m]) => `${a0} mod ${m} = ${a0 % m}`).join("，")}</span>` : `<span>方程组<b>无解</b></span>`;
+  }
+  $("#cadd", mount).addEventListener("click", () => { if (rows.length < 5) { rows.push([1, [11, 13, 17, 19, 23][rows.length % 5]]); renderRows(); } });
+  $("#cdel", mount).addEventListener("click", () => { if (rows.length > 2) { rows.pop(); renderRows(); } });
+  $("#cdemo", mount).addEventListener("click", () => { di = (di + 1) % demos.length; rows = demos[di].map(r => r.slice()); renderRows(); });
+  renderRows();
+  typeset(mount);
+}
+
+/* ================= 交互工具：普吕弗编码 ================= */
+function pruferPlay(mount) {
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl">
+      <label for="pseq">普吕弗序列 <input id="pseq" type="text" value="2,2,1,1" style="width:12em" aria-label="普吕弗序列，用逗号分隔"></label>
+      <label for="pn">n = <input id="pn" type="number" value="6" min="2" max="16" style="width:4.5em"></label>
+      <button class="btn" id="prand" type="button">随机一棵</button>
+    </div>
+    <div class="ctrl"><label for="pstep">删叶步数 <input id="pstep" type="range" min="0" max="5" value="0"></label><b class="mono" id="pstepv"></b></div>
+    <div id="psvg"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>这一步删去的叶 x<sub>i</sub></span><span><i style="background:var(--teal)"></i>它的邻点 y<sub>i</sub></span><span><i style="background:var(--line)"></i>已删去</span></div>
+    <div class="table-wrap" id="ptab"></div>
+    <div class="readout" id="pout"></div>
+    <p class="small muted">表格从左往右读是编码（删最小的叶、记邻点），从右往左添边是还原。n 不填时取序列长度 + 2。</p>
+  </div>`;
+  const seqIn = $("#pseq", mount), nIn = $("#pn", mount), stepIn = $("#pstep", mount);
+  let T = null;
+  function decode(y, n) {
+    const ys = y.concat([n]), used = new Set(), xs = [];
+    for (let i = 0; i < n - 1; i++) {
+      const ex = new Set([...used, ...ys.slice(i)]);
+      let x = 1; while (ex.has(x)) x++;
+      xs.push(x); used.add(x);
+    }
+    return { n, xs, ys, edges: xs.map((x, i) => [x, ys[i]]) };
+  }
+  function layout(t) {
+    const adj = Array.from({ length: t.n + 1 }, () => []);
+    t.edges.forEach(([a, b]) => { adj[a].push(b); adj[b].push(a); });
+    const depth = Array(t.n + 1).fill(-1), order = [], par = Array(t.n + 1).fill(0);
+    depth[t.n] = 0; const q = [t.n];
+    while (q.length) { const v = q.shift(); order.push(v); adj[v].sort((a, b) => a - b).forEach(w => { if (depth[w] < 0) { depth[w] = depth[v] + 1; par[w] = v; q.push(w); } }); }
+    // 叶子按 DFS 顺序排横坐标，内点取子节点平均
+    const pos = {}, kids = v => adj[v].filter(w => w !== par[v] && depth[w] === depth[v] + 1);
+    let cur = 0;
+    (function dfs(v) { const ks = kids(v); if (!ks.length) { pos[v] = cur++; return; } ks.forEach(dfs); pos[v] = ks.reduce((s, w) => s + pos[w], 0) / ks.length; })(t.n);
+    const D = Math.max(...depth.slice(1));
+    return { x: pos, y: depth, W: Math.max(cur, 1), D };
+  }
+  function build() {
+    const raw = seqIn.value.split(/[^0-9]+/).filter(Boolean).map(Number);
+    let n = +nIn.value || raw.length + 2;
+    const out = $("#pout", mount);
+    if (n !== raw.length + 2) { n = raw.length + 2; nIn.value = n; }
+    if (n < 2 || n > 16) { T = null; out.innerHTML = "<span>序列长度要在 0 到 14 之间（n 为 2–16）。</span>"; $("#psvg", mount).innerHTML = ""; $("#ptab", mount).innerHTML = ""; return; }
+    if (raw.some(v => v < 1 || v > n)) { T = null; out.innerHTML = `<span>序列里的数都要在 1 到 ${n} 之间。</span>`; $("#psvg", mount).innerHTML = ""; $("#ptab", mount).innerHTML = ""; return; }
+    T = decode(raw, n); T.L = layout(T);
+    stepIn.max = n - 1; if (+stepIn.value > n - 1) stepIn.value = 0;
+    const cnt = {}; raw.forEach(v => cnt[v] = (cnt[v] || 0) + 1);
+    const leaves = []; for (let v = 1; v <= n; v++) if (!cnt[v]) leaves.push(v);
+    out.innerHTML = `<span>边：${T.edges.map(([a, b]) => Math.min(a, b) + "–" + Math.max(a, b)).join("，")}</span><span>叶（没在序列里出现的标号）：${leaves.join("、")}，共 ${leaves.length} 个</span><span>度数 = 1 + 出现次数：${Object.keys(cnt).map(v => `d(${v}) = ${1 + cnt[v]}`).join("，") || "全是叶"}</span>`;
+    draw();
+  }
+  function draw() {
+    if (!T) return;
+    const k = +stepIn.value, n = T.n, { x, y, W, D } = T.L;
+    $("#pstepv", mount).textContent = k === 0 ? "原树" : k <= n - 2 ? `第 ${k} 步：删 ${T.xs[k - 1]}，记 ${T.ys[k - 1]}` : `第 ${k} 步：删 ${T.xs[k - 1]}，只剩 ${n}`;
+    const VW = 640, VH = 70 + 70 * D, px = v => 30 + (W === 1 ? (VW - 60) / 2 : x[v] / (W - 1) * (VW - 60)), py = v => 30 + y[v] * 70;
+    const gone = new Set(T.xs.slice(0, Math.max(0, k - 1))), cx = k ? T.xs[k - 1] : null, cy = k ? T.ys[k - 1] : null;
+    const edges = T.edges.map(([a, b], i) => { const del = i < k - 1, now = i === k - 1; return `<line x1="${px(a)}" y1="${py(a)}" x2="${px(b)}" y2="${py(b)}" style="stroke:var(${now ? "--accent" : del ? "--line" : "--ink"});stroke-width:${now ? 3.5 : 2}${del ? ";stroke-dasharray:4 4" : ""}"/>`; }).join("");
+    const nodes = []; for (let v = 1; v <= n; v++) {
+      const fill = v === cx ? "--accent" : v === cy ? "--teal" : gone.has(v) ? "--bg" : "--surface", ink = v === cx || v === cy ? "--accent-ink" : gone.has(v) ? "--muted" : "--ink";
+      nodes.push(`<g><circle cx="${px(v)}" cy="${py(v)}" r="14" style="fill:var(${fill});stroke:var(${gone.has(v) ? "--line" : "--ink"});stroke-width:1.5"/><text x="${px(v)}" y="${py(v) + 4.5}" text-anchor="middle" style="fill:var(${ink});font:600 13px var(--f-mono)">${v}</text></g>`);
+    }
+    $("#psvg", mount).innerHTML = `<svg viewBox="0 0 ${VW} ${VH}" style="width:100%;max-height:360px;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="由普吕弗序列还原出的树">${edges}${nodes.join("")}</svg>`;
+    const th = T.xs.map((_, i) => `<th style="text-align:center${i === k - 1 ? ";color:var(--accent)" : ""}">${i + 1}</th>`).join("");
+    const row = (arr, lab) => `<tr><td>${lab}</td>${arr.map((v, i) => `<td style="text-align:center${i === k - 1 ? ";font-weight:700;color:var(--accent)" : i < k - 1 ? ";color:var(--muted)" : ""}">${v}</td>`).join("")}</tr>`;
+    $("#ptab", mount).innerHTML = `<table><thead><tr><th>i</th>${th}</tr></thead><tbody>${row(T.xs, "x<sub>i</sub> 删去的叶")}${row(T.ys.map((v, i) => i === n - 2 ? v + "*" : v), "y<sub>i</sub> 邻点")}</tbody></table><p class="small muted">* 末项 y<sub>n−1</sub> = n 是补上的，不属于序列。</p>`;
+  }
+  seqIn.addEventListener("input", () => { nIn.value = ""; build(); });
+  nIn.addEventListener("change", () => { const n = +nIn.value; if (n >= 2 && n <= 16) { const raw = seqIn.value.split(/[^0-9]+/).filter(Boolean).map(Number); while (raw.length < n - 2) raw.push(1); raw.length = n - 2; seqIn.value = raw.join(","); } build(); });
+  stepIn.addEventListener("input", draw);
+  $("#prand", mount).addEventListener("click", () => { const n = 6 + Math.floor(Math.random() * 5); seqIn.value = Array.from({ length: n - 2 }, () => 1 + Math.floor(Math.random() * n)).join(","); nIn.value = n; stepIn.value = 0; build(); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  build();
+}
+
+
+renderNav();
+render();
+</script>
+</body>
+</html>
