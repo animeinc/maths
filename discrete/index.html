@@ -282,7 +282,7 @@ const EXAM_MAP = [
 
 const SCHEDULE = [
   ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
-  ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", "h1"], ["Day 4–5", "平面图、Euler 公式与染色", null], ["Day 6–7", "复盘", null]]],
+  ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", "h1"], ["Day 4–5", "平面图、Euler 公式与染色", "p1"], ["Day 6–7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
   ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "速查表 + 模拟卷 1", null]]],
@@ -303,6 +303,9 @@ const MUST = [
   ["指定度数", R`$\dfrac{(n-2)!}{(d_1-1)!\cdots(d_n-1)!}$ 棵`],
   ["Hall", R`存在覆盖左侧 $A$ 的匹配 ⇔ 对每个 $S\subseteq A$，$|N(S)|\ge|S|$；左右等大时即完美匹配`],
   ["正则二部图", R`正度 $d\gt0$：$d|S|\le d|N(S)|$ ⇒ Hall；$d=0$ 时不可约去度数`],
+  ["平面 Euler", R`连通 $v-e+f=2$；一般非空图 $v-e+f=1+c$；含外部面，桥按两侧计面边`],
+  ["平面边数界", R`简单平面图 $v\ge3$：$e\le3v-6$；无三角形时 $e\le2v-4$。满足界不能反推平面性`],
+  ["贪心染色", R`简单图 $\chi\le\Delta+1$；简单平面图每个子图有度 $\le5$ 的点，可用删点归纳证 6 色`],
   ["Kruskal", R`按权升序，连接不同分支才加边；选满 $n-1$ 条；逆向算法按权降序，删后仍连通才删`],
   ["MST 换边", R`割上唯一最轻边必选；圈上唯一最重边必不选；并列时只能保证某棵 MST 作相应选择`],
   ["MST 唯一性", R`对每条非树边 $e=uv$，若 $w(e)\gt\max_{f\in P_T(u,v)}w(f)$，则 $T$ 为唯一 MST`],
@@ -313,7 +316,7 @@ const UNITS = [
   { id: "nt", title: "数论：中国剩余定理", lessons: ["n1"] },
   { id: "graph", title: "图论基础", lessons: ["g1", "g2"] },
   { id: "mst", title: "生成树与匹配", lessons: ["mst1", "h1"] },
-  { id: "planar", title: "平面图与染色", lessons: [], soon: true },
+  { id: "planar", title: "平面图与染色", lessons: ["p1"] },
   { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
 ];
 
@@ -804,6 +807,81 @@ h1: {
       hints: [R`先由数边得到两侧等大，再用 Hall 找一组完美匹配。`, R`删除这组匹配后，每个顶点都恰好少一条边。`, R`剩余图是 $(d-1)$-正则二部图，归纳；$d=1$ 时整个边集就是匹配。`],
       method: "m-hall", sol: R`<p>对 $d$ 归纳。$d=1$ 时每点只有一条邻边，所有边即构成完美匹配。设 $d\ge2$。由 $d|A|=|E|=d|B|$ 得两侧等大，由 Hall 的数边证明得到一组完美匹配 $M_1$。</p><p>删去 $M_1$ 后，每点恰少一条边，剩余图仍为二部图且为 $(d-1)$-正则。由归纳假设，其边集可分解成 $d-1$ 组完美匹配。加上 $M_1$，得到所需的 $d$ 组；每组覆盖所有顶点，各组边互不相交。</p>` }
   ]
+},
+/* ---------------- P1 ---------------- */
+p1: {
+  unit: "planar", n: 1, title: "平面图：Euler 公式与贪心染色",
+  goal: "会数外部面、使用连通与非连通版本的 Euler 公式；会由面边计数排除平面性，并证明色数不超过最大度加一。30 分钟先做概念题、基础题和真题，变种与延伸选做。",
+  sections: [
+    { id: "p1-s1", h: "1. 平面嵌入与 Euler 公式", html: R`
+      <p><b>可平面图</b>是能画在平面上且边只在公共端点相交的图；<b>平面嵌入</b>是这样的一种具体画法。一幅画有交叉，不代表这个抽象图不能重新画成无交叉图。</p>
+      <p>记顶点数 $v$、边数 $e$、面数 $f$（<b>包括无界的外部面</b>），分支数为 $c$。对非空有限平面图，</p>
+      $$v-e+f=1+c;\qquad\text{连通时 }v-e+f=2.$$
+      <p><b>连通情形的证明</b>：树满足 $e=v-1,f=1$。若不是树，取圈上一条边删除，图仍连通，两个相邻面合并，$e,f$ 各减 1，$v-e+f$ 不变。反复删到树即得结论。非连通时可补 $c-1$ 条不相交的连分支边；这些边不分割面，再对连通图用公式。</p>
+      <p><b>桥与圈边不同</b>：删除圈边会令 $f$ 减 1、$c$ 不变；删除桥会令 $c$ 加 1、$f$ 不变。下面图中的顶点位置固定，全部边都可无交叉地画出；试着删边，再亲自数面。</p>` },
+    { id: "p1-s2", h: "2. 数面边：2e 等于各面边界长度之和", html: R`
+      <p>每条边有两侧，因此 $\sum_F\deg(F)=2e$。这里按<b>边界行走的次数</b>计数：桥的两侧可能属于同一个面，但仍计两次。连通树只有一个面，边界长度为 $2e$。</p>
+      <p>对<b>简单、可平面且 $v\ge3$</b> 的图，</p>
+      $$e\le3v-6.$$
+      <p>先证连通情形：每个面的边界长度至少为 3，所以 $3f\le2e$，与 $f=2-v+e$ 联立即得。若图不连通，先在分支间补边使其连通，再用该界，原来的边数更不会超过它。</p>
+      <p>若还<b>不含三角形</b>，特别是简单二部可平面图，则面长至少为 4，得到</p>
+      $$e\le2v-4\qquad(v\ge3).$$
+      <p>不连通时补的连分支边不会产生新圈，所以仍保持无三角形。这些都是<b>必要条件</b>：超出上界即可判非平面；未超界只表示该检验没有排除它，不能直接判平面。例如把 $K_{3,3}$ 的一条边细分为两段，得到 $v=7,e=10$，满足 $e\le3v-6$，却仍非平面；细分点可沿两边的弧压回原边。</p>` },
+    { id: "p1-s3", h: "3. 顶点染色：逐点贪心与删点归纳", html: R`
+      <p><b>正常顶点染色</b>要求相邻顶点颜色不同，最少颜色数为 $\chi(G)$。2022 期末考的是适用于<b>任意有限简单图</b>的结论：</p>
+      $$\chi(G)\le\Delta+1,\qquad\Delta=\max_x d(x).$$
+      <p>证明：把顶点任意排序，依次用 $\Delta+1$ 种颜色染色。轮到某点时，已染色的邻点至多有 $\Delta$ 个，最多禁用 $\Delta$ 种颜色，至少还剩一种可用。每条边在后染色的端点处得到检查，因此最终相邻点颜色不同。</p>
+      <p>平面图还能用平均度：简单平面图 $v\ge3$ 时 $2e/v\lt6$，所以至少有一个度不超过 5 的顶点。每个子图仍可平面，故可反复删低度点，再倒序用 6 色染回。完整归纳放在延伸题。</p>
+      <p>不要把“当前这个顶点的度”与“整张图的最大度”混淆；高最大度也不代表色数一定高，例如有任意多个叶子的星形树只需 2 色。</p>` }
+  ],
+  widget: "planarPlay",
+  concepts: [
+    { id: "p1-c1", sec: "p1-s1", q: R`一个平面嵌入有 $v=6,e=6,c=2$。包括外部面共有几个面？`,
+      opts: [R`1`, R`2`, R`3`, R`4`], a: 2,
+      ex: R`用非连通版本 $f=1+c-v+e=1+2-6+6=3$，不能套连通版本得到 2。` },
+    { id: "p1-c2", sec: "p1-s2", q: R`一棵 5 点树只有一个面。它的面边界长度按走边次数计为：`,
+      opts: [R`4`, R`5`, R`8`, R`10`], a: 2,
+      ex: R`树有 4 条边，每条桥的两侧都属于外部面，仍各计一次，所以长度为 $2e=8$。` },
+    { id: "p1-c3", sec: "p1-s2", q: R`一个简单图满足 $v\ge3$ 且 $e\le3v-6$，能否直接断定可平面？`,
+      opts: [R`能，这是充分必要条件`, R`不能，这只是必要条件`, R`能，只要图连通`, R`能，只要没有孤立点`], a: 1,
+      ex: R`上界只用于排除。$K_{3,3}$ 本身就有 $v=6,e=9\le12$，但二部平面图的更强界要求 $e\le8$，所以它非平面。` },
+    { id: "p1-c4", sec: "p1-s3", q: R`最大度为 $\Delta$ 的简单图，用 $\Delta+1$ 色依次贪心染色时，关键理由是：`,
+      opts: [R`所有邻点都已经染色`, R`每点恰有 $\Delta$ 个邻点`, R`已染色邻点至多禁用 $\Delta$ 种颜色`, R`图必须是平面图`], a: 2,
+      ex: R`已染色邻点只是全部邻点的一个子集，数量至多为 $\Delta$；不需要图可平面。` }
+  ],
+  methods: [
+    { id: "m-planar-count", title: "平面图数面：先数分支，再数面边", steps: [
+      R`确认已给无交叉嵌入或已知可平面；列出 $v,e,c$，外部面也要计入。`,
+      R`连通用 $v-e+f=2$，一般用 $v-e+f=1+c$。`,
+      R`需要面大小时用 $\sum_F\deg(F)=2e$；桥按两侧重复计数。`,
+      R`排除平面性：简单图 $v\ge3$ 用 $e\le3v-6$；无三角形时用 $e\le2v-4$。满足上界不能反推可平面。`] },
+    { id: "m-color-greedy", title: "染色证明：说明最多禁用几种颜色", steps: [
+      R`一般最大度界：任选顶点顺序，准备 $\Delta+1$ 种颜色。`,
+      R`轮到当前点时，已染色邻点数至多为 $\Delta$，因此至少一种颜色未被禁用。`,
+      R`平面图小度归纳：由平均度找度 $\le5$ 的点，删点、给剩余图染色，再染回该点。`,
+      R`明确归纳时子图仍满足什么条件，并交代小顶点数的初始情况。`] }
+  ],
+  problems: [
+    { id: "p1-p1", lv: "基础", src: "自编", stmt: R`分别求下列平面嵌入的面数（包括外部面）：(1) 立方体图，$v=8,e=12$；(2) 一棵 7 点树；(3) 两个互不相交的三角形。并求 (2) 唯一面的边界长度。`,
+      hints: [R`前两个图连通，第三个有 2 个分支。`, R`树的边数为 $v-1$，而两个三角形有 $v=e=6$。`, R`树的每条边都要沿两个方向出现在同一个面的边界行走中。`],
+      method: "m-planar-count", sol: R`<p>(1) 立方体图连通，$f=2-v+e=2-8+12=6$。平面画法中有 5 个有界面和 1 个外部面。</p><p>(2) 树有 $e=6,c=1$，故 $f=2-7+6=1$；唯一面是外部面，边界长度 $2e=12$。</p><p>(3) 两个三角形有 $v=6,e=6,c=2$，所以 $f=1+2-6+6=3$。可并排画出：两个内部面加一个共用外部面。</p>` },
+    { id: "p1-p2", lv: "真题", src: "2022 秋期末 2(1)(2)", stmt: R`<p>(1) 叙述平面图的 Euler 公式。</p><p>(2) 设简单图 $G$ 每个顶点的度都不超过 $\Delta$，证明 $\chi(G)\le\Delta+1$。</p>`,
+      hints: [R`(1) 记得说明连通性，以及面数包含外部面。`, R`(2) 将顶点任意排序，用 $\Delta+1$ 种颜色依次染色。`, R`当前顶点至多有 $\Delta$ 个已染色邻点，它们最多禁用 $\Delta$ 种颜色。`],
+      method: "m-color-greedy", sol: R`<p>(1) 对有限连通平面图，若顶点、边、面数分别为 $v,e,f$，其中包括外部面，则 $v-e+f=2$。一般非空平面图若有 $c$ 个分支，则 $v-e+f=1+c$。</p><p>(2) 把顶点排成 $x_1,\dots,x_n$，准备 $\Delta+1$ 种颜色。依次给 $x_i$ 选一种不同于它已染色邻点的颜色。因为 $x_i$ 总邻点数至多为 $\Delta$，已染色邻点最多禁用 $\Delta$ 种颜色，总有一种颜色可选。</p><p>最终对任意边 $x_ix_j$，不妨 $i\lt j$，在给 $x_j$ 染色时已避开 $x_i$ 的颜色，故是正常染色。因此 $\chi(G)\le\Delta+1$。第 (2) 问不需要平面性假设。</p>` }
+  ],
+  variants: [
+    { id: "p1-v1", lv: "变种", src: "经典例题", stmt: R`分别证明 $K_5$ 和 $K_{3,3}$ 不可平面。再说明为何不能用一般的 $e\le3v-6$ 直接排除 $K_{3,3}$。`,
+      hints: [R`$K_5$ 有 5 点、10 边；$K_{3,3}$ 有 6 点、9 边。`, R`$K_{3,3}$ 是二部图，不含三角形，可用更强的 $e\le2v-4$。`, R`一般界给 $9\le12$，没有矛盾；更强界要求 $9\le8$，矛盾。`],
+      method: "m-planar-count", sol: R`<p>若 $K_5$ 可平面，由简单平面图的界应有 $10\le3\cdot5-6=9$，矛盾。</p><p>若 $K_{3,3}$ 可平面，由它是简单二部图，应有 $9\le2\cdot6-4=8$，矛盾。</p><p>只用一般界时，$K_{3,3}$ 的 $e=9\le3\cdot6-6=12$，检验通过，但这不是平面性的证明。选用“二部 / 无三角形”的额外条件才能得到本题需要的矛盾。</p>` },
+    { id: "p1-v2", lv: "变种", src: "自编：Euler 与面边双计数", stmt: R`某连通简单平面图有 12 个顶点、21 条边，每个面（包括外部面）的边界长度都是 3 或 4。求三边面和四边面的数目。`,
+      hints: [R`先由 Euler 公式求总面数 $f$。`, R`设三边面、四边面数分别为 $t,q$，则 $t+q=f$。`, R`面边总次数为 $3t+4q=2e=42$，不是 $e$。`],
+      method: "m-planar-count", sol: R`<p>连通，所以 $f=2-12+21=11$。设两类面数为 $t,q$，则 $t+q=11$，又由每条边计两侧得 $3t+4q=42$。</p><p>用第二式减去第一式的 3 倍，得 $q=9$；于是 $t=2$。自检：$2+9=11$，$3\cdot2+4\cdot9=42=2e$。</p>` }
+  ],
+  extensions: [
+    { id: "p1-e1", lv: "延伸", src: "经典结论：简单平面图六色定理", stmt: R`只用 Euler 边数界和归纳法，证明任意有限简单可平面图都能用至多 6 种颜色正常染色。`,
+      hints: [R`$v\le2$ 时直接成立。$v\ge3$ 时由 $e\le3v-6$ 得平均度严格小于 6。`, R`因此存在度不超过 5 的顶点 $x$，删掉它后仍是简单可平面图。`, R`剩余图由归纳假设能 6 色染色，再把 $x$ 染回；邻点至多禁用 5 色。`],
+      method: "m-color-greedy", sol: R`<p>按顶点数归纳。顶点数不超过 2 时显然成立。设 $v\ge3$，由 $2e\le6v-12\lt6v$，图中必有顶点 $x$ 满足 $d(x)\le5$，否则度数和至少为 $6v$。</p><p>删去 $x$ 后仍为简单可平面图，由归纳假设可用至多 6 色正常染色。再给 $x$ 染色，其至多 5 个邻点最多禁用 5 色，尚有一种可选。故原图也能 6 色染色。证明不要求原图连通。</p>` }
+  ]
 }
 };
 
@@ -1138,7 +1216,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1569,6 +1647,55 @@ function hallPlay(mount) {
   mode.addEventListener("change", () => { note = ""; show.checked = false; draw(); });
   checks.forEach(c => c.addEventListener("change", () => { note = ""; draw(); }));
   show.addEventListener("change", draw);
+  draw();
+}
+
+
+/* ================= 交互工具：平面图删边与数面 ================= */
+function planarPlay(mount) {
+  const points = { A: [65, 245], B: [535, 245], C: [300, 35], D: [300, 165] };
+  const edges = ["AB", "AC", "AD", "BC", "BD", "CD"];
+  const presets = { full: edges, tree: ["AB", "AC", "AD"], split: ["AB"], empty: [] };
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="plane-preset">图形 <select id="plane-preset"><option value="full">完整 K4</option><option value="tree">一棵树</option><option value="split">一条边与两个孤立点</option><option value="empty">四个孤立点</option><option value="custom">自选边</option></select></label></div>
+    <div class="ctrl" id="plane-edges">保留边：${edges.map(e => `<label><input type="checkbox" value="${e}" checked> ${e}</label>`).join("")}</div>
+    <div id="plane-graph"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>在圈上的边</span><span><i style="background:var(--teal)"></i>桥</span></div>
+    <div class="readout" id="plane-count"></div>
+    <div class="ctrl"><label for="plane-answer">面数（含外部面） <input id="plane-answer" type="number" min="1" max="4" step="1" style="width:4em"></label><button class="btn" id="plane-check" type="button">核对面数</button></div>
+    <div class="readout" id="plane-result" aria-live="polite"></div>
+    <p class="small muted">四个顶点始终保留。删去圈边会合并两个面；删去桥会增加分支，面数不变。无界区域也算一个面。</p>
+  </div>`;
+  const mode = $("#plane-preset", mount), checks = [...mount.querySelectorAll("#plane-edges input")], answer = $("#plane-answer", mount);
+  function components(es) {
+    const parent = { A: "A", B: "B", C: "C", D: "D" };
+    function root(x) { while (x !== parent[x]) x = parent[x]; return x; }
+    for (const e of es) parent[root(e[0])] = root(e[1]);
+    return new Set(Object.keys(points).map(root)).size;
+  }
+  function selected() { return checks.filter(c => c.checked).map(c => c.value); }
+  function draw() {
+    const es = selected(), c = components(es);
+    const lines = es.map(e => {
+      const [x1, y1] = points[e[0]], [x2, y2] = points[e[1]], bridge = components(es.filter(f => f !== e)) > c;
+      return `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(${bridge ? "--teal" : "--accent"});stroke-width:3"/>`;
+    }).join("");
+    const nodes = Object.entries(points).map(([v, [x, y]]) => `<g><circle cx="${x}" cy="${y}" r="17" style="fill:var(--surface);stroke:var(--ink);stroke-width:1.5"/><text x="${x}" y="${y + 5}" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--f-mono)">${v}</text></g>`).join("");
+    $("#plane-graph", mount).innerHTML = `<svg viewBox="0 0 600 285" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="四个顶点的无交叉平面嵌入，当前有 ${es.length} 条边、${c} 个分支；青色是桥">${lines}${nodes}</svg>`;
+    $("#plane-count", mount).innerHTML = `<span>v = 4，e = ${es.length}，c = ${c}。</span><span>先数图中有界区域，再加上外部面；非连通时使用 v−e+f = 1+c。</span>`;
+    answer.value = "";
+    $("#plane-result", mount).textContent = "";
+  }
+  checks.forEach(c => c.addEventListener("change", () => { mode.value = "custom"; draw(); }));
+  mode.addEventListener("change", () => {
+    if (presets[mode.value]) checks.forEach(c => { c.checked = presets[mode.value].includes(c.value); });
+    draw();
+  });
+  answer.addEventListener("input", () => { $("#plane-result", mount).textContent = ""; });
+  $("#plane-check", mount).addEventListener("click", () => {
+    const es = selected(), c = components(es), f = 1 + c - 4 + es.length, guess = Number(answer.value);
+    $("#plane-result", mount).textContent = !answer.value || !Number.isInteger(guess) || guess < 1 ? "先输入一个正整数面数，再核对。" : `${guess === f ? "正确。" : "再数一次："}面数 f = 1+${c}−4+${es.length} = ${f}（含外部面）；4−${es.length}+${f} = ${1 + c} = 1+c。`;
+  });
   draw();
 }
 

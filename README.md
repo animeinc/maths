@@ -2,8 +2,8 @@
 
 清华大一 2026 秋期末复习页，每课约 30 分钟，含交互图、概念检测、分层提示、方法卡和变种/延伸题。
 
-- 高等微积分(1)：https://animeinc.github.io/maths/ （Taylor 公式、中值定理、凸函数、定积分换元与分部）
-- 离散数学：https://animeinc.github.io/maths/discrete/ （中国剩余定理、图与欧拉路、树与普吕弗编码、最便宜生成树、Hall 匹配）
+- 高等微积分(1)：https://animeinc.github.io/maths/ （Taylor 公式、中值定理、凸函数、定积分换元分部与 Wallis 递推）
+- 离散数学：https://animeinc.github.io/maths/discrete/ （中国剩余定理、图与欧拉路、树与普吕弗编码、最便宜生成树、Hall 匹配、平面图与染色）
 - 作答自动保存在浏览器本地；“进度与同步”里可以导出/导入进度文件或用同步码在设备间合并（每题保留较新的记录）
 - 适配手机和平板；公式由 MathJax 渲染，需要联网加载 cdnjs
 

@@ -282,7 +282,7 @@ const EXAM_MAP = [
 
 const SCHEDULE = [
   ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘（期中卷订正待拿到卷后补）", null]]],
-  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", null], ["Day 3", "积分计算综合复盘", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
+  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", "i2"], ["Day 3", "积分计算综合复盘", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "整理速查表 + 模拟卷 1（周末整块 2 小时）", null]]],
@@ -304,7 +304,7 @@ const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
   { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
   { id: "convex", title: "凸函数与拐点", lessons: ["c1"] },
-  { id: "int", title: "定积分计算", lessons: ["i1"] },
+  { id: "int", title: "定积分计算", lessons: ["i1", "i2"] },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
 ];
@@ -932,6 +932,100 @@ i1: {
       $$\frac{e^{2x}}2\arctan\sqrt{e^x-1}-\frac12\sqrt{e^x-1}-\frac16(e^x-1)^{3/2}+C.$$
       <p>验算：在 $t$ 变量求导时，第一项多出的 $(1+t^2)/2$，恰由后两项导数抵消，剩下 $2t(1+t^2)\arctan t$；再乘 $dt/dx$ 即恢复原被积函数。</p>` }
   ]
+},
+/* ---------------- I2 ---------------- */
+i2: {
+  unit: "int", n: 2, title: "Wallis 型递推：分部、奇偶与夹逼",
+  goal: "会推导 Wallis 递推并分奇偶计算；把带根号的积分化为同一族；用单调性夹逼相邻项比值。30 分钟先做概念题和三道核心题，级数求和放在延伸。",
+  sections: [
+    { id: "i2-s1", h: "1. Wallis 积分：把 n 阶降为 n−2 阶", html: R`
+      <p>对整数 $n\ge0$，定义 $W_n=\int_0^{\pi/2}\sin^n x\,dx$。先算初值：</p>
+      $$W_0=\frac\pi2,\qquad W_1=1.$$
+      <p>$n\ge2$ 时，把 $\sin^n x$ 写成 $\sin^{n-1}x\cdot\sin x$，分部取 $u=\sin^{n-1}x,dv=\sin x\,dx$，边界项 $[-\sin^{n-1}x\cos x]_0^{\pi/2}=0$，所以</p>
+      $$W_n=(n-1)\int_0^{\pi/2}\sin^{n-2}x\cos^2x\,dx
+      =(n-1)(W_{n-2}-W_n).$$
+      <p>把右侧 $W_n$ 移到左侧，得到</p>
+      $$W_n=\frac{n-1}{n}W_{n-2}\qquad(n\ge2).$$
+      <p><b>不能漏掉移项</b>，也不能把递推用于 $n=1$：那时边界项不为零。递推跨两阶，必须分别从 $W_0,W_1$ 出发。</p>` },
+    { id: "i2-s2", h: "2. 奇偶通式与带根号的真题", html: R`
+      <p>记双阶乘 $k!!=k(k-2)(k-4)\cdots$，约定 $0!!=(-1)!!=1$。连续递推得</p>
+      $$W_{2m}=\frac{(2m-1)!!}{(2m)!!}\frac\pi2,\qquad
+      W_{2m+1}=\frac{(2m)!!}{(2m+1)!!}\qquad(m\ge0).$$
+      <p>2023 期末的积分族是 $a_n=\int_0^1x^n\sqrt{1-x^2}\,dx$。令 $x=\sin t$，$dx=\cos t\,dt$，根号在 $0\le t\le\pi/2$ 上等于 $\cos t$，得到</p>
+      $$a_n=\int_0^{\pi/2}\sin^nt\cos^2t\,dt=W_n-W_{n+2}=\frac{W_n}{n+2}.$$
+      <p>因此 $a_0=\pi/4,a_1=1/3$，并且</p>
+      $$a_n=\frac{n-1}{n+2}a_{n-2}\qquad(n\ge2).$$
+      <p>若积分区间改成 $[-1,1]$，先看奇偶：$I_n=\int_{-1}^1x^n\sqrt{1-x^2}\,dx$ 在 $n$ 为奇数时为零，偶数时等于 $2a_n$。不要把只适用于偶数的“乘 2”套到所有 $n$。</p>` },
+    { id: "i2-s3", h: "3. 比值极限：先找单调性，再用递推夹逼", html: R`
+      <p>在 $0\le x\le1$ 上，$x^n\sqrt{1-x^2}$ 随 $n$ 增大而减小，且积分为正，所以 $0\lt a_n\le a_{n-1}\le a_{n-2}$。结合递推：</p>
+      $$\frac{n-1}{n+2}=\frac{a_n}{a_{n-2}}\le\frac{a_n}{a_{n-1}}\le1\qquad(n\ge2).$$
+      <p>两端都趋于 1，故 $a_n/a_{n-1}\to1$。这完成 2023 期末第 3 题的极限，<b>不需要 Stirling 公式</b>。仅凭 $a_n\to0$ 不能推出相邻项比值趋于 1，例如 $2^{-n}$ 就不成立。</p>
+      <p>同样地 $W_n$ 随 $n$ 增大而减小，结合 $W_{n+2}/W_n=(n+1)/(n+2)$，可夹出 $W_{n+1}/W_n\to1$。想证明 $W_n\to0$，可把积分区间分成 $[0,\pi/2-\delta]$ 和最后一小段：前者按几何速度衰减，后者长度只有 $\delta$。</p>` }
+  ],
+  widget: "wallisPlay",
+  concepts: [
+    { id: "i2-c1", sec: "i2-s1", q: R`Wallis 递推 $W_n=\frac{n-1}{n}W_{n-2}$ 的适用范围是：`,
+      opts: [R`$n\ge0$`, R`$n\ge1$`, R`整数 $n\ge2$`, R`只适用于偶数 $n$`], a: 2,
+      ex: R`$n=1$ 时分部积分的下端边界项不再为零；$W_0$ 和 $W_1$ 要直接计算，分别作为初值。` },
+    { id: "i2-c2", sec: "i2-s2", q: R`$a_n=\int_0^1x^n\sqrt{1-x^2}\,dx$ 与 $W_n$ 的关系是：`,
+      opts: [R`$a_n=W_n$`, R`$a_n=W_n/(n+2)$`, R`$a_n=(n+2)W_n$`, R`$a_n=W_n/n$`], a: 1,
+      ex: R`$x=\sin t$ 后，根号与微分各贡献一个 $\cos t$，所以 $a_n=W_n-W_{n+2}=W_n/(n+2)$。` },
+    { id: "i2-c3", sec: "i2-s2", q: R`$\int_{-1}^1x^5\sqrt{1-x^2}\,dx$ 等于：`,
+      opts: [R`$2a_5$`, R`$a_5$`, R`0`, R`不能由奇偶性判断`], a: 2,
+      ex: R`被积函数是连续奇函数，在对称区间上的积分为零。$a_5\gt0$，不能直接乘 2。` },
+    { id: "i2-c4", sec: "i2-s3", q: R`已知 $0\lt a_n\le a_{n-1}\le a_{n-2}$。正确的比值夹逼是：`,
+      opts: [R`$1\le a_n/a_{n-1}\le a_n/a_{n-2}$`, R`$a_n/a_{n-2}\le a_n/a_{n-1}\le1$`, R`$a_n/a_{n-1}=a_n/a_{n-2}$`, R`$a_n/a_{n-1}\le0$`], a: 1,
+      ex: R`分子固定为正数 $a_n$，分母越大，比值越小；再用 $a_n\le a_{n-1}$ 给出上界 1。` }
+  ],
+  methods: [
+    { id: "m-wallis", title: "积分递推：分部后把同族项移到一边", steps: [
+      R`先定义积分族并算低阶初值；若一步降两阶，就分别保留奇、偶两个初值。`,
+      R`分出一项做 $dv$，其余求导；完整检查边界项，注明递推适用的阶数。`,
+      R`用 $\cos^2x=1-\sin^2x$ 等恒等式，把剩余积分写回同族；含未知积分的项要移项。`,
+      R`得到通式后回代小阶数自检；区间对称时先判断奇偶，再决定是否乘 2。`] },
+    { id: "m-integral-ratio", title: "相邻比值极限：单调性配合隔项递推", steps: [
+      R`从被积函数逐点比较推出积分序列为正、单调，先写出连续三项的大小关系。`,
+      R`把目标比值夹在 1 和可由递推直接计算的隔项比值之间。`,
+      R`检查上下界都趋于同一数，再用夹逼定理；不要只由两项都趋于 0 就断言比值。`] }
+  ],
+  problems: [
+    { id: "i2-p1", lv: "基础", src: "自编", stmt: R`推导 $W_n=\int_0^{\pi/2}\sin^nx\,dx$ 的隔两阶递推，并计算 $W_4,W_5$。`,
+      hints: [R`取 $u=\sin^{n-1}x,dv=\sin x\,dx$，$v=-\cos x$。`, R`$W_n=(n-1)(W_{n-2}-W_n)$，要先移项。`, R`偶数从 $W_0=\pi/2$ 出发，奇数从 $W_1=1$ 出发。`],
+      method: "m-wallis", sol: R`<p>$n\ge2$ 时边界项为零，分部得 $W_n=(n-1)\int_0^{\pi/2}\sin^{n-2}x\cos^2x\,dx=(n-1)(W_{n-2}-W_n)$，所以 $nW_n=(n-1)W_{n-2}$。</p>
+      $$W_4=\frac34\cdot\frac12\cdot\frac\pi2=\frac{3\pi}{16},\qquad
+      W_5=\frac45\cdot\frac23\cdot1=\frac8{15}.$$
+      <p>自检：$W_4\approx0.5890$、$W_5\approx0.5333$，符合 $W_5\le W_4$。</p>` },
+    { id: "i2-p2", lv: "真题", src: "2023 秋期末 3(1)(2)", stmt: R`<p>对正整数 $n$ 定义 $a_n=\int_0^1x^n\sqrt{1-x^2}\,dx$。</p><p>(1) 证明 $n\ge2$ 时 $a_n=\frac{n-1}{n+2}a_{n-2}$。</p><p>(2) 求 $\lim_{n\to\infty}a_n/a_{n-1}$。原题给出 Stirling 公式，也允许不使用它；这里用夹逼完成。</p>`,
+      hints: [R`(1) 令 $x=\sin t$，把积分写成 $W_n-W_{n+2}$。为说明 $n=2$，可把定义自然补到 $a_0$。`, R`由 Wallis 递推得 $a_n=W_n/(n+2)$，再比较 $a_n$ 与 $a_{n-2}$。`, R`(2) $0\lt a_n\le a_{n-1}\le a_{n-2}$，故 $(n-1)/(n+2)\le a_n/a_{n-1}\le1$。`],
+      method: "m-integral-ratio", sol: R`<p>(1) 将 $a_0$ 也按同一积分定义。令 $x=\sin t$，根号与微分各给一个 $\cos t$，得到 $a_n=W_n-W_{n+2}=W_n/(n+2)$。对 $n\ge2$，又有 $a_{n-2}=W_{n-2}/n$，所以</p>
+      $$\frac{a_n}{a_{n-2}}=\frac{n}{n+2}\frac{W_n}{W_{n-2}}
+      =\frac{n}{n+2}\frac{n-1}{n}=\frac{n-1}{n+2}.$$
+      <p>(2) 因为 $0\le x\le1$ 时 $x^n\le x^{n-1}\le x^{n-2}$，积分为正，故</p>
+      $$\frac{n-1}{n+2}=\frac{a_n}{a_{n-2}}\le\frac{a_n}{a_{n-1}}\le1.$$
+      <p>下界趋于 1，上界为 1，由夹逼定理，所求极限为 $1$。</p>` },
+    { id: "i2-p3", lv: "真题", src: "2022 秋期末 6(1)", stmt: R`对非负整数 $n$，计算 $\displaystyle I_n=\int_{-1}^1x^n\sqrt{1-x^2}\,dx$。`,
+      hints: [R`先看 $n$ 是奇数还是偶数。`, R`奇数积分为零；$n=2m$ 时 $I_{2m}=2a_{2m}=W_{2m}/(m+1)$。`, R`代入 Wallis 通式，结果也可写成二项式系数形式。`],
+      method: "m-wallis", sol: R`<p>$n$ 为奇数时，被积函数为奇函数，故 $I_n=0$。$n=2m$（$m\ge0$）时，被积函数为偶函数，</p>
+      $$I_{2m}=2a_{2m}=\frac{W_{2m}}{m+1}
+      =\frac\pi{2(m+1)}\frac{(2m-1)!!}{(2m)!!}
+      =\frac\pi{2(m+1)}\frac{\binom{2m}{m}}{4^m}.$$
+      <p>使用 $0!!=(-1)!!=1$。自检：$I_0=\pi/2$ 是单位圆上半圆面积；$I_2=\pi/8$、$I_4=\pi/16$。奇数阶全为零。</p>` }
+  ],
+  variants: [
+    { id: "i2-v1", lv: "变种", src: "自编：同一积分族的两种外形", stmt: R`计算 $\displaystyle\int_0^{\pi/2}\sin^6t\cos^2t\,dt$ 和 $\displaystyle\int_0^1x^6\sqrt{1-x^2}\,dx$，并说明二者为什么相等。`,
+      hints: [R`第一式用 $\cos^2t=1-\sin^2t$，变成 $W_6-W_8$。`, R`$W_8=(7/8)W_6$，所以差为 $W_6/8$。`, R`$W_6=(5/6)(3/4)(1/2)(\pi/2)=5\pi/32$；第二式用 $x=\sin t$。`],
+      method: "m-wallis", sol: R`<p>第一式为 $W_6-W_8=W_6/8$，而 $W_6=(5/6)(3/4)(1/2)(\pi/2)=5\pi/32$，所以积分等于 $5\pi/256$。</p><p>第二式令 $x=\sin t$，$\sqrt{1-x^2}=\cos t$、$dx=\cos t\,dt$，正好变成第一式，故也为 $5\pi/256$。自检：它就是 $a_6=W_6/(6+2)$。</p>` }
+  ],
+  extensions: [
+    { id: "i2-e1", lv: "延伸", src: "2022 秋期末 6(2)", stmt: R`设 $I_n$ 如真题所定义，求 $\displaystyle\sum_{n=0}^{\infty}I_n$。要求先处理有限部分和，再说明极限，避免未经证明直接交换无穷求和与积分。`,
+      hints: [R`奇数项为零，只需数 $I_0+I_2+\cdots+I_{2N}$。有限几何和可直接放进积分。`, R`有限和等于 $\int_{-1}^1(1-x^{2N+2})/\sqrt{1-x^2}\,dx=\pi-2W_{2N+2}$。端点先截断再取极限。`, R`证明 $W_k\to0$：固定 $0\lt\delta\lt\pi/2$，前段积分至多 $(\pi/2)(\cos\delta)^k$，末段至多 $\delta$。`],
+      method: "m-wallis", sol: R`<p>因为 $I_{2m+1}=0$，完整级数的部分和由偶数阶部分和决定。对有限 $N$，有限求和与积分可交换，几何和给</p>
+      $$\sum_{m=0}^NI_{2m}=\int_{-1}^1\sqrt{1-x^2}\sum_{m=0}^Nx^{2m}\,dx
+      =\int_{-1}^1\frac{1-x^{2N+2}}{\sqrt{1-x^2}}\,dx.$$
+      <p>最后的式子在端点按极限解释。各项拆开后是收敛的瑕积分，可先在内部截断，再令截断趋于端点。令 $x=\sin t$，得到</p>
+      $$\sum_{m=0}^NI_{2m}=\pi-2W_{2N+2}.$$
+      <p>对任意 $0\lt\delta\lt\pi/2$，把 $W_k$ 的积分区间分为两段，得到 $0\le W_k\le(\pi/2)(\cos\delta)^k+\delta$。先令 $k\to\infty$，再令 $\delta\to0^+$，可知 $W_k\to0$。所以所求级数和为 $\pi$。</p><p>这里先计算有限和，再取极限，没有预设“无穷和可以与积分交换”。</p>` }
+  ]
 }
 };
 
@@ -1266,7 +1360,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot })[LESSONS[v].widget](w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot, wallisPlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1743,6 +1837,50 @@ function substitutionPlot(mount) {
   }
   mode.addEventListener("change", draw);
   end.addEventListener("input", draw);
+  draw();
+}
+
+
+/* ================= 交互图：Wallis 递推与奇偶 ================= */
+function wallisPlay(mount) {
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="wallis-family">积分族 <select id="wallis-family"><option value="W">Wₙ：0 到 π/2，sinⁿx</option><option value="a">aₙ：0 到 1，xⁿ√(1−x²)</option><option value="I">Iₙ：−1 到 1，xⁿ√(1−x²)</option></select></label></div>
+    <div class="ctrl"><label for="wallis-n">阶数 n <input id="wallis-n" type="range" min="0" max="20" step="1" value="6"></label><b class="mono" id="wallis-nv"></b></div>
+    <div id="wallis-graph"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>当前阶 n（阴影是带符号面积）</span><span><i style="background:var(--muted)"></i>虚线：n−2 阶</span></div>
+    <div class="readout" id="wallis-out" aria-live="polite"></div><div class="table-wrap" id="wallis-table"></div>
+    <p class="small muted">滑块可分奇偶追踪递推；n=0、1 用各自初值。Iₙ 在奇数阶时左负右正，积分相消，不可用“偶函数乘 2”。</p>
+  </div>`;
+  const family = $("#wallis-family", mount), input = $("#wallis-n", mount), W = [Math.PI / 2, 1];
+  for (let n = 2; n <= 20; n++) W[n] = (n - 1) / n * W[n - 2];
+  function val(kind, n) { return kind === "W" ? W[n] : kind === "a" ? W[n] / (n + 2) : n % 2 ? 0 : 2 * W[n] / (n + 2); }
+  function draw() {
+    const kind = family.value, n = +input.value, oddI = kind === "I" && n % 2 === 1;
+    const left = kind === "I" ? -1 : 0, right = kind === "W" ? Math.PI / 2 : 1;
+    const ymin = oddI ? -1.1 : 0, ymax = 1.1, X = x => 45 + 510 * (x - left) / (right - left), Y = y => 225 - 190 * (y - ymin) / (ymax - ymin);
+    const fun = (x, k) => kind === "W" ? Math.sin(x) ** k : x ** k * Math.sqrt(Math.max(0, 1 - x * x));
+    const path = k => Array.from({ length: 241 }, (_, i) => { const x = left + (right - left) * i / 240; return `${i ? "L" : "M"}${X(x).toFixed(2)},${Y(fun(x, k)).toFixed(2)}`; }).join(" ");
+    function area(a, b, color) {
+      const p = `M${X(a)},${Y(0)} ` + Array.from({ length: 121 }, (_, i) => { const x = a + (b - a) * i / 120; return `L${X(x).toFixed(2)},${Y(fun(x, n)).toFixed(2)}`; }).join(" ") + ` L${X(b)},${Y(0)} Z`;
+      return `<path d="${p}" style="fill:var(${color});opacity:0.2"/>`;
+    }
+    const fills = oddI ? area(-1, 0, "--accent") + area(0, 1, "--teal") : area(left, right, "--accent");
+    const prev = n >= 2 ? `<path d="${path(n - 2)}" style="fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 4"/>` : "";
+    $("#wallis-graph", mount).innerHTML = `<svg viewBox="0 0 600 260" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="${kind} 积分族第 ${n} 阶曲线与带符号面积${oddI ? "，左右相消" : ""}">${fills}<path d="M45,${Y(0)} H565 M${X(0)},25 V230" style="fill:none;stroke:var(--muted);stroke-width:1"/>${prev}<path d="${path(n)}" style="fill:none;stroke:var(--accent);stroke-width:2.5"/><text x="40" y="249" style="fill:var(--muted);font:12px var(--f-mono)">${left}</text><text x="545" y="249" style="fill:var(--muted);font:12px var(--f-mono)">${kind === "W" ? "π/2" : "1"}</text><text x="18" y="${Y(1) + 4}" style="fill:var(--muted);font:12px var(--f-mono)">1</text>${oddI ? `<text x="11" y="${Y(-1) + 4}" style="fill:var(--muted);font:12px var(--f-mono)">−1</text>` : ""}</svg>`;
+    $("#wallis-nv", mount).textContent = String(n);
+    let description = oddI ? "奇函数在对称区间上积分为 0。" : n < 2 ? "本阶直接使用初值，不套递推。" : `${kind}(${n}) = ${n - 1}/${kind === "W" ? n : n + 2} × ${kind}(${n - 2})。`;
+    let ratio = "";
+    if (kind === "a" && n >= 2) ratio = `相邻比值 a(${n})/a(${n - 1}) = ${(val(kind, n) / val(kind, n - 1)).toFixed(8)}，位于 [${((n - 1) / (n + 2)).toFixed(8)}, 1]。`;
+    $("#wallis-out", mount).innerHTML = `<span>${kind}(${n}) = ${val(kind, n).toFixed(8)}。</span><span>${description}</span>${ratio ? `<span>${ratio}</span>` : ""}`;
+    let rows = "";
+    for (let k = n % 2; k <= n; k += 2) {
+      const why = kind === "I" && k % 2 ? "奇函数相消" : k < 2 ? "初值" : `${k - 1}/${kind === "W" ? k : k + 2} × ${kind}(${k - 2})`;
+      rows += `<tr><td>${kind}(${k})</td><td>${why}</td><td class="mono">${val(kind, k).toFixed(8)}</td></tr>`;
+    }
+    $("#wallis-table", mount).innerHTML = `<table><thead><tr><th>本阶</th><th>递推 / 理由</th><th>数值</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  family.addEventListener("change", draw);
+  input.addEventListener("input", draw);
   draw();
 }
 
