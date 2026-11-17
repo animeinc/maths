@@ -273,6 +273,7 @@ const EXAM_MAP = [
   ["树的性质与生成树", [1], 5, "边数 n−1、加边成圈、删边不连通；2022 期末 1(2)、5(1)"],
   ["连通分支与边数", [1], 4, "2022 期末 1(1)：n 点 m 个分支，边数最少 n−m"],
   ["握手定理与按度数计数", [1], 4, "2022 期末 6：角的数目、无 4-圈图的边数上界"],
+  ["双计数：区组设计", [1], 3, "2022 期末 2(3)：数（元素，区组）配对"],
   ["Hall 匹配定理、二部图", [1], 4, "2022 期末 3、7"],
   ["平面图 Euler 公式、染色", [1], 4, "2022 期末 2"],
   ["最便宜生成树", [1], 3, "2022 期末 5(2)，作业 7"],
@@ -281,7 +282,7 @@ const EXAM_MAP = [
 ];
 
 const SCHEDULE = [
-  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
+  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "图论复盘：双计数与无 4-圈图（2022 期末 6）", "g3"]]],
   ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", "h1"], ["Day 4–5", "平面图、Euler 公式与染色", "p1"], ["Day 6–7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
   ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
@@ -309,12 +310,16 @@ const MUST = [
   ["Kruskal", R`按权升序，连接不同分支才加边；选满 $n-1$ 条；逆向算法按权降序，删后仍连通才删`],
   ["MST 换边", R`割上唯一最轻边必选；圈上唯一最重边必不选；并列时只能保证某棵 MST 作相应选择`],
   ["MST 唯一性", R`对每条非树边 $e=uv$，若 $w(e)\gt\max_{f\in P_T(u,v)}w(f)$，则 $T$ 为唯一 MST`],
+  ["换序求和", R`$\sum_{a}\sum_{b:(a,b)\in E}f=\sum_{b}\sum_{a:(a,b)\in E}f$；双计数 = $f\equiv1$，约束条件照写`],
+  ["角数", R`$S=\sum\binom{d_i}2\ge\frac{2E^2}n-E$（Cauchy）；按支点对 $S=\sum_{\{B,C\}}|N(B)\cap N(C)|$`],
+  ["无 4-圈", R`⇔ 任两点至多一个公共邻点 ⇒ $S\le\binom n2$ ⇒ $E\le\frac{1+\sqrt{4n-3}}4n$`],
+  ["区组设计", R`每对元素恰在 $\lambda$ 个 $k$ 元区组中 ⇒ 每个元素在 $r=\frac{\lambda(v-1)}{k-1}$ 个区组中，$bk=vr$`],
   ["补全森林", R`$k$ 个分支、大小 $s_1,\dots,s_k$：$n^{k-2}s_1\cdots s_k$ 棵；含指定边：$2n^{n-3}$ 棵`]
 ];
 
 const UNITS = [
   { id: "nt", title: "数论：中国剩余定理", lessons: ["n1"] },
-  { id: "graph", title: "图论基础", lessons: ["g1", "g2"] },
+  { id: "graph", title: "图论基础", lessons: ["g1", "g2", "g3"] },
   { id: "mst", title: "生成树与匹配", lessons: ["mst1", "h1"] },
   { id: "planar", title: "平面图与染色", lessons: ["p1"] },
   { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
@@ -882,6 +887,108 @@ p1: {
       hints: [R`$v\le2$ 时直接成立。$v\ge3$ 时由 $e\le3v-6$ 得平均度严格小于 6。`, R`因此存在度不超过 5 的顶点 $x$，删掉它后仍是简单可平面图。`, R`剩余图由归纳假设能 6 色染色，再把 $x$ 染回；邻点至多禁用 5 色。`],
       method: "m-color-greedy", sol: R`<p>按顶点数归纳。顶点数不超过 2 时显然成立。设 $v\ge3$，由 $2e\le6v-12\lt6v$，图中必有顶点 $x$ 满足 $d(x)\le5$，否则度数和至少为 $6v$。</p><p>删去 $x$ 后仍为简单可平面图，由归纳假设可用至多 6 色正常染色。再给 $x$ 染色，其至多 5 个邻点最多禁用 5 色，尚有一种可选。故原图也能 6 色染色。证明不要求原图连通。</p>` }
   ]
+},
+/* ---------------- G3 ---------------- */
+g3: {
+  unit: "graph", n: 3, title: "双计数：角、无 4-圈图与区组设计",
+  goal: "会按讲义的“分类求和、换序求和”把同一个集合数两遍；会用角数夹出无 4-圈图的边数上界（2022 期末 6），会数区组设计中每个元素出现的次数（2022 期末 2(3)）。30 分钟先做概念题和两道真题，讲义作业题作变种与延伸。",
+  sections: [
+    { id: "g3-s1", h: "1. 讲义 1.2 节：分类求和与换序求和", html: R`
+      <p>讲义的<b>离散 Fubini 定理</b>：$p:E\to B$ 是有限集之间的映射，$F_b=p^{-1}(\{b\})$，则对任意 $f:E\to\mathbb R$，</p>
+      $$\sum_{e\in E}f(e)=\sum_{b\in B}\ \sum_{e\in E,\ p(e)=b}f(e).$$
+      <p>这叫<b>按 $p(e)$ 的值分类求和</b>。取 $f\equiv1$，就是“总数 = 各类个数之和”。</p>
+      <p>若 $E\subseteq A\times B$，用两个投影各分类一次，得到<b>换序求和</b>：</p>
+      $$\sum_{a\in A}\ \sum_{b\in B,\ (a,b)\in E}f(a,b)=\sum_{b\in B}\ \sum_{a\in A,\ (a,b)\in E}f(a,b).$$
+      <p>交换内外层求和时，<b>约束条件 $(a,b)\in E$ 照写</b>。例如 $\sum_{i\lt j}a_{ij}=\sum_{i=1}^{n-1}\sum_{j=i+1}^na_{ij}=\sum_{j=2}^n\sum_{i=1}^{j-1}a_{ij}$。</p>
+      <p><b>双计数</b>就是 $f\equiv1$ 时的换序求和：先选好一个“配对集合” $E$，从 $A$ 这边数一次，从 $B$ 这边再数一次。握手定理就是对 $E=\{(v,e):v\in e\}$ 这样做：按顶点数得 $\sum d(v)$，按边数得 $2e(G)$。</p>` },
+    { id: "g3-s2", h: "2. 数角：按顶点分类，再用 Cauchy–Schwarz", html: R`
+      <p>2022 期末 6 的定义：两条有公共顶点的边 $AB,AC$ 构成一个<b>角</b>，$A$ 是角的<b>顶点</b>，$B,C$ 是角的<b>支点</b>。每个角由“顶点 + 两个支点”决定。</p>
+      <p><b>按顶点分类</b>：以 $v_i$ 为顶点的角，就是从 $v_i$ 的 $d_i$ 条边中选 2 条，所以</p>
+      $$S=\sum_{i=1}^n\binom{d_i}2=\frac12\sum_{i=1}^nd_i^2-E.$$
+      <p>最后一步用了握手定理 $\sum d_i=2E$。再由 Cauchy–Schwarz $n\sum d_i^2\ge\left(\sum d_i\right)^2=4E^2$：</p>
+      $$S\ge\frac{2E^2}{n}-E,$$
+      <p>等号当且仅当所有 $d_i$ 相等（正则图）。<b>下界只由 $n,E$ 决定</b>，与图的具体形状无关，这是后面夹逼的一半。</p>` },
+    { id: "g3-s3", h: "3. 换一种分类：按支点对数角，夹出无 4-圈图的边数", html: R`
+      <p><b>按支点对分类</b>：以 $\{B,C\}$ 为支点的角，顶点 $A$ 必须同时与 $B,C$ 相邻。记 $c(B,C)=|N(B)\cap N(C)|$（公共邻点数），则</p>
+      $$S=\sum_{\{B,C\}}c(B,C),$$
+      <p>和式取遍 $\binom n2$ 个无序点对。两种分类数的是同一批角，结果相同。</p>
+      <p><b>关键等价</b>（2022 期末 6(3)）：$G$ 无 4-圈 ⇔ 每个点对 $\{B,C\}$ 至多是一个角的支点，即 $c(B,C)\le1$。</p>
+      <ul>
+        <li>若 $c(B,C)\ge2$，取两个公共邻点 $A\ne A'$，则 $B,A,C,A'$ 是四个不同顶点，$BA,AC,CA',A'B$ 都是边，构成 4-圈。</li>
+        <li>若有 4-圈 $v_1v_2v_3v_4$，则 $v_2,v_4$ 都是 $v_1,v_3$ 的公共邻点，$c(v_1,v_3)\ge2$。</li>
+      </ul>
+      <p>于是无 4-圈时 $S\le\binom n2$。和第 2 节下界合起来：</p>
+      $$\frac{2E^2}{n}-E\le S\le\frac{n(n-1)}2.$$
+      <p>这是关于 $E$ 的二次不等式 $4E^2-2nE-n^2(n-1)\le0$，取正根即得 $E\le\frac{1+\sqrt{4n-3}}{4}\,n$，量级约为 $\frac12n^{3/2}$。下面的工具可以点顶点加删边，同时看两种数法和上下界。</p>` }
+  ],
+  widget: "anglePlay",
+  concepts: [
+    { id: "g3-c1", sec: "g3-s1", q: R`按讲义的换序求和，$\sum_{i=1}^{n}\sum_{j=1}^{i}a_{ij}$ 等于：`,
+      opts: [R`$\sum_{j=1}^{n}\sum_{i=1}^{j}a_{ij}$`, R`$\sum_{j=1}^{n}\sum_{i=j}^{n}a_{ij}$`, R`$\sum_{j=1}^{n}\sum_{i=1}^{n}a_{ij}$`, R`$\sum_{i=1}^{n}\sum_{j=i}^{n}a_{ij}$`], a: 1,
+      ex: R`约束是 $1\le j\le i\le n$。固定外层 $j$，内层 $i$ 从 $j$ 跑到 $n$。只交换求和顺序，约束本身不变。` },
+    { id: "g3-c2", sec: "g3-s2", q: R`星形树 $K_{1,4}$（中心连 4 个叶）的角数 $S$ 是：`,
+      opts: [R`4`, R`6`, R`8`, R`10`], a: 1,
+      ex: R`只有中心度为 4，其余度为 1：$S=\binom42+4\binom12=6$。下界 $2E^2/n-E=2\cdot16/5-4=2.4$，不是正则图，所以不取等。` },
+    { id: "g3-c3", sec: "g3-s3", q: R`简单图中两点 $B,C$ 有两个公共邻点。下面一定成立的是：`,
+      opts: [R`$B,C$ 相邻`, R`图中有 4-圈`, R`图中有三角形`, R`图不连通`], a: 1,
+      ex: R`公共邻点 $A\ne A'$ 给出 4-圈 $B\,A\,C\,A'$。$B,C$ 是否相邻无关；若相邻，还会多出三角形，但那不是“一定”。` },
+    { id: "g3-c4", sec: "g3-s3", q: R`$n$ 阶无 4-圈图的角数 $S$ 的最好的普遍上界是：`,
+      opts: [R`$n$`, R`$E$`, R`$\binom n2$`, R`$\binom n3$`], a: 2,
+      ex: R`每个无序点对至多贡献一个角，共 $\binom n2$ 对。蝴蝶图（两个三角形共用一个顶点）$n=5$ 时 $S=10=\binom52$，可以取到。` }
+  ],
+  methods: [
+    { id: "m-double-count", title: "双计数（讲义：分类求和 / 换序求和）", steps: [
+      R`先写清楚被数的对象：一个配对集合 $E\subseteq A\times B$，比如（顶点，边）、（角，支点对）、（元素，区组）。`,
+      R`按第一个分量分类求和，得到一个表达式；按第二个分量分类求和，得到另一个。`,
+      R`两式相等；其中一边常用已知量（度数、区组大小），另一边含要求的量。`,
+      R`换序时约束条件照写；检查边界情形（例如 $k\ge2$ 才能除以 $k-1$）。`] },
+    { id: "m-angle-bound", title: "角数夹逼：下界靠 Cauchy，上界靠结构", steps: [
+      R`按顶点数角：$S=\sum\binom{d_i}2$，Cauchy–Schwarz 给 $S\ge2E^2/n-E$。`,
+      R`按支点对数角：$S=\sum_{\{B,C\}}c(B,C)$，用题目的结构条件（无 4-圈 ⇔ $c\le1$）给上界。`,
+      R`把上下界连起来，得到 $E$ 的二次不等式，取正根。`,
+      R`回头说明每一步用到的条件（简单图、无 4-圈），以及等号何时可能成立。`] }
+  ],
+  problems: [
+    { id: "g3-p1", lv: "基础", src: "自编（讲义 1.2 节例题风格）", stmt: R`<p>(1) 某班 20 名学生，每人恰参加 3 个社团，每个社团恰有 5 名成员。共有几个社团？</p><p>(2) Petersen 图有 10 个顶点、每点度为 3，且没有 4-圈。求它的角数 $S$，并验证 $S\ge2E^2/n-E$ 与 $S\le\binom n2$。</p>`,
+      hints: [R`(1) 数配对（学生，社团），要求学生在社团里。`, R`按学生数：$20\times3$；按社团数：$5c$。`, R`(2) $E=15$，$S=10\binom32$；下界 $2\cdot15^2/10-15$；上界 $\binom{10}2=45$。`],
+      method: "m-double-count", sol: R`<p>(1) 设社团数为 $c$。配对集合 $\{(s,T):s\in T\}$ 按学生数得 $20\cdot3=60$，按社团数得 $5c$，故 $c=12$。</p><p>(2) $E=10\cdot3/2=15$，$S=10\binom32=30$。下界 $2\cdot225/10-15=30$，正好取等，因为 Petersen 图是 3-正则的。上界 $\binom{10}2=45\ge30$，符合无 4-圈的要求。边数界 $\frac{1+\sqrt{37}}4\cdot10\approx17.7\ge15$。</p>` },
+    { id: "g3-p2", lv: "真题", src: "2022 秋期末 6(1)–(4)", stmt: R`<p>在简单图 $G$ 中，称两条有公共顶点的边 $AB,AC$ 构成一个角，$A$ 为角的顶点，$B,C$ 为角的支点。</p><p>(1) 设 $G$ 是 $n$ 阶图，各顶点的度为 $d_1,\dots,d_n$。用它们表示角的总数 $S$。</p><p>(2) 利用 $n(d_1^2+\cdots+d_n^2)\ge(d_1+\cdots+d_n)^2$，证明：若 $G$ 有 $E$ 条边，则 $S\ge\frac{2E^2}n-E$。</p><p>(3) 证明：$G$ 中没有长为 4 的圈，当且仅当对任何两个不同顶点 $B,C$，以 $B,C$ 为支点的角至多一个。</p><p>(4) 利用 (2)(3) 证明：若 $n$ 阶图 $G$ 没有长为 4 的圈，则 $E\le\frac{1+\sqrt{4n-3}}4\,n$。</p>`,
+      hints: [R`(1)(2) 按角的顶点分类：$S=\sum\binom{d_i}2=\frac12\sum d_i^2-\frac12\sum d_i$，再代 $\sum d_i=2E$。`, R`(3) 以 $B,C$ 为支点的角对应 $B,C$ 的一个公共邻点。两个公共邻点 ⇔ 一个 4-圈的“对角”。`, R`(4) 按支点对分类得 $S\le\binom n2$；联立得 $4E^2-2nE-n^2(n-1)\le0$。`],
+      method: "m-angle-bound", sol: R`<p><b>(1)</b> 每个角恰有一个顶点。以 $v_i$ 为顶点的角由 $v_i$ 的两条不同的边决定，共 $\binom{d_i}2$ 个，所以 $S=\sum_{i=1}^n\binom{d_i}2$。</p>
+      <p><b>(2)</b> $S=\frac12\sum d_i^2-\frac12\sum d_i$，而 $\sum d_i=2E$。由题给不等式 $\sum d_i^2\ge\frac{4E^2}n$，所以 $S\ge\frac{2E^2}n-E$。</p>
+      <p><b>(3)</b> 以 $B,C$ 为支点的角 $\leftrightarrow$ $B,C$ 的公共邻点 $A$（角为 $AB,AC$），所以这种角的个数是 $c(B,C)=|N(B)\cap N(C)|$。</p>
+      <p>若某对 $B,C$ 有两个这样的角，顶点分别为 $A\ne A'$。$A,A'$ 与 $B,C$ 都相邻，在简单图中自然不等于 $B,C$；又 $B\ne C$，所以 $B,A,C,A'$ 互不相同，$BA,AC,CA',A'B$ 构成长为 4 的圈。反之，若有 4-圈 $v_1v_2v_3v_4$，则 $v_2v_1,v_2v_3$ 与 $v_4v_1,v_4v_3$ 是两个以 $v_1,v_3$ 为支点的不同角。两个方向的逆否合起来就是所求的等价。</p>
+      <p><b>(4)</b> 每个角恰有一对支点，按支点对分类求和得 $S=\sum_{\{B,C\}}c(B,C)$。无 4-圈时由 (3) 每项 $\le1$，所以 $S\le\binom n2$。结合 (2)：</p>
+      $$\frac{2E^2}n-E\le\frac{n(n-1)}2\iff4E^2-2nE-n^2(n-1)\le0.$$
+      <p>二次函数开口向上，$E$ 不超过较大的根：</p>
+      $$E\le\frac{2n+\sqrt{4n^2+16n^2(n-1)}}8=\frac{2n+2n\sqrt{4n-3}}8=\frac{1+\sqrt{4n-3}}4\,n.$$` },
+    { id: "g3-p3", lv: "真题", src: "2022 秋期末 2(3)", stmt: R`设 $Y_1,\dots,Y_b$ 都是 $X=\{1,2,\dots,v\}$ 的 $k$ 元子集（$k\ge2$），满足：对 $X$ 中任何两个不同元素 $x,x'$，恰有 $\lambda$ 个 $Y_i$ 同时包含 $x$ 与 $x'$。问：每个元素 $x\in X$ 恰被多少个 $Y_i$ 包含？`,
+      hints: [R`固定 $x$，设它属于 $r$ 个区组。要数的配对是 $(x',i)$：$x'\ne x$ 且 $\{x,x'\}\subseteq Y_i$。`, R`按 $x'$ 分类：$v-1$ 个 $x'$，每个对应 $\lambda$ 个 $i$。`, R`按 $i$ 分类：只有含 $x$ 的 $r$ 个区组有贡献，每个贡献 $k-1$ 个 $x'$。`],
+      method: "m-double-count", sol: R`<p>固定 $x\in X$，设 $x$ 恰属于 $r_x$ 个 $Y_i$。数集合 $P=\{(x',i):x'\ne x,\ x,x'\in Y_i\}$。</p>
+      <p>按 $x'$ 分类：$x'$ 有 $v-1$ 种取法，每种恰有 $\lambda$ 个 $i$，故 $|P|=\lambda(v-1)$。</p>
+      <p>按 $i$ 分类：若 $x\notin Y_i$，没有贡献；若 $x\in Y_i$，$x'$ 取 $Y_i\setminus\{x\}$，有 $k-1$ 个。故 $|P|=r_x(k-1)$。</p>
+      $$r_x=\frac{\lambda(v-1)}{k-1}.$$
+      <p>它与 $x$ 无关。自检：Fano 平面 $v=7,k=3,\lambda=1$，每点在 $r=3$ 条“线”上。再数（元素，区组）配对得 $bk=vr$，所以 $b=7$。</p>` }
+  ],
+  variants: [
+    { id: "g3-v1", lv: "变种", src: "自编：边数界的取整与构造", stmt: R`求 5 阶无 4-圈简单图的最大边数，并给出取到最大值的例子。`,
+      hints: [R`代入 $n=5$：$E\le\frac{1+\sqrt{17}}4\cdot5\approx6.40$，边数是整数。`, R`试“蝴蝶图”：两个三角形共用一个顶点。`, R`验证无 4-圈：逐对检查公共邻点数不超过 1，或者直接看出每个圈都在某个三角形里。`],
+      method: "m-angle-bound", sol: R`<p>由 2022 期末 6(4)，$E\le\frac{1+\sqrt{17}}4\cdot5\approx6.40$，所以 $E\le6$。</p><p>构造：中心 $c$ 与 $a,b,d,e$ 都相邻，另加边 $ab,de$，共 6 条边。中心与任一点的公共邻点只有该点的三角形同伴，$a,b$ 的公共邻点只有 $c$，$a,d$ 的公共邻点也只有 $c$，其余点对同理，每对的公共邻点都恰为 1 个，故无 4-圈。最大边数为 6。</p><p>此时 $S=\binom42+4\binom22=10=\binom52$，上界恰好取到。界不总是紧的：$n=7$ 时界给出 $E\le10$，而穷举可知最大值是 9。</p>` },
+    { id: "g3-v2", lv: "变种", src: "讲义作业 6.5.1(1)(2)", stmt: R`<p>对 $n$ 阶图 $G$ 的两个顶点 $u,v$，若 $uv$ 不是边，就在 $u,v$ 之间画一条虚边。证明：由一条实边和一条虚边构成的角的数目是</p>$$D=\sum_{i=1}^nd_i(n-1-d_i).$$`,
+      hints: [R`仍按角的顶点分类。`, R`顶点 $v_i$ 连出 $d_i$ 条实边和 $n-1-d_i$ 条虚边。`, R`一实一虚的角，就是从两类边中各选一条。`],
+      method: "m-double-count", sol: R`<p>每个角恰有一个顶点。在 $v_i$ 处，实边有 $d_i$ 条，虚边有 $n-1-d_i$ 条（$v_i$ 与其余每个点之间恰有一条实边或虚边）。一实一虚的角由一条实边和一条虚边决定，共 $d_i(n-1-d_i)$ 个。对 $i$ 求和即得 $D$。</p>` }
+  ],
+  extensions: [
+    { id: "g3-e1", lv: "延伸", src: "讲义作业 6.5.1(3)(4)", stmt: R`<p>沿用上题记号，令 $C=\sum\binom{d_i}2$ 为实角数。把 $K_n$ 的 $\binom n3$ 个三角形按边界上的实边数分类：三实边 $x$ 个，两实一虚 $y$ 个，一实两虚 $z$ 个。</p><p>(1) 证明 $3x+y=C$，$2y+2z=D$。</p><p>(2) 证明 $x\ge\frac{4E}{3n}\left(E-\frac{n^2}4\right)+\frac z3$。特别地，$E\gt n^2/4$ 时 $G$ 中有三角形。</p>`,
+      hints: [R`每个角恰好落在一个三角形里（补上两支点之间的那条边）。数每类三角形里各有几个实角、几个一实一虚角。`, R`三实边三角形有 3 个实角；两实一虚有 1 个实角、2 个一实一虚角；一实两虚有 2 个一实一虚角。`, R`消去 $y$：$3x=C-\frac D2+z$。再算 $C-\frac D2=\sum d_i^2-nE$，用 Cauchy。`],
+      method: "m-double-count", sol: R`<p><b>(1)</b> 每个角（实角或一实一虚角）由顶点和两个支点确定，恰位于 $K_n$ 的一个三角形中。按三角形分类求和：三实边三角形含 3 个实角；两实一虚三角形的两条实边交于一点，含 1 个实角和 2 个一实一虚角；一实两虚三角形含 0 个实角和 2 个一实一虚角；全虚三角形都不含。所以 $C=3x+y$，$D=2y+2z$。</p>
+      <p><b>(2)</b> 由 (1)，$3x=C-y=C-\frac D2+z$。计算</p>
+      $$C-\frac D2=\frac12\sum_i\left(d_i^2-d_i-(n-1)d_i+d_i^2\right)=\sum_id_i^2-\frac n2\sum_id_i=\sum_id_i^2-nE.$$
+      <p>由 Cauchy–Schwarz $\sum d_i^2\ge4E^2/n$，得 $3x\ge\frac{4E^2}n-nE+z=\frac{4E}n\left(E-\frac{n^2}4\right)+z$，两边除以 3 即为所求。当 $E\gt n^2/4$ 时右端为正，$x\gt0$，即有三角形（Mantel 定理）。</p>` },
+    { id: "g3-e2", lv: "延伸", src: "2022 期末 2(3) 的特例（讲义作业 6.8.7 背景）", stmt: R`$X$ 是 $v$ 元集。若一组 3 元子集使 $X$ 中任两个不同元素恰同属其中一个子集（施泰纳三元系），求每个元素所在的子集数 $r$ 与子集总数 $b$，并说明 $v\equiv1$ 或 $3\pmod 6$ 是必要条件。`,
+      hints: [R`这是 $k=3,\lambda=1$ 的区组设计，直接套 $r=\lambda(v-1)/(k-1)$。`, R`再数（元素，子集）配对：$bk=vr$。`, R`$r,b$ 都必须是整数：$v$ 为奇数，且 $6\mid v(v-1)$。`],
+      method: "m-double-count", sol: R`<p>由真题结论，$r=\frac{v-1}2$。数配对 $\{(x,i):x\in Y_i\}$：按 $x$ 得 $vr$，按 $i$ 得 $3b$，故 $b=\frac{v(v-1)}6$。</p><p>$r$ 为整数 ⇒ $v$ 为奇数；$b$ 为整数 ⇒ $3\mid v(v-1)$，即 $v\equiv0$ 或 $1\pmod3$。结合 $v$ 为奇数，得 $v\equiv1$ 或 $3\pmod6$。例如 $v=7$ 时 $r=3,b=7$（Fano 平面）。</p>` }
+  ]
 }
 };
 
@@ -1216,7 +1323,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay, anglePlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1697,6 +1804,76 @@ function planarPlay(mount) {
     $("#plane-result", mount).textContent = !answer.value || !Number.isInteger(guess) || guess < 1 ? "先输入一个正整数面数，再核对。" : `${guess === f ? "正确。" : "再数一次："}面数 f = 1+${c}−4+${es.length} = ${f}（含外部面）；4−${es.length}+${f} = ${1 + c} = 1+c。`;
   });
   draw();
+}
+
+
+/* ================= 交互工具：角的双计数与无 4-圈 ================= */
+function anglePlay(mount) {
+  const ring = (n, r, cx, cy, start) => Array.from({ length: n }, (_, i) => [cx + r * Math.cos(start + 2 * Math.PI * i / n), cy + r * Math.sin(start + 2 * Math.PI * i / n)]);
+  const top = -Math.PI / 2;
+  const presets = {
+    bowtie: { label: "蝴蝶图（5 点 6 边）", pos: [[300, 150], [170, 60], [170, 240], [430, 60], [430, 240]], edges: [[0, 1], [0, 2], [1, 2], [0, 3], [0, 4], [3, 4]] },
+    petersen: { label: "Petersen 图（10 点 3-正则）", pos: ring(5, 130, 300, 155, top).concat(ring(5, 62, 300, 155, top)), edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [0, 5], [1, 6], [2, 7], [3, 8], [4, 9], [5, 7], [7, 9], [9, 6], [6, 8], [8, 5]] },
+    cube: { label: "立方体图（8 点，有 4-圈）", pos: [[150, 60], [330, 60], [330, 240], [150, 240], [230, 120], [450, 120], [450, 280], [230, 280]].map(([x, y]) => [x, y - 15]), edges: [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]] },
+    c5: { label: "五边形 C5", pos: ring(5, 120, 300, 155, top), edges: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0]] },
+    k4: { label: "完全图 K4", pos: ring(4, 115, 300, 150, top), edges: [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]] },
+    empty: { label: "6 个孤立点（自己连边）", pos: ring(6, 120, 300, 150, top), edges: [] }
+  };
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="ang-preset">例图 <select id="ang-preset">${Object.entries(presets).map(([k, p]) => `<option value="${k}">${p.label}</option>`).join("")}</select></label><button class="btn" id="ang-clear" type="button">清空边</button></div>
+    <div id="ang-graph"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>已选中的顶点</span><span><i style="background:var(--bad)"></i>找到的一个 4-圈</span></div>
+    <div class="readout" id="ang-out" aria-live="polite"></div>
+    <div class="table-wrap" id="ang-table"></div>
+    <p class="small muted">先点一个顶点，再点另一个顶点：两点之间没有边就加上，有边就删掉。表格只列公共邻点数至少 2 的点对（它们就是 4-圈的“对角”）。</p>
+  </div>`;
+  const sel = $("#ang-preset", mount);
+  let pos = [], edges = new Set(), picked = -1;
+  const key = (a, b) => a < b ? a + "-" + b : b + "-" + a;
+  function load() {
+    const p = presets[sel.value];
+    pos = p.pos; edges = new Set(p.edges.map(([a, b]) => key(a, b))); picked = -1; draw();
+  }
+  function draw() {
+    const n = pos.length, adj = Array.from({ length: n }, () => new Set());
+    for (const k of edges) { const [a, b] = k.split("-").map(Number); adj[a].add(b); adj[b].add(a); }
+    const deg = adj.map(s => s.size), E = edges.size;
+    const S = deg.reduce((t, d) => t + d * (d - 1) / 2, 0);
+    let S2 = 0, bad = [], cycle = null;
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const common = [...adj[i]].filter(x => adj[j].has(x));
+      S2 += common.length;
+      if (common.length >= 2) { bad.push([i, j, common]); if (!cycle) cycle = [i, common[0], j, common[1]]; }
+    }
+    const onCycle = new Set();
+    if (cycle) for (let t = 0; t < 4; t++) onCycle.add(key(cycle[t], cycle[(t + 1) % 4]));
+    const lines = [...edges].map(k => {
+      const [a, b] = k.split("-").map(Number), hit = onCycle.has(k);
+      return `<line x1="${pos[a][0].toFixed(1)}" y1="${pos[a][1].toFixed(1)}" x2="${pos[b][0].toFixed(1)}" y2="${pos[b][1].toFixed(1)}" style="stroke:var(${hit ? "--bad" : "--muted"});stroke-width:${hit ? 4 : 2.2}"/>`;
+    }).join("");
+    const dots = pos.map(([x, y], i) => `<g data-v="${i}" role="button" tabindex="0" aria-label="顶点 ${i + 1}，度 ${deg[i]}" style="cursor:pointer"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="22" style="fill:var(${i === picked ? "--accent" : "--surface"});stroke:var(--ink);stroke-width:1.5"/><text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" style="fill:var(${i === picked ? "--accent-ink" : "--ink"});font:600 14px var(--f-mono);pointer-events:none">${i + 1}</text></g>`).join("");
+    $("#ang-graph", mount).innerHTML = `<svg viewBox="0 0 600 310" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="${n} 个顶点、${E} 条边的图${cycle ? "，红色标出一个 4-圈" : "，没有 4-圈"}">${lines}${dots}</svg>`;
+    const low = 2 * E * E / n - E, pairs = n * (n - 1) / 2, bound = n * (1 + Math.sqrt(4 * n - 3)) / 4;
+    $("#ang-out", mount).innerHTML = `<span>n = ${n}，E = ${E}，度数 (${deg.join(", ")})</span>`
+      + `<span>按顶点数：S = Σ C(dᵢ,2) = <b>${S}</b>；按支点对数：Σ c(B,C) = <b>${S2}</b>${S === S2 ? "，两种数法一致" : ""}。</span>`
+      + `<span>下界 2E²/n − E = ${low.toFixed(2)} ≤ S${Math.abs(low - S) < 1e-9 ? "（取等：正则图）" : ""}。</span>`
+      + (cycle ? `<span>有 4-圈：${cycle.map(v => v + 1).join("–")}–${cycle[0] + 1}；共有 ${bad.length} 个点对的公共邻点数 ≥ 2，所以上界 S ≤ C(n,2) 不再适用。</span>`
+        : `<span>无 4-圈：每对至多 1 个公共邻点，S = ${S} ≤ C(n,2) = ${pairs}；边数 E = ${E} ≤ n(1+√(4n−3))/4 = ${bound.toFixed(2)}。</span>`)
+      + (picked >= 0 ? `<span>已选顶点 ${picked + 1}，再点另一个顶点加边或删边。</span>` : "");
+    $("#ang-table", mount).innerHTML = bad.length ? `<table><thead><tr><th>点对 {B, C}</th><th>公共邻点</th><th>c(B,C)</th></tr></thead><tbody>${bad.slice(0, 12).map(([i, j, c]) => `<tr><td>{${i + 1}, ${j + 1}}</td><td>${c.map(v => v + 1).join(", ")}</td><td class="mono">${c.length}</td></tr>`).join("")}</tbody></table>${bad.length > 12 ? `<p class="small muted">另有 ${bad.length - 12} 对未列出。</p>` : ""}` : "";
+  }
+  function pick(v) {
+    if (picked < 0) picked = v;
+    else if (picked === v) picked = -1;
+    else { const k = key(picked, v); if (edges.has(k)) edges.delete(k); else edges.add(k); picked = -1; }
+    draw();
+  }
+  const graph = $("#ang-graph", mount);
+  graph.addEventListener("click", ev => { const g = ev.target.closest("[data-v]"); if (g) pick(+g.dataset.v); });
+  graph.addEventListener("keydown", ev => { const g = ev.target.closest("[data-v]"); if (g && (ev.key === "Enter" || ev.key === " ")) { ev.preventDefault(); pick(+g.dataset.v); } });
+  sel.addEventListener("change", load);
+  $("#ang-clear", mount).addEventListener("click", () => { edges = new Set(); picked = -1; draw(); });
+  load();
 }
 
 

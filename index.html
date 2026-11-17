@@ -282,7 +282,7 @@ const EXAM_MAP = [
 
 const SCHEDULE = [
   ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘（期中卷订正待拿到卷后补）", null]]],
-  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", "i2"], ["Day 3", "积分计算综合复盘", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
+  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", "i2"], ["Day 3", "积分计算综合复盘", "i3"], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "整理速查表 + 模拟卷 1（周末整块 2 小时）", null]]],
@@ -304,7 +304,7 @@ const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
   { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
   { id: "convex", title: "凸函数与拐点", lessons: ["c1"] },
-  { id: "int", title: "定积分计算", lessons: ["i1", "i2"] },
+  { id: "int", title: "定积分计算", lessons: ["i1", "i2", "i3"] },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
 ];
@@ -1026,6 +1026,113 @@ i2: {
       $$\sum_{m=0}^NI_{2m}=\pi-2W_{2N+2}.$$
       <p>对任意 $0\lt\delta\lt\pi/2$，把 $W_k$ 的积分区间分为两段，得到 $0\le W_k\le(\pi/2)(\cos\delta)^k+\delta$。先令 $k\to\infty$，再令 $\delta\to0^+$，可知 $W_k\to0$。所以所求级数和为 $\pi$。</p><p>这里先计算有限和，再取极限，没有预设“无穷和可以与积分交换”。</p>` }
   ]
+},
+/* ---------------- I3 ---------------- */
+i3: {
+  unit: "int", n: 3, title: "积分计算综合复盘：分诊、有理函数与原函数的连续性",
+  goal: "拿到积分先看结构再选方法；会拆有理函数并用配对技巧；会检查牛顿–莱布尼兹公式的前提（原函数在整个区间上连续），避开半角代换的跳跃陷阱。30 分钟先做概念题、基础题和两道真题，区间再现与 2020 期末 4 选做。",
+  sections: [
+    { id: "i3-s1", h: "1. 先分诊：看被积函数的结构", html: R`
+      <p>前两课分别练了换元、分部和递推。考场上难的往往不是计算，而是<b>第一步选哪条路</b>。按下面的顺序过一遍：</p>
+      <ul>
+        <li><b>复合函数且旁边有内层导数</b> → 凑微分。例：$\frac{x}{1+x^4}=\frac12\cdot\frac{(x^2)'}{1+(x^2)^2}$。</li>
+        <li><b>根式</b> $\sqrt{a^2-x^2}$、$\sqrt{(x-p)(q-x)}$ → 先配方，再令 $x-\frac{p+q}2=-\frac{q-p}2\cos\theta$ 之类的三角代换，根号变成 $\sin\theta$。</li>
+        <li><b>多项式乘 $e^x,\sin x$，或含 $\ln x,\arctan x$</b> → 分部：求导变简单的当 $u$。</li>
+        <li><b>有理函数</b> → 部分分式；<b>三角有理式</b> → 半角代换 $t=\tan\frac\theta2$（注意第 3 节的陷阱）。</li>
+        <li><b>题目给出“$F$ 是 $f$ 的原函数”而要积 $f'$</b> → 分部，把导数推回去：$\int xf'(x)\,dx=xf(x)-\int f(x)\,dx$。</li>
+        <li><b>对称区间或 $[0,\pi]$</b> → 先试奇偶性、区间再现 $x\mapsto a+b-x$，常能消掉难缠的因子。</li>
+        <li><b>带参数 $n$ 的一族积分</b> → 递推（上一课）。</li>
+      </ul>
+      <p>算完必做三项<b>自检</b>：不定积分求导还原；定积分看符号和粗略大小（被积函数的上下界乘区间长）；检查原函数在整个区间上是否连续。</p>` },
+    { id: "i3-s2", h: "2. 有理函数：部分分式、配方与配对", html: R`
+      <p>真分式先把分母分解成一次因子和不可约二次因子，再按形式设待定系数。例如 $1+x^3=(1+x)(x^2-x+1)$：</p>
+      $$\frac1{1+x^3}=\frac{1/3}{1+x}+\frac{-\frac13x+\frac23}{x^2-x+1}.$$
+      <p>二次因子那一项拆成“分母导数的倍数 + 常数”：$-\frac13x+\frac23=-\frac16(2x-1)+\frac12$。前者积出 $\ln$，后者配方积出 $\arctan$：</p>
+      $$\int\frac{dx}{x^2-x+1}=\int\frac{dx}{(x-\frac12)^2+\frac34}=\frac2{\sqrt3}\arctan\frac{2x-1}{\sqrt3}+C.$$
+      <p><b>配对技巧</b>（2022 电子系期末 1(2)）：$I=\int\frac{dx}{1+x^3}$ 与 $J=\int\frac{x\,dx}{1+x^3}$ 一起算。$I+J$ 的分子 $1+x$ 正好约掉一次因子，只剩配方；$I-J$ 的分子 $1-x$ 不能约分，但它恰好是 $\ln|1+x|$ 与 $\ln|1+x^3|$ 适当组合的导数的分子，可以直接验证：</p>
+      $$\frac{d}{dx}\Big(\ln|1+x|-\tfrac13\ln|1+x^3|\Big)=\frac1{1+x}-\frac{x^2}{1+x^3}=\frac{1-x}{1+x^3}.$$
+      <p>两式相加、相减再除以 2，就得到 $I,J$。<b>答案的区间</b>：被积函数在 $x=-1$ 无定义，原函数分别在 $(-\infty,-1)$ 与 $(-1,+\infty)$ 上成立，常数 $C$ 可以在两段上不同。</p>` },
+    { id: "i3-s3", h: "3. 牛顿–莱布尼兹的前提：原函数在整个区间上连续", html: R`
+      <p>公式 $\int_a^bf=F(b)-F(a)$ 要求 $F$ 在 $[a,b]$ 上<b>连续</b>，且在 $(a,b)$ 内 $F'=f$。半角代换给出的原函数常常违反这一点：$a\gt b\gt0$ 时</p>
+      $$F(\theta)=\frac2{\sqrt{a^2-b^2}}\arctan\Big(\sqrt{\tfrac{a+b}{a-b}}\tan\frac\theta2\Big)$$
+      <p>在 $\theta=\pi$ 处没有定义：左极限为 $\frac{\pi}{\sqrt{a^2-b^2}}$，右极限为 $-\frac{\pi}{\sqrt{a^2-b^2}}$。2021 期末 5(1) 的标准答案正是先把 $F$ 用左极限延拓到 $\theta=\pi$，再用公式。</p>
+      <p>若积分区间是 $[0,2\pi]$ 却直接写 $F(2\pi)-F(0)=0$，就错了：被积函数恒正，积分不可能为 0。正确做法是在 $\pi$ 处分段，或者给 $\theta\gt\pi$ 的那段加上跳跃量，让原函数连续。下面的工具可以看到跳跃，以及“数值积分”和“$F(b)-F(a)$”在跨过 $\pi$ 后分道扬镳。</p>
+      <p><b>区间再现</b>：令 $x=a+b-t$，$\int_a^bf(x)\,dx=\int_a^bf(a+b-x)\,dx$。在 $[0,\pi]$ 上，若 $h(\pi-x)=h(x)$，则 $\int_0^\pi xh(x)\,dx=\frac\pi2\int_0^\pi h(x)\,dx$：两式相加，$x+(\pi-x)=\pi$ 把讨厌的 $x$ 消掉。</p>
+      <p><b>认出反函数</b>：在 $(-1,1)$ 上 $\arctan\frac{x}{\sqrt{1-x^2}}=\arcsin x$；在 $(-1,1]$ 上 $\arctan\frac{1-x}{\sqrt{1-x^2}}=\frac12\arccos x$（用半角公式 $\tan\frac\varphi2=\sqrt{\frac{1-\cos\varphi}{1+\cos\varphi}}$，$\varphi=\arccos x$）。认出来后求导、积分都只剩一步。</p>` }
+  ],
+  widget: "primitiveCheck",
+  concepts: [
+    { id: "i3-c1", sec: "i3-s1", q: R`计算 $\int\frac{x^2}{1+x^6}\,dx$，最快的第一步是：`,
+      opts: [R`对 $1+x^6$ 做部分分式`, R`令 $u=x^3$`, R`分部，取 $u=x^2$`, R`令 $x=\tan t$`], a: 1,
+      ex: R`$du=3x^2\,dx$，积分化为 $\frac13\int\frac{du}{1+u^2}=\frac13\arctan x^3+C$。部分分式也能做，但要分解六次多项式。` },
+    { id: "i3-c2", sec: "i3-s2", q: R`$\frac1{1+x^3}$ 的部分分式应设为：`,
+      opts: [R`$\frac A{1+x}+\frac B{x^2-x+1}$`, R`$\frac A{1+x}+\frac{Bx+C}{x^2-x+1}$`, R`$\frac A{1+x}+\frac B{(1+x)^2}+\frac C{(1+x)^3}$`, R`$\frac{Ax+B}{1+x^3}$`], a: 1,
+      ex: R`$x^2-x+1$ 判别式为负、不可约，它上面的分子要设一次式 $Bx+C$。只设常数会缺一个自由度，解不出来。` },
+    { id: "i3-c3", sec: "i3-s3", q: R`有人用 $t=\tan\frac\theta2$ 算出 $\int_0^{2\pi}\frac{d\theta}{2-\cos\theta}=F(2\pi)-F(0)=0$。错误在于：`,
+      opts: [R`半角代换只能用于不定积分`, R`$F$ 在 $\theta=\pi$ 处不连续，不能整段用牛顿–莱布尼兹`, R`被积函数在 $[0,2\pi]$ 上不可积`, R`应该写成 $F(0)-F(2\pi)$`], a: 1,
+      ex: R`$F$ 在 $\pi$ 左右的极限分别为 $\pm\pi/\sqrt3$，跳了 $2\pi/\sqrt3$。被积函数连续且恒正，积分是 $2\pi/\sqrt3$。` },
+    { id: "i3-c4", sec: "i3-s3", q: R`在 $(-1,1)$ 上，$\arctan\frac{x}{\sqrt{1-x^2}}$ 等于：`,
+      opts: [R`$\arccos x$`, R`$\arcsin x$`, R`$\frac12\arcsin x$`, R`$\arctan x$`], a: 1,
+      ex: R`令 $x=\sin\varphi$，$\varphi\in(-\frac\pi2,\frac\pi2)$，则 $\frac{x}{\sqrt{1-x^2}}=\tan\varphi$，而 $\arctan\tan\varphi=\varphi$。` }
+  ],
+  methods: [
+    { id: "m-int-triage", title: "积分分诊：先看结构，再选方法", steps: [
+      R`有复合且有内层导数 → 凑微分；有根式 → 配方后三角代换；有 $\ln$、$\arctan$ 或“多项式 × 指数/三角” → 分部。`,
+      R`有理函数 → 部分分式；三角有理式 → 半角代换；题给原函数而要积 $f'$ → 分部把导数推回去。`,
+      R`区间对称或为 $[0,\pi]$ → 先试奇偶性与区间再现；含参数 $n$ → 递推。`,
+      R`自检：求导还原；看符号与大小；检查原函数在整个区间上连续。`] },
+    { id: "m-int-rational", title: "有理函数：拆分、配方、配对", steps: [
+      R`假分式先做多项式除法；分母分解为一次因子与不可约二次因子。`,
+      R`一次因子设常数分子，不可约二次因子设一次分子 $Bx+C$；代特殊点或比较系数求待定系数。`,
+      R`二次因子项拆成“分母导数的倍数”（积出 $\ln$）+ 常数（配方积出 $\arctan$）。`,
+      R`同分母的两个积分，可先算和与差（配对），再解出各自；写清原函数成立的区间。`] },
+    { id: "m-int-nl", title: "定积分用原函数前：检查连续性", steps: [
+      R`确认 $F'=f$ 在 $(a,b)$ 内每一点成立，特别是代换在区间内是否有奇点（如 $\tan\frac\theta2$ 在 $\theta=\pi$）。`,
+      R`端点处无定义：用单侧极限把 $F$ 延拓为连续函数，再用公式。`,
+      R`区间内有跳跃：在跳跃点分段，或给后一段加上跳跃量；也可用周期性、对称性把区间折半。`,
+      R`最后用“被积函数恒正 ⇒ 积分为正”等粗估核对。`] }
+  ],
+  problems: [
+    { id: "i3-p1", lv: "基础", src: "自编：三种结构各一题", stmt: R`计算：(1) $\displaystyle\int_0^1\frac{x}{1+x^4}\,dx$；(2) $\displaystyle\int_0^\pi x\sin x\,dx$；(3) $\displaystyle\int_1^e\ln^2x\,dx$。`,
+      hints: [R`(1) 凑微分 $u=x^2$；(2) 分部 $u=x$；(3) 分部 $u=\ln^2x$，$dv=dx$。`, R`(3) 一次分部后剩 $2\int_1^e\ln x\,dx$，再分部一次。`, R`$\int\ln x\,dx=x\ln x-x+C$。`],
+      method: "m-int-triage", sol: R`<p>(1) $u=x^2$，$du=2x\,dx$：$\frac12\int_0^1\frac{du}{1+u^2}=\frac12\cdot\frac\pi4=\frac\pi8$。</p><p>(2) $\int_0^\pi x\sin x\,dx=[-x\cos x]_0^\pi+\int_0^\pi\cos x\,dx=\pi+0=\pi$。</p><p>(3) $\int\ln^2x\,dx=x\ln^2x-2\int\ln x\,dx=x\ln^2x-2x\ln x+2x+C$。代入：$(e-2e+2e)-(0-0+2)=e-2$。</p><p>自检：(3) 被积函数在 $[1,e]$ 上介于 0 与 1 之间，区间长 $e-1\approx1.72$，答案 $\approx0.718$ 合理。</p>` },
+    { id: "i3-p2", lv: "真题", src: "2022 秋期末 1（电子系卷）", stmt: R`<p>(1) 设 $\frac{\sin x}{x}$ 是 $f(x)$ 的一个原函数，求 $\int xf'(x)\,dx$。</p><p>(2) 求不定积分 $I=\int\frac{dx}{1+x^3}$ 与 $J=\int\frac{x\,dx}{1+x^3}$。</p>`,
+      hints: [R`(1) 分部：$\int xf'(x)\,dx=xf(x)-\int f(x)\,dx$；$f$ 是 $\frac{\sin x}x$ 的导数。`, R`(2) $I+J=\int\frac{dx}{x^2-x+1}$，配方。`, R`$I-J=\int\frac{1-x}{1+x^3}\,dx$：验证 $\ln|1+x|-\frac13\ln|1+x^3|$ 的导数。`],
+      method: "m-int-rational", sol: R`<p><b>(1)</b> $f(x)=\left(\frac{\sin x}x\right)'=\frac{x\cos x-\sin x}{x^2}$。分部：</p>
+      $$\int xf'(x)\,dx=xf(x)-\int f(x)\,dx=\frac{x\cos x-\sin x}{x}-\frac{\sin x}x+C=\cos x-\frac{2\sin x}x+C.$$
+      <p><b>(2)</b> $1+x^3=(1+x)(x^2-x+1)$。</p>
+      $$I+J=\int\frac{dx}{x^2-x+1}=\frac2{\sqrt3}\arctan\frac{2x-1}{\sqrt3}+C_1,\qquad I-J=\ln|1+x|-\frac13\ln|1+x^3|+C_2.$$
+      <p>后者求导验证：$\frac1{1+x}-\frac{x^2}{1+x^3}=\frac{x^2-x+1-x^2}{1+x^3}=\frac{1-x}{1+x^3}$。由 $\ln|1+x^3|=\ln|1+x|+\ln(x^2-x+1)$，得</p>
+      $$I=\frac1{\sqrt3}\arctan\frac{2x-1}{\sqrt3}+\frac13\ln|1+x|-\frac16\ln(x^2-x+1)+C,$$
+      $$J=\frac1{\sqrt3}\arctan\frac{2x-1}{\sqrt3}-\frac13\ln|1+x|+\frac16\ln(x^2-x+1)+C.$$
+      <p>两式在 $x\lt-1$ 与 $x\gt-1$ 两段上分别成立，常数可以不同。</p>` },
+    { id: "i3-p3", lv: "真题", src: "2021 秋期末 5(2)（5(1) 见 i1）", stmt: R`给定正数 $p\lt q$，计算 $\displaystyle I=\int_p^q\frac1x\sqrt{(x-p)(q-x)}\,dx$。可以使用 5(1) 的结论：$a\gt b\gt0$ 时 $\int_0^\pi\frac{d\theta}{a-b\cos\theta}=\frac\pi{\sqrt{a^2-b^2}}$。`,
+      hints: [R`配方：记 $A=\frac{p+q}2$，$B=\frac{q-p}2$，则 $(x-p)(q-x)=B^2-(x-A)^2$。令 $x=A-B\cos\theta$，$\theta\in[0,\pi]$。`, R`根号变成 $B\sin\theta$，$dx=B\sin\theta\,d\theta$，$I=\int_0^\pi\frac{B^2\sin^2\theta}{A-B\cos\theta}\,d\theta$。`, R`把分子写成 $(A-B\cos\theta)(A+B\cos\theta)+(B^2-A^2)$。注意 $A^2-B^2=pq$。`],
+      method: "m-int-sub", sol: R`<p>记 $A=\frac{p+q}2$，$B=\frac{q-p}2$，$A\gt B\gt0$。令 $x=A-B\cos\theta$，$\theta:0\to\pi$ 时 $x:p\to q$。此时 $x-p=B(1-\cos\theta)$，$q-x=B(1+\cos\theta)$，根号为 $B\sin\theta\ge0$，$dx=B\sin\theta\,d\theta$：</p>
+      $$I=\int_0^\pi\frac{B^2\sin^2\theta}{A-B\cos\theta}\,d\theta.$$
+      <p>因为 $B^2\sin^2\theta=B^2-B^2\cos^2\theta=(A-B\cos\theta)(A+B\cos\theta)+(B^2-A^2)$，</p>
+      $$I=\int_0^\pi(A+B\cos\theta)\,d\theta+(B^2-A^2)\int_0^\pi\frac{d\theta}{A-B\cos\theta}=A\pi-(A^2-B^2)\frac{\pi}{\sqrt{A^2-B^2}}.$$
+      <p>又 $A^2-B^2=pq$，所以 $I=\pi\left(\frac{p+q}2-\sqrt{pq}\right)$。</p><p>自检：由均值不等式结果为正；$p=1,q=4$ 时为 $\pi/2$，与数值积分一致。</p>` }
+  ],
+  variants: [
+    { id: "i3-v1", lv: "变种", src: "自编：半角代换的跳跃陷阱", stmt: R`计算 $\displaystyle\int_0^{2\pi}\frac{d\theta}{2-\cos\theta}$，并指出直接写 $F(2\pi)-F(0)$ 为何得到错误的 0。`,
+      hints: [R`半角代换给 $F(\theta)=\frac2{\sqrt3}\arctan\big(\sqrt3\tan\frac\theta2\big)$，看它在 $\theta=\pi$ 两侧的极限。`, R`在 $\pi$ 处分段；后一段令 $\theta=2\pi-s$，化回 $[0,\pi]$。`, R`$[0,\pi]$ 上的积分用 2021 期末 5(1) 的结果，$a=2,b=1$。`],
+      method: "m-int-nl", sol: R`<p>由 2021 期末 5(1)，$\int_0^\pi\frac{d\theta}{2-\cos\theta}=\frac\pi{\sqrt3}$。后半段令 $\theta=2\pi-s$，$\cos\theta=\cos s$，得 $\int_\pi^{2\pi}=\int_0^\pi\frac{ds}{2-\cos s}=\frac\pi{\sqrt3}$。所以积分为 $\frac{2\pi}{\sqrt3}$。</p><p>错误原因：$F(\theta)=\frac2{\sqrt3}\arctan\big(\sqrt3\tan\frac\theta2\big)$ 在 $\pi$ 处无定义，左右极限为 $\pm\frac\pi{\sqrt3}$，跳了 $\frac{2\pi}{\sqrt3}$。它只是 $(0,\pi)$ 与 $(\pi,2\pi)$ 上各自的原函数，不是 $[0,2\pi]$ 上的连续原函数，牛顿–莱布尼兹公式不适用。给后一段加上跳跃量 $\frac{2\pi}{\sqrt3}$ 就得到连续原函数，结果相同。</p>` },
+    { id: "i3-v2", lv: "变种", src: "经典例题：区间再现", stmt: R`计算 $\displaystyle\int_0^\pi\frac{x\sin x}{1+\cos^2x}\,dx$。`,
+      hints: [R`$x\sin x$ 的原函数无法与分母配合；先想办法去掉 $x$。`, R`令 $x=\pi-t$：$\sin$ 不变，$\cos^2$ 不变，$x$ 变成 $\pi-t$。`, R`两式相加得 $2I=\pi\int_0^\pi\frac{\sin x}{1+\cos^2x}\,dx$，再令 $u=\cos x$。`],
+      method: "m-int-triage", sol: R`<p>令 $x=\pi-t$，得 $I=\int_0^\pi\frac{(\pi-t)\sin t}{1+\cos^2t}\,dt$。与原式相加：</p>
+      $$2I=\pi\int_0^\pi\frac{\sin x}{1+\cos^2x}\,dx=\pi\big[-\arctan(\cos x)\big]_0^\pi=\pi\Big(\frac\pi4+\frac\pi4\Big).$$
+      <p>所以 $I=\frac{\pi^2}4$。自检：被积函数在 $(0,\pi)$ 上为正，$\frac{\pi^2}4\approx2.47$，与数值积分一致。</p>` }
+  ],
+  extensions: [
+    { id: "i3-e1", lv: "延伸", src: "2020 秋期末 4（艾颖华整理）", stmt: R`<p>(1) 求 $\arctan\frac{1-x}{\sqrt{1-x^2}}$ 的导函数。</p><p>(2) 计算不定积分 $\displaystyle\int\frac1{\sqrt{1-x^2}}\arctan\frac{1-x}{\sqrt{1-x^2}}\,dx$。</p><p>(3) 计算 $\displaystyle I=\int_0^{1/2}\frac1{\sqrt{1-x^2}}\arctan\frac{x}{\sqrt{1-x^2}}\,dx+\int_{1/2}^1\frac1{\sqrt{1-x^2}}\arctan\frac{1-x}{\sqrt{1-x^2}}\,dx$。</p>`,
+      hints: [R`(1) 直接求导，或认出 $\arctan\frac{1-x}{\sqrt{1-x^2}}=\frac12\arccos x$。`, R`(2) 记 $u=\arctan\frac{1-x}{\sqrt{1-x^2}}$，由 (1) $\frac{dx}{\sqrt{1-x^2}}=-2\,du$。`, R`(3) 第一项的反正切就是 $\arcsin x$；第二项的原函数在 $x=1$ 处用左极限。`],
+      method: "m-int-nl", sol: R`<p><b>(1)</b> 在 $(-1,1)$ 上，令 $\varphi=\arccos x\in(0,\pi)$，则 $\frac{1-x}{\sqrt{1-x^2}}=\sqrt{\frac{1-\cos\varphi}{1+\cos\varphi}}=\tan\frac\varphi2$，所以函数等于 $\frac12\arccos x$，导数为 $-\frac1{2\sqrt{1-x^2}}$。</p>
+      <p><b>(2)</b> 由 (1)，原积分 $=\int\frac12\arccos x\cdot\frac{dx}{\sqrt{1-x^2}}=-\frac14\arccos^2x+C=-\arctan^2\frac{1-x}{\sqrt{1-x^2}}+C$。</p>
+      <p><b>(3)</b> 第一项：$\arctan\frac x{\sqrt{1-x^2}}=\arcsin x$，积分为 $\big[\frac12\arcsin^2x\big]_0^{1/2}=\frac{\pi^2}{72}$。</p>
+      <p>第二项：被积函数在 $x\to1^-$ 时有界（$\arctan$ 部分与 $\sqrt{1-x}$ 同阶），原函数 $-\frac14\arccos^2x$ 在 $[\frac12,1]$ 上连续，$x=1$ 处取值 0。所以第二项为 $0-\big(-\frac14\cdot\frac{\pi^2}9\big)=\frac{\pi^2}{36}$。</p>
+      $$I=\frac{\pi^2}{72}+\frac{\pi^2}{36}=\frac{\pi^2}{24}.$$` }
+  ]
 }
 };
 
@@ -1360,7 +1467,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot, wallisPlay })[LESSONS[v].widget](w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot, wallisPlay, primitiveCheck })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1881,6 +1988,80 @@ function wallisPlay(mount) {
   }
   family.addEventListener("change", draw);
   input.addEventListener("input", draw);
+  draw();
+}
+
+
+/* ================= 交互图：原函数是否连续 ================= */
+function primitiveCheck(mount) {
+  const r3 = Math.sqrt(3);
+  const cases = {
+    tan: { label: "1/(2−cos θ)，0 到 2π，半角代换", a: 0, b: 2 * Math.PI, f: t => 1 / (2 - Math.cos(t)),
+      F: t => 2 / r3 * Math.atan(r3 * Math.tan(t / 2)), jump: Math.PI, size: 2 * Math.PI / r3, fname: "1/(2−cos θ)", Fname: "(2/√3)·arctan(√3·tan(θ/2))", var: "θ" },
+    cubic: { label: "1/(1+x³)，0 到 3，部分分式", a: 0, b: 3, f: x => 1 / (1 + x ** 3),
+      F: x => Math.atan((2 * x - 1) / r3) / r3 + Math.log(1 + x) / 3 - Math.log(x * x - x + 1) / 6, fname: "1/(1+x³)", Fname: "arctan((2x−1)/√3)/√3 + ln(1+x)/3 − ln(x²−x+1)/6", var: "x" },
+    log: { label: "ln²x，1 到 e，两次分部", a: 1, b: Math.E, f: x => Math.log(x) ** 2,
+      F: x => x * Math.log(x) ** 2 - 2 * x * Math.log(x) + 2 * x, fname: "ln²x", Fname: "x ln²x − 2x ln x + 2x", var: "x" }
+  };
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="pc-case">例子 <select id="pc-case">${Object.entries(cases).map(([k, c]) => `<option value="${k}">${c.label}</option>`).join("")}</select></label></div>
+    <div class="ctrl"><label for="pc-end">上限 b <input id="pc-end" type="range" min="1" max="200" step="1" value="200"></label><b class="mono" id="pc-bv"></b></div>
+    <div class="ctrl" id="pc-fixrow"><label><input id="pc-fix" type="checkbox"> 修正：θ 过 π 后加上跳跃量 2π/√3</label></div>
+    <div id="pc-graph"></div>
+    <div class="legend"><span><i style="background:var(--accent)"></i>原函数 F（公式）</span><span><i style="background:var(--teal)"></i>虚线：F(a) + 数值积分</span></div>
+    <div class="readout" id="pc-out" aria-live="polite"></div>
+    <p class="small muted">上图是被积函数与积分区域，下图比较两条曲线。两条曲线重合，说明 F 在这一段上是连续原函数；一旦分开，F(b)−F(a) 就不再等于积分。</p>
+  </div>`;
+  const sel = $("#pc-case", mount), end = $("#pc-end", mount), fix = $("#pc-fix", mount);
+  function draw() {
+    const c = cases[sel.value], N = 600, a = c.a, B = c.b;
+    $("#pc-fixrow", mount).style.display = c.jump ? "" : "none";
+    const Fx = t => {
+      if (c.jump && Math.abs(t - c.jump) < 1e-12) return fix.checked ? c.size / 2 : NaN;
+      return c.F(t) + (c.jump && fix.checked && t > c.jump ? c.size : 0);
+    };
+    const xs = Array.from({ length: N + 1 }, (_, i) => a + (B - a) * i / N);
+    const cum = [Fx(a)];
+    for (let i = 1; i <= N; i++) {
+      const l = xs[i - 1], r = xs[i], m = (l + r) / 2;
+      cum.push(cum[i - 1] + (r - l) * (c.f(l) + 4 * c.f(m) + c.f(r)) / 6);
+    }
+    const k = Math.round(+end.value / 200 * N), b = xs[k];
+    const fmax = Math.max(...xs.map(c.f)) * 1.1;
+    const Fvals = xs.map(Fx).filter(Number.isFinite).concat(cum);
+    const lo = Math.min(...Fvals), hi = Math.max(...Fvals), pad = (hi - lo) * 0.08 || 1;
+    const X = x => 50 + 520 * (x - a) / (B - a);
+    const Y1 = y => 125 - 105 * y / fmax, Y2 = y => 300 - 140 * (y - lo + pad) / (hi - lo + 2 * pad);
+    const fPath = xs.map((x, i) => `${i ? "L" : "M"}${X(x).toFixed(1)},${Y1(c.f(x)).toFixed(1)}`).join(" ");
+    const area = `M${X(a)},${Y1(0)} ` + xs.slice(0, k + 1).map(x => `L${X(x).toFixed(1)},${Y1(c.f(x)).toFixed(1)}`).join(" ") + ` L${X(b).toFixed(1)},${Y1(0)} Z`;
+    let FPath = "", pen = false, prev = null;
+    for (const x of xs) {
+      const y = Fx(x);
+      if (!Number.isFinite(y) || (prev !== null && Math.abs(y - prev) > (hi - lo) * 0.3)) { pen = false; prev = Number.isFinite(y) ? y : null; if (!Number.isFinite(y)) continue; }
+      FPath += `${pen ? "L" : "M"}${X(x).toFixed(1)},${Y2(y).toFixed(1)} `; pen = true; prev = y;
+    }
+    const cumPath = xs.map((x, i) => `${i ? "L" : "M"}${X(x).toFixed(1)},${Y2(cum[i]).toFixed(1)}`).join(" ");
+    const jumpLine = c.jump ? `<line x1="${X(c.jump)}" y1="160" x2="${X(c.jump)}" y2="305" style="stroke:var(--warn);stroke-dasharray:3 4"/><text x="${X(c.jump) + 5}" y="172" style="fill:var(--warn);font:12px var(--f-mono)">θ = π</text>` : "";
+    $("#pc-graph", mount).innerHTML = `<svg viewBox="0 0 600 320" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="上图被积函数 ${c.fname}，阴影到 ${b.toFixed(3)}；下图原函数与数值积分曲线">
+      <path d="${area}" style="fill:var(--accent);opacity:0.18"/><path d="${fPath}" style="fill:none;stroke:var(--accent);stroke-width:2.2"/>
+      <path d="M50,20 V${Y1(0)} H575" style="fill:none;stroke:var(--muted);stroke-width:1"/>
+      <line x1="${X(b).toFixed(1)}" y1="20" x2="${X(b).toFixed(1)}" y2="305" style="stroke:var(--ink);stroke-width:1;opacity:0.5"/>
+      ${jumpLine}
+      <path d="M50,160 V300 H575" style="fill:none;stroke:var(--muted);stroke-width:1"/>
+      <path d="${cumPath}" style="fill:none;stroke:var(--teal);stroke-width:2.2;stroke-dasharray:6 4"/><path d="${FPath}" style="fill:none;stroke:var(--accent);stroke-width:2.5"/>
+      <text x="56" y="16" style="fill:var(--ink);font:500 13px var(--f-sans)">被积函数</text><text x="56" y="156" style="fill:var(--ink);font:500 13px var(--f-sans)">原函数</text>
+      <text x="44" y="${Y1(0) + 15}" style="fill:var(--muted);font:12px var(--f-mono)">${+a.toFixed(3)}</text><text x="545" y="${Y1(0) + 15}" style="fill:var(--muted);font:12px var(--f-mono)">${c.jump ? "2π" : +B.toFixed(3)}</text></svg>`;
+    $("#pc-bv", mount).textContent = `${c.var} = ${b.toFixed(3)}`;
+    const Fb = Fx(b), num = cum[k] - cum[0], diff = Fb - Fx(a);
+    const ok = Number.isFinite(Fb) && Math.abs(diff - num) < 1e-6;
+    $("#pc-out", mount).innerHTML = `<span>F = ${c.Fname}${c.jump && fix.checked ? "（过 π 后已加 2π/√3）" : ""}</span>`
+      + `<span>数值积分 ∫ = <b>${num.toFixed(6)}</b></span>`
+      + `<span>F(b) − F(a) = <b>${Number.isFinite(Fb) ? (Math.abs(diff) < 5e-7 ? 0 : diff).toFixed(6) : "F 在 π 处无定义"}</b></span>`
+      + `<span>${ok ? "两者一致：F 在 [a, b] 上连续，可用牛顿–莱布尼兹。" : Number.isFinite(Fb) ? `相差 ${(num - diff).toFixed(6)}（= 2π/√3 ≈ ${(2 * Math.PI / r3).toFixed(6)}）：F 在 π 处跳跃，不能整段用公式。` : "端点处要用单侧极限延拓 F。"}</span>`;
+  }
+  sel.addEventListener("change", () => { end.value = 200; fix.checked = false; draw(); });
+  end.addEventListener("input", draw);
+  fix.addEventListener("change", draw);
   draw();
 }
 
