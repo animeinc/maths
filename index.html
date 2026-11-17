@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="清华《高等微积分(1)》期末复习：按往年期末考点排序，含交互图、概念检测、分层提示与作答记录。">
-<style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<meta name="theme-color" content="#f5f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131116" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="高微1冲刺">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>html,body{margin:0}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
 <title>高微1 期末冲刺</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -192,6 +198,53 @@ pre.md { white-space: pre-wrap; background: var(--surface); border: 1px solid va
   h1 { font-size: 25px; }
   .widget canvas { height: 260px; }
 }
+/* 网格子元素允许收缩，长公式在自己的框里横向滚动，不把页面撑宽 */
+.col > *, .stack > *, .block > *, .prose > *, .prob .body > *, .widget > *, .q > *, .reveal > * { min-width: 0; }
+mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; margin: .5em 0 !important; padding-bottom: 2px; }
+.widget canvas { touch-action: pan-y; cursor: ew-resize; }
+.sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.sync-card { border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 10px; align-content: start; background: var(--surface); }
+.sync-card h3 { font-size: 16px; }
+.sync-card textarea { width: 100%; min-height: 84px; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--bg); font-family: var(--f-mono); font-size: 12px; resize: vertical; }
+.note { font-size: 13px; padding: 8px 12px; border-radius: 8px; }
+.note.ok { background: var(--good-soft); color: var(--good); }
+.note.no { background: var(--bad-soft); color: var(--bad); }
+.stat-row { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 14px; }
+.stat-row b { font-family: var(--f-mono); font-size: 18px; margin-right: 4px; }
+.pattern td:first-child { white-space: nowrap; }
+/* 平板 */
+@media (min-width: 861px) and (max-width: 1180px) {
+  .shell { grid-template-columns: 200px minmax(0, 1fr); }
+  .rail { padding-left: max(14px, env(safe-area-inset-left, 0px)); padding-right: 12px; }
+  main { padding-block: 26px 70px; }
+}
+/* 手机和竖屏平板：导航贴在顶部 */
+@media (max-width: 860px) {
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  .rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: var(--bg); padding-block: 10px 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 14px; }
+  .brand { font-size: 17px; }
+  .brand small { display: none; }
+  .sync { margin-top: 0; }
+  .nav { flex-basis: 100%; margin-top: 4px; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a.soon { display: none; }
+  main { padding-block: 20px 64px; }
+  .block { padding: 16px; }
+  .prob > header, .prob .body { padding-left: 14px; padding-right: 14px; }
+  .sync-grid { grid-template-columns: minmax(0, 1fr); }
+  .week { grid-template-columns: minmax(0, 1fr); }
+  .ctrl input[type=range] { width: 100%; }
+  .ctrl label { flex: 1 1 100%; }
+}
+/* 触屏：加大点击区域，输入框 16px 防止 iOS 自动放大 */
+@media (pointer: coarse) {
+  .btn { min-height: 42px; padding: 8px 15px; }
+  .q .opt { padding: 11px 14px; min-height: 44px; }
+  .nav a { padding: 9px 13px; }
+  textarea, select, input { font-size: 16px !important; }
+  .ctrl input[type=range] { height: 32px; }
+  .ctrl select { min-height: 38px; }
+}
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
@@ -226,7 +279,7 @@ const EXAM_MAP = [
 ];
 
 const SCHEDULE = [
-  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4–5", "中值定理证明：构造辅助函数", null], ["Day 6", "凸函数与拐点", null], ["Day 7", "复盘 + 订正今年期中卷", null]]],
+  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", null], ["Day 7", "复盘 + 订正今年期中卷", null]]],
   ["第 2 周", [["Day 1–3", "定积分计算：换元、分部、Wallis 递推", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
@@ -247,7 +300,7 @@ const MUST = [
 
 const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
-  { id: "mvt", title: "中值定理证明", lessons: [], soon: true },
+  { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
   { id: "int", title: "定积分计算", lessons: [], soon: true },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
@@ -483,6 +536,178 @@ t3: {
       hints: [R`$f(x_0)\gt0$ 的点很简单：复合函数求导。`, R`$f(x_0)=0$ 的点是 $f$ 的最小值点，所以 $f'(x_0)=0$。用 Peano 展开 $f(x)=\frac{f''(x_0)}2(x-x_0)^2+o((x-x_0)^2)$。`, R`$\frac{\sqrt{f(x)}}{x-x_0}$ 的左右极限分别是 $\mp\sqrt{f''(x_0)/2}$ 和 $\pm\cdots$，什么时候相等？`],
       method: "m-which", sol: R`<p>(1) $f(x_0)\gt0$：$\sqrt{\cdot}$ 在正数处可导，$\sqrt f$ 在 $x_0$ 处可导。</p><p>(2) $f(x_0)=0$：$x_0$ 是最小值点，$f'(x_0)=0$，$f''(x_0)\ge0$，且 $f(x)=\frac{f''(x_0)}2(x-x_0)^2+o((x-x_0)^2)$。于是 $$\frac{\sqrt{f(x)}-0}{x-x_0}=\frac{|x-x_0|}{x-x_0}\sqrt{\frac{f''(x_0)}2+o(1)}\to\pm\sqrt{\frac{f''(x_0)}2}\ (x\to x_0^\pm).$$ 左右导数相等当且仅当 $f''(x_0)=0$。</p><p><b>结论</b>：$\sqrt f$ 在 $x_0$ 可导 ⇔ $f(x_0)\gt0$，或 $f(x_0)=0$ 且 $f''(x_0)=0$。</p>` }
   ]
+},
+/* ---------------- M1 ---------------- */
+m1: {
+  unit: "mvt", n: 1, title: "构造辅助函数：Rolle、Lagrange、Cauchy",
+  goal: "看到“存在 $\\xi$ 使某个含 $f,f'$ 的式子成立”，能倒推出该对哪个辅助函数用 Rolle；分清三个中值定理各自管什么。",
+  sections: [
+    { id: "m1-s1", h: "1. 三个定理其实是一个", html: R`
+      <p>三个定理的条件都是“$[a,b]$ 上连续，$(a,b)$ 内可导”，结论里的 $\xi$ 都在<b>开区间</b> $(a,b)$ 里。</p>
+      <ul>
+        <li><b>Rolle</b>：$f(a)=f(b)$ ⇒ $\exists\xi$，$f'(\xi)=0$。几何上是“有一处切线水平”。</li>
+        <li><b>Lagrange</b>：$f'(\xi)=\frac{f(b)-f(a)}{b-a}$。证明就是对 $F(x)=f(x)-\frac{f(b)-f(a)}{b-a}(x-a)$ 用 Rolle，也就是把弦“扳平”。</li>
+        <li><b>Cauchy</b>：$\frac{f'(\xi)}{g'(\xi)}=\frac{f(b)-f(a)}{g(b)-g(a)}$（$g'\ne0$）。对 $F=f-kg$ 用 Rolle，$k$ 取弦的斜率。几何上是参数曲线 $(g(t),f(t))$ 有一处切线平行于弦（讲义第 7 周例 8）。</li>
+      </ul>
+      <p>下图拖动 $a,b$（或直接在图上左右拖），看满足 $f'(\xi)=\frac{f(b)-f(a)}{b-a}$ 的点：可能不止一个，定理只保证至少有一个。</p>` },
+    { id: "m1-s2", h: "2. 反推辅助函数：把结论“积回去”", html: R`
+      <p>证明题最难的一步是想到对谁用 Rolle。方法：把结论里的 $\xi$ 换成 $x$，看左边是哪个函数的导数（或差一个非零因子）。</p>
+      <div class="table-wrap"><table class="pattern"><thead><tr><th>要证 $\exists\xi$ 使……$=0$</th><th>辅助函数 $F(x)$</th><th>因为 $F'(x)=$</th></tr></thead><tbody>
+        <tr><td>$f'(\xi)+\lambda f(\xi)$</td><td>$e^{\lambda x}f(x)$</td><td>$e^{\lambda x}\big(f'+\lambda f\big)$</td></tr>
+        <tr><td>$f'(\xi)+g'(\xi)f(\xi)$</td><td>$e^{g(x)}f(x)$</td><td>$e^{g}\big(f'+g'f\big)$</td></tr>
+        <tr><td>$\xi f'(\xi)+kf(\xi)$</td><td>$x^kf(x)$</td><td>$x^{k-1}\big(xf'+kf\big)$</td></tr>
+        <tr><td>$\xi f'(\xi)-f(\xi)$</td><td>$\frac{f(x)}{x}$</td><td>$\frac{xf'-f}{x^2}$</td></tr>
+        <tr><td>$f'(\xi)g(\xi)+f(\xi)g'(\xi)$</td><td>$f(x)g(x)$</td><td>$f'g+fg'$</td></tr>
+        <tr><td>$f'(\xi)-c$（常数）</td><td>$f(x)-cx$</td><td>$f'-c$</td></tr>
+      </tbody></table></div>
+      <p>找到 $F$ 后还要检查 $F(a)=F(b)$，这一步通常正好用上题目给的条件。如果结论是“比值等于弦的斜率”，就直接用 Lagrange 或 Cauchy，并把要比较的两个函数选对。2022 秋期中那题选的是 $\frac{f(x)}x$ 和 $\frac1x$。</p>` }
+  ],
+  widget: "mvtPlot",
+  concepts: [
+    { id: "m1-c1", sec: "m1-s1", q: R`Rolle 定理的条件里，下面哪一条<b>不需要</b>？`,
+      opts: [R`$f$ 在 $[a,b]$ 上连续`, R`$f$ 在 $(a,b)$ 内可导`, R`$f(a)=f(b)$`, R`$f'$ 在 $(a,b)$ 内连续`], a: 3,
+      ex: R`只要求可导，不要求导函数连续。反过来，前三条缺一不可：$|x|$ 在 $[-1,1]$ 上缺“可导”，结论就不成立。` },
+    { id: "m1-c2", sec: "m1-s2", q: R`要证 $\exists\xi$ 使 $f'(\xi)+2f(\xi)=0$，应对哪个函数用 Rolle？`,
+      opts: [R`$e^{2x}f(x)$`, R`$e^{-2x}f(x)$`, R`$x^2f(x)$`, R`$f(x)^2$`], a: 0,
+      ex: R`$(e^{2x}f)'=e^{2x}(f'+2f)$，而 $e^{2x}\ne0$。这就是讲义第 7 周例 5 取 $\lambda=2$。` },
+    { id: "m1-c3", sec: "m1-s2", q: R`要证 $\exists\xi$ 使 $\xi f'(\xi)+2f(\xi)=0$，应对哪个函数用 Rolle？`,
+      opts: [R`$e^{2x}f(x)$`, R`$x^2f(x)$`, R`$\frac{f(x)}{x^2}$`, R`$xf(x)$`], a: 1,
+      ex: R`$(x^2f)'=2xf+x^2f'=x\big(xf'+2f\big)$。` },
+    { id: "m1-c4", sec: "m1-s1", q: R`为什么 Cauchy 中值定理不能“对 $f$、$g$ 分别用 Lagrange 再相除”来证明？`,
+      opts: [R`因为 $g$ 可能不可导`, R`因为两次得到的 $\xi$ 一般不是同一个点`, R`因为 Lagrange 只对多项式成立`, R`其实可以`], a: 1,
+      ex: R`分别用会得到 $f'(\xi_1)$ 和 $g'(\xi_2)$，而 Cauchy 要的是同一个 $\xi$。所以要对 $F=f-kg$ 只用一次 Rolle。` },
+    { id: "m1-c5", sec: "m1-s1", q: R`$f(x)=|x|$ 在 $[-1,2]$ 上，Lagrange 中值定理的结论成立吗？`,
+      opts: [R`成立，因为 $f$ 连续`, R`不成立：弦斜率 $\frac13$，而 $f'$ 只取 $\pm1$`, R`成立，取 $\xi=0$`, R`无法判断`], a: 1,
+      ex: R`$f$ 在 $0$ 处不可导，条件不满足；而 $f'(x)\in\{-1,1\}$，取不到 $\frac{2-1}{3}=\frac13$。` }
+  ],
+  methods: [
+    { id: "m-aux", title: "反推辅助函数", steps: [
+      R`把结论里的 $\xi$ 换成 $x$，得到要证为零的式子 $E(x)$。`,
+      R`认形：$f'+\lambda f\to e^{\lambda x}f$；$f'+g'f\to e^{g}f$；$xf'+kf\to x^kf$；$xf'-f\to\frac fx$；$f'g+fg'\to fg$。`,
+      R`检查 $F(a)=F(b)$（通常用上题目条件），用 Rolle 得 $F'(\xi)=0$，再约掉非零因子。`,
+      R`结论是“导数之比 = 函数差之比” → 直接用 Cauchy，关键是选对 $f$ 和 $g$。`] }
+  ],
+  problems: [
+    { id: "m1-p1", lv: "基础", src: "讲义第 7 周例 5", stmt: R`设 $\lambda$ 为实数，$f\in C[a,b]$，$f(a)=f(b)=0$，$f$ 在 $(a,b)$ 内可导。证明：$\exists\xi\in(a,b)$，使 $\lambda f(\xi)+f'(\xi)=0$。`,
+      hints: [R`$f'+\lambda f$ 是哪个函数的导数除以一个非零因子？`, R`$F(x)=e^{\lambda x}f(x)$，$F'(x)=e^{\lambda x}\big(f'(x)+\lambda f(x)\big)$。`, R`$F(a)=F(b)=0$，对 $F$ 用 Rolle。`],
+      method: "m-aux", sol: R`<p>令 $F(x)=e^{\lambda x}f(x)$，则 $F\in C[a,b]$，在 $(a,b)$ 内可导，$F(a)=F(b)=0$。由 Rolle 定理，$\exists\xi\in(a,b)$ 使 $F'(\xi)=e^{\lambda\xi}\big(f'(\xi)+\lambda f(\xi)\big)=0$。因 $e^{\lambda\xi}\ne0$，得 $\lambda f(\xi)+f'(\xi)=0$。</p>` },
+    { id: "m1-p2", lv: "真题", src: "2022 秋期中 证明题 2", stmt: R`设 $f$ 在 $[a,b]$ 上连续（$ab\gt0$），在 $(a,b)$ 内可导。证明：存在 $\xi\in(a,b)$，使 $\dfrac{af(b)-bf(a)}{b-a}=\xi f'(\xi)-f(\xi)$。`,
+      hints: [R`右边 $xf'-f$ 让人想到 $\big(\frac fx\big)'=\frac{xf'-f}{x^2}$，但多了一个 $x^2$。`, R`再找一个函数，它的导数是 $-\frac1{x^2}$：就是 $\frac1x$。对 $\frac{f(x)}x$ 和 $\frac1x$ 用 Cauchy。`, R`$ab\gt0$ 保证 $0\notin[a,b]$，两个函数都在 $[a,b]$ 上有定义且可导，$\big(\frac1x\big)'\ne0$。`],
+      method: "m-aux", sol: R`<p>令 $F(x)=\frac{f(x)}x$，$G(x)=\frac1x$。由 $ab\gt0$，$0\notin[a,b]$，$F,G$ 在 $[a,b]$ 上连续、$(a,b)$ 内可导，且 $G'(x)=-\frac1{x^2}\ne0$。由 Cauchy 中值定理，$\exists\xi\in(a,b)$：</p>
+      $$\frac{\frac{f(b)}b-\frac{f(a)}a}{\frac1b-\frac1a}=\frac{\frac{\xi f'(\xi)-f(\xi)}{\xi^2}}{-\frac1{\xi^2}}=f(\xi)-\xi f'(\xi).$$
+      <p>左边分子分母同乘 $ab$：$\frac{af(b)-bf(a)}{a-b}$。所以 $\frac{af(b)-bf(a)}{b-a}=\xi f'(\xi)-f(\xi)$。</p>` },
+    { id: "m1-p3", lv: "真题", src: "2023 秋期末 4", stmt: R`设 $f$ 在 $[a,b]$ 上连续，在 $(a,b)$ 内处处可导，$f(b)\gt f(a)$，记 $c=\frac{f(b)-f(a)}{b-a}$。证明下面两个断言必有一个成立：(1) 对任何 $x\in[a,b]$，$f(x)-f(a)=c(x-a)$；(2) 存在 $\xi\in(a,b)$，使 $f'(\xi)\gt c$。`,
+      hints: [R`把弦减掉：$g(x)=f(x)-f(a)-c(x-a)$，$g(a)=g(b)=0$。(1) 就是 $g\equiv0$。`, R`若 $g\not\equiv0$，有某点 $x_0$ 使 $g(x_0)\ne0$。分 $g(x_0)\gt0$ 和 $g(x_0)\lt0$ 两种情况。`, R`$g(x_0)\gt0$：在 $[a,x_0]$ 上对 $g$ 用 Lagrange；$g(x_0)\lt0$：在 $[x_0,b]$ 上用。两种情况都得到 $g'(\xi)\gt0$。`],
+      method: "m-aux", sol: R`<p>令 $g(x)=f(x)-f(a)-c(x-a)$，则 $g$ 在 $[a,b]$ 上连续、$(a,b)$ 内可导，$g(a)=g(b)=0$，$g'(x)=f'(x)-c$。</p>
+      <p>若 $g\equiv0$，即 (1) 成立。否则存在 $x_0\in(a,b)$ 使 $g(x_0)\ne0$。</p>
+      <p>若 $g(x_0)\gt0$，在 $[a,x_0]$ 上用 Lagrange：$\exists\xi\in(a,x_0)$，$g'(\xi)=\frac{g(x_0)-g(a)}{x_0-a}\gt0$。</p>
+      <p>若 $g(x_0)\lt0$，在 $[x_0,b]$ 上用 Lagrange：$\exists\xi\in(x_0,b)$，$g'(\xi)=\frac{g(b)-g(x_0)}{b-x_0}\gt0$。</p>
+      <p>两种情况都有 $f'(\xi)=g'(\xi)+c\gt c$，即 (2) 成立。</p>
+      <p class="small muted">条件 $f(b)\gt f(a)$ 在证明里其实没用到。</p>` },
+    { id: "m1-p4", lv: "真题", src: "2025 秋期中 6(2)", stmt: R`设 $f$ 在 $(a,b)$ 上有连续的导函数，$\lim_{x\to a^+}f(x)=+\infty$，$\lim_{x\to b^-}f(x)=-\infty$，且对任何 $x\in(a,b)$，$f'(x)+f^2(x)\ge-1$。证明：$b-a\ge\pi$。`,
+      hints: [R`$f'+f^2+1$ 出现在哪个导数里？想想 $\big(\arctan f\big)'=\frac{f'}{1+f^2}$。`, R`令 $g(x)=x+\arctan f(x)$，则 $g'=\frac{f'+f^2+1}{1+f^2}\ge0$，$g$ 单调不减。`, R`对 $x\lt y$ 有 $g(x)\le g(y)$，先令 $x\to a^+$，再令 $y\to b^-$。`],
+      method: "m-aux", sol: R`<p>令 $g(x)=x+\arctan f(x)$，则 $g'(x)=1+\frac{f'(x)}{1+f(x)^2}=\frac{f'(x)+f(x)^2+1}{1+f(x)^2}\ge0$，故 $g$ 在 $(a,b)$ 上单调不减。</p>
+      <p>对 $a\lt x\lt y\lt b$ 有 $g(x)\le g(y)$。令 $x\to a^+$：$\lim g(x)=a+\frac\pi2$，得 $a+\frac\pi2\le g(y)$；再令 $y\to b^-$：$a+\frac\pi2\le b-\frac\pi2$，即 $b-a\ge\pi$。</p>` }
+  ],
+  variants: [
+    { id: "m1-v1", lv: "变种", src: "仿例 5", stmt: R`设 $f\in C[0,1]$，在 $(0,1)$ 内可导，$f(1)=0$。证明：$\exists\xi\in(0,1)$，使 $\xi f'(\xi)+2f(\xi)=0$。`,
+      hints: [R`查表：$xf'+kf$ 对应 $x^kf$。`, R`$F(x)=x^2f(x)$，算 $F(0)$ 和 $F(1)$。`, R`$F(0)=0$ 不需要知道 $f(0)$ 的值。最后约掉 $\xi\ne0$。`],
+      method: "m-aux", sol: R`<p>令 $F(x)=x^2f(x)$，$F(0)=0=F(1)$。由 Rolle，$\exists\xi\in(0,1)$ 使 $F'(\xi)=\xi\big(\xi f'(\xi)+2f(\xi)\big)=0$，而 $\xi\gt0$，故 $\xi f'(\xi)+2f(\xi)=0$。</p>` },
+    { id: "m1-v2", lv: "变种", src: "仿例 5", stmt: R`设 $f\in C[0,1]$，在 $(0,1)$ 内可导，$f(0)=f(1)=0$。证明：$\exists\xi\in(0,1)$，使 $f'(\xi)=2\xi f(\xi)$。`,
+      hints: [R`改写成 $f'(\xi)+g'(\xi)f(\xi)=0$ 的形式，$g'(x)=?$`, R`$g'(x)=-2x$，$g(x)=-x^2$。`, R`$F(x)=e^{-x^2}f(x)$。`],
+      method: "m-aux", sol: R`<p>令 $F(x)=e^{-x^2}f(x)$，$F(0)=F(1)=0$。由 Rolle，$\exists\xi\in(0,1)$，$F'(\xi)=e^{-\xi^2}\big(f'(\xi)-2\xi f(\xi)\big)=0$，故 $f'(\xi)=2\xi f(\xi)$。</p>` }
+  ],
+  extensions: [
+    { id: "m1-e1", lv: "延伸", src: "讲义第 7 周例 2(3)：导数介值定理", stmt: R`设 $f$ 在开区间 $I$ 上可导，$a\lt b$ 属于 $I$，$f'(a)\lt\mu\lt f'(b)$。证明：存在 $\xi\in(a,b)$ 使 $f'(\xi)=\mu$。（注意：没有假设 $f'$ 连续。）`,
+      hints: [R`令 $g(x)=f(x)-\mu x$，则 $g'(a)\lt0\lt g'(b)$，要找 $g'$ 的零点。`, R`$g$ 在 $[a,b]$ 上连续，有最小值。最小值点会不会是端点？`, R`$g'(a)\lt0$ 说明 $a$ 右侧附近有点比 $g(a)$ 小；$g'(b)\gt0$ 说明 $b$ 左侧附近有点比 $g(b)$ 小。最小值点在内部，用 Fermat 定理。`],
+      method: "m-aux", sol: R`<p>令 $g(x)=f(x)-\mu x$，$g'(a)=f'(a)-\mu\lt0$，$g'(b)\gt0$。$g$ 在 $[a,b]$ 上连续，取到最小值。</p>
+      <p>由 $g'(a)=\lim_{x\to a^+}\frac{g(x)-g(a)}{x-a}\lt0$，由极限保号性，存在 $x\gt a$ 使 $g(x)\lt g(a)$，所以 $a$ 不是最小值点；同理由 $g'(b)\gt0$，存在 $x\lt b$ 使 $g(x)\lt g(b)$，$b$ 也不是。</p>
+      <p>于是最小值点 $\xi\in(a,b)$，由 Fermat 定理 $g'(\xi)=0$，即 $f'(\xi)=\mu$。</p>
+      <p class="small muted">推论：导函数没有第一类间断点（讲义例 7），所以“导函数有跳跃”的函数不存在原函数。</p>` }
+  ]
+},
+/* ---------------- M2 ---------------- */
+m2: {
+  unit: "mvt", n: 2, title: "双中值与零点个数",
+  goal: "会用“切一刀、各用一次”处理两个中值点的题，会用介值定理 + 单调性/Rolle 数零点。",
+  sections: [
+    { id: "m2-s1", h: "1. 两个中值点：先切开，再各用一次", html: R`
+      <p>题目要 $\xi\ne\eta$（或 $\xi\lt\eta$）时，在整个区间上用两次 Lagrange 得到的可能是同一个点。正确做法是在某点 $c$ 处把区间切成 $[a,c]$、$[c,b]$，在两段上各用一次，自动有 $\xi\lt c\lt\eta$。</p>
+      <p><b>$c$ 怎么选</b>：</p>
+      <ul>
+        <li>结论只和导数有关、关于两段对称（如 $f'(\xi)+f'(\eta)=\cdots$）→ 取中点 $c=\frac{a+b}2$。</li>
+        <li>结论里出现 $\frac1{f'}$ 或 $f'(\xi)f'(\eta)$ → 按<b>函数值</b>选：用介值定理找 $c$ 使 $f(c)$ 等于某个中间值，这样两段的 $f$ 增量相等，$c$ 只出现在分母里。</li>
+        <li>结论里有 $e^{f}f'$ 这样的组合 → 先令 $F=e^{f}$，对 $F$ 做上面的事。本学期期中第 5(2) 题就是这样。</li>
+      </ul>` },
+    { id: "m2-s2", h: "2. 数零点：介值定理管“有”，单调和 Rolle 管“几个”", html: R`
+      <ul>
+        <li><b>存在</b>：找两个函数值异号的点，用零点定理。</li>
+        <li><b>至多一个</b>：$f'$ 恒正（或恒负）⇒ $f$ 严格单调 ⇒ 至多一个零点。或者反证：若有两个零点，由 Rolle 得 $f'$ 有零点，矛盾。</li>
+        <li><b>零点个数往下传</b>：$f$ 有 $k$ 个不同零点 ⇒ $f'$ 至少有 $k-1$ 个（相邻两个零点之间各一个）。反过来，$f'$ 至多 $m$ 个零点 ⇒ $f$ 至多 $m+1$ 个零点。</li>
+        <li><b>单调区间数零点</b>：$f'$ 的零点把实轴分成若干段，$f$ 在每段上严格单调，每段至多一个零点；再看段端点处的函数值和 $\pm\infty$ 处的极限决定有没有。</li>
+      </ul>` }
+  ],
+  widget: null,
+  concepts: [
+    { id: "m2-c1", sec: "m2-s2", q: R`$f$ 在 $\mathbb R$ 上可导，有 3 个不同零点。$f'$ 至少有几个零点？`,
+      opts: [R`1 个`, R`2 个`, R`3 个`, R`不一定有`], a: 1, ex: R`相邻零点 $x_1\lt x_2\lt x_3$ 之间各用一次 Rolle，得到 $f'$ 在 $(x_1,x_2)$、$(x_2,x_3)$ 内各一个零点。` },
+    { id: "m2-c2", sec: "m2-s1", q: R`要证 $\exists\,0\lt\xi\lt\eta\lt1$ 满足某个关于 $f'(\xi),f'(\eta)$ 的等式，正确的起手是：`,
+      opts: [R`在 $[0,1]$ 上用两次 Lagrange`, R`选一点 $c\in(0,1)$，在 $[0,c]$、$[c,1]$ 上各用一次 Lagrange`, R`用 Cauchy 中值定理一次`, R`用 Taylor 公式展开到二阶`], a: 1,
+      ex: R`在同一个区间上用两次，定理只保证存在，可能给出同一个点，无法保证 $\xi\lt\eta$。` },
+    { id: "m2-c3", sec: "m2-s2", q: R`证明“方程 $x^3+x-1=0$ 恰有一个实根”，哪种说法完整？`,
+      opts: [R`$f(0)\lt0\lt f(1)$，所以恰有一个根`, R`$f'\gt0$，所以恰有一个根`, R`零点定理给出存在，$f'\gt0$ 给出至多一个`, R`三次方程总有三个根`], a: 2,
+      ex: R`“恰有一个”要分成“存在”和“至多一个”两半。只写一半会被扣分。` }
+  ],
+  methods: [
+    { id: "m-two", title: "双中值：切一刀", steps: [
+      R`$\xi,\eta$ 要不同 → 选 $c$，在 $[a,c]$、$[c,b]$ 上各用一次 Lagrange（或 Cauchy）。`,
+      R`$c$ 的选法：对称结论取中点；含 $\frac1{f'}$ 或乘积的，用介值定理按函数值选 $c$。`,
+      R`有 $e^{f}f'$ 等组合时，先换成 $F=e^{f}$ 再切。`,
+      R`收尾常用：$c(1-c)\le\frac14$，或均值不等式。`] },
+    { id: "m-roots", title: "零点个数", steps: [
+      R`<b>存在</b>：找异号点，零点定理；必要时用极限 $x\to\pm\infty$ 的符号。`,
+      R`<b>至多</b>：$f'$ 不变号 ⇒ 至多 1 个；$f$ 有 $k$ 个零点 ⇒ $f'$ 至少 $k-1$ 个（Rolle），用来反证。`,
+      R`<b>按单调区间数</b>：用 $f'$ 的零点切分，每段至多一个零点，看段端点值的符号。`,
+      R`“恰有 $n$ 个” = 存在 $n$ 个 + 至多 $n$ 个，两半都要写。`] }
+  ],
+  problems: [
+    { id: "m2-p1", lv: "基础", src: "讲义第 7 周例 4", stmt: R`证明 $f(x)=x^3+x-1$ 有唯一的零点。`,
+      hints: [R`分“存在”和“唯一”两部分。`, R`存在：$f(0)=-1$，$f(1)=1$。`, R`唯一：$f'(x)=3x^2+1\gt0$。`],
+      method: "m-roots", sol: R`<p><b>存在</b>：$f$ 连续，$f(0)=-1\lt0\lt1=f(1)$，由零点定理 $\exists x_0\in(0,1)$，$f(x_0)=0$。</p><p><b>唯一</b>：$f'(x)=3x^2+1\gt0$，$f$ 严格单调递增，至多一个零点。</p>` },
+    { id: "m2-p2", lv: "真题", src: "2022 秋期中 证明题 5", stmt: R`设 $f$ 在 $[a,b]$ 上二阶可导，$f(a)=f(b)$，$f'_+(a)f'_-(b)\gt0$。证明：存在 $\xi\in(a,b)$，使 $f''(\xi)=0$。`,
+      hints: [R`要 $f''$ 有零点，就要 $f'$ 有两个零点，再用一次 Rolle。`, R`不妨设 $f'_+(a)\gt0$，$f'_-(b)\gt0$。由保号性，$a$ 右侧有点 $x_1$ 使 $f(x_1)\gt f(a)$，$b$ 左侧有点 $x_2$ 使 $f(x_2)\lt f(b)$。`, R`$f(x_1)\gt f(a)=f(b)\gt f(x_2)$，介值定理在 $(x_1,x_2)$ 内找 $c$ 使 $f(c)=f(a)$。然后在 $[a,c]$、$[c,b]$ 上各用 Rolle。`],
+      method: "m-roots", sol: R`<p>不妨设 $f'_+(a)\gt0$，$f'_-(b)\gt0$（都小于 $0$ 时对 $-f$ 讨论）。由保号性，存在 $x_1\in(a,b)$ 靠近 $a$ 使 $f(x_1)\gt f(a)$，存在 $x_2\in(x_1,b)$ 靠近 $b$ 使 $f(x_2)\lt f(b)$。</p>
+      <p>由 $f(x_1)\gt f(a)=f(b)\gt f(x_2)$ 和介值定理，$\exists c\in(x_1,x_2)$ 使 $f(c)=f(a)=f(b)$。</p>
+      <p>在 $[a,c]$、$[c,b]$ 上分别用 Rolle：$\exists\xi_1\in(a,c)$，$\xi_2\in(c,b)$ 使 $f'(\xi_1)=f'(\xi_2)=0$。$f'$ 在 $[\xi_1,\xi_2]$ 上可导，再用 Rolle：$\exists\xi\in(\xi_1,\xi_2)$，$f''(\xi)=0$。</p>` },
+    { id: "m2-p3", lv: "真题", src: "2026 秋期中 5(2)（本学期）", stmt: R`已知 $f(0)=0$，$f(1)=1$，$f'$ 连续。证明：存在 $0\lt\xi\lt\eta\lt1$，使 $e^{f(\xi)+f(\eta)}f'(\xi)f'(\eta)\ge(e-1)^2$。`,
+      hints: [R`$e^{f(\xi)}f'(\xi)$ 是谁的导数？令 $F=e^{f}$，$F(0)=1$，$F(1)=e$。要证 $F'(\xi)F'(\eta)\ge(e-1)^2$。`, R`切一刀：在 $[0,c]$、$[c,1]$ 上对 $F$ 用 Lagrange。$c$ 按函数值选，让两段 $F$ 的增量相等：$F(c)=\frac{1+e}2$。`, R`得到 $F'(\xi)F'(\eta)=\frac{(e-1)^2/4}{c(1-c)}$，再用 $c(1-c)\le\frac14$。`],
+      method: "m-two", sol: R`<p>令 $F(x)=e^{f(x)}$，则 $F$ 在 $[0,1]$ 上可导，$F(0)=1$，$F(1)=e$，$F'(x)=e^{f(x)}f'(x)$。</p>
+      <p>$F$ 连续且 $1\lt\frac{1+e}2\lt e$，由介值定理 $\exists c\in(0,1)$ 使 $F(c)=\frac{1+e}2$。在 $[0,c]$ 与 $[c,1]$ 上分别用 Lagrange：$\exists\xi\in(0,c)$，$\eta\in(c,1)$，</p>
+      $$F'(\xi)=\frac{F(c)-F(0)}{c}=\frac{e-1}{2c},\qquad F'(\eta)=\frac{F(1)-F(c)}{1-c}=\frac{e-1}{2(1-c)}.$$
+      <p>于是 $e^{f(\xi)+f(\eta)}f'(\xi)f'(\eta)=F'(\xi)F'(\eta)=\frac{(e-1)^2}{4c(1-c)}\ge(e-1)^2$，因为 $c(1-c)\le\frac14$。且 $\xi\lt c\lt\eta$。</p>` },
+    { id: "m2-p4", lv: "真题", src: "讲义第 7 周例 6", stmt: R`证明 $n$ 次 Legendre 多项式 $\dfrac{d^n}{dx^n}\big[(x^2-1)^n\big]$ 在 $(-1,1)$ 内恰有 $n$ 个不同的实零点。`,
+      hints: [R`$P(x)=(x^2-1)^n$ 以 $\pm1$ 为 $n$ 重零点，所以 $k\lt n$ 时 $P^{(k)}(\pm1)=0$。`, R`归纳：设 $P^{(k)}$ 在 $(-1,1)$ 内至少有 $k$ 个不同零点，再加上 $\pm1$，一共 $k+2$ 个，用 Rolle 往下传。`, R`$P^{(n)}$ 在 $(-1,1)$ 内至少 $n$ 个零点，而它是 $n$ 次多项式，至多 $n$ 个。`],
+      method: "m-roots", sol: R`<p>令 $P(x)=(x^2-1)^n=(x-1)^n(x+1)^n$，则当 $0\le k\le n-1$ 时 $P^{(k)}(\pm1)=0$。</p>
+      <p><b>断言</b>：对 $0\le k\le n$，$P^{(k)}$ 在 $(-1,1)$ 内至少有 $k$ 个不同零点。$k=0$ 显然。设对 $k\lt n$ 成立，零点为 $-1\lt x_1\lt\cdots\lt x_k\lt1$；连同 $\pm1$ 共 $k+2$ 个零点，相邻两点间用 Rolle，得 $P^{(k+1)}$ 在 $(-1,1)$ 内至少 $k+1$ 个不同零点。</p>
+      <p>取 $k=n$：$P^{(n)}$ 在 $(-1,1)$ 内至少 $n$ 个不同零点。它是 $n$ 次多项式（首项系数 $\frac{(2n)!}{n!}\ne0$），至多 $n$ 个零点，故恰有 $n$ 个。</p>` }
+  ],
+  variants: [
+    { id: "m2-v1", lv: "变种", src: "仿 2026 期中 5(2)", stmt: R`设 $f\in C[0,1]$，在 $(0,1)$ 内可导，$f(0)=0$，$f(1)=1$。证明：存在 $0\lt\xi\lt\eta\lt1$，使 $\dfrac1{f'(\xi)}+\dfrac1{f'(\eta)}=2$。`,
+      hints: [R`结论里是 $\frac1{f'}$，按函数值选切点。`, R`取 $c$ 使 $f(c)=\frac12$。`, R`$f'(\xi)=\frac{1/2}{c}$，$f'(\eta)=\frac{1/2}{1-c}$，倒数相加。`],
+      method: "m-two", sol: R`<p>由介值定理取 $c\in(0,1)$ 使 $f(c)=\frac12$。在 $[0,c]$、$[c,1]$ 上用 Lagrange：$f'(\xi)=\frac1{2c}$，$f'(\eta)=\frac1{2(1-c)}$，$\xi\lt c\lt\eta$，且二者都不为零。于是 $\frac1{f'(\xi)}+\frac1{f'(\eta)}=2c+2(1-c)=2$。</p>` },
+    { id: "m2-v2", lv: "变种", src: "仿 2026 期中 5(2)", stmt: R`条件同上一题。证明：存在 $0\lt\xi\lt\eta\lt1$，使 $f'(\xi)+f'(\eta)=2$。`,
+      hints: [R`这次是导数相加，结论对称。`, R`取中点 $c=\frac12$。`, R`$f'(\xi)=2f(\tfrac12)$，$f'(\eta)=2\big(1-f(\tfrac12)\big)$。`],
+      method: "m-two", sol: R`<p>在 $[0,\frac12]$、$[\frac12,1]$ 上用 Lagrange：$f'(\xi)=\frac{f(\frac12)-0}{1/2}=2f(\tfrac12)$，$f'(\eta)=\frac{1-f(\frac12)}{1/2}=2-2f(\tfrac12)$，相加得 $2$。</p>` }
+  ],
+  extensions: [
+    { id: "m2-e1", lv: "延伸", src: "2026 秋期中 6（本学期）", stmt: R`称 $x_0$ 为 $f$ 的简单零点，若 $f(x_0)=0$，$f'(x_0)\ne0$。是否存在三阶可微函数 $f:\mathbb R\to\mathbb R$ 同时满足：(a) $f$ 恰有 2 个零点，且都是简单零点；(b) $f'$ 恰有 2 个零点，且都是简单零点；(c) $f''$ 恰有 1 个零点，且是简单零点？若存在，给出构造；若不存在，给出证明。`,
+      hints: [R`先试 $x^3-3x+k$：它满足 (b)(c)，但零点数只能是 1 或 3（2 个时是重根）。猜测不存在。`, R`由 (c)，$f''$ 在零点 $c$ 两侧异号且各自不变号，所以 $f'$ 在 $c$ 两侧分别严格单调；不妨设 $f'$ 在 $c$ 左减右增。由 (b)，两个零点 $b_1\lt c\lt b_2$，且 $f'\gt0$ 于 $(-\infty,b_1)\cup(b_2,\infty)$，$f'\lt0$ 于 $(b_1,b_2)$。`, R`看尾部：$x\lt b_1-1$ 时 $f'(x)\ge f'(b_1-1)\gt0$，所以 $f\to-\infty$（$x\to-\infty$）；同理 $f\to+\infty$（$x\to+\infty$）。按 $f(b_1),f(b_2)$ 的符号分情况数零点。`],
+      method: "m-roots", sol: R`<p><b>结论：不存在。</b></p>
+      <p>设 $c$ 是 $f''$ 唯一的零点，$f'''(c)\ne0$。$f''$ 连续且只在 $c$ 处为零，所以在 $(-\infty,c)$、$(c,\infty)$ 上各自不变号；又 $f'''(c)\ne0$，$f''$ 在 $c$ 两侧异号。必要时把 $f$ 换成 $-f$（不改变 (a)(b)(c)），不妨设 $f''\lt0$ 于 $(-\infty,c)$，$f''\gt0$ 于 $(c,\infty)$：$f'$ 在 $(-\infty,c]$ 严格减，在 $[c,\infty)$ 严格增。</p>
+      <p>每一侧 $f'$ 至多一个零点，而 $f'$ 恰有两个零点，所以 $b_1\lt c\lt b_2$，且 $f'(c)\lt f'(b_2)=0$。于是 $f'\gt0$ 于 $(-\infty,b_1)$，$f'\lt0$ 于 $(b_1,b_2)$，$f'\gt0$ 于 $(b_2,\infty)$：$f$ 依次严格增、减、增。</p>
+      <p><b>尾部</b>：$x\le b_1-1$ 时 $f'(x)\ge\delta:=f'(b_1-1)\gt0$，故 $f(x)\le f(b_1-1)-\delta(b_1-1-x)\to-\infty$；同理 $x\to+\infty$ 时 $f\to+\infty$。</p>
+      <p><b>数零点</b>（每个单调段至多一个）：若 $f(b_1)\gt0$ 且 $f(b_2)\lt0$，三段各有一个零点，共 3 个；若 $f(b_1)\lt0$，则 $f(b_2)\lt f(b_1)\lt0$，只在 $(b_2,\infty)$ 有 1 个；若 $f(b_2)\gt0$，只在 $(-\infty,b_1)$ 有 1 个；若 $f(b_1)=0$ 或 $f(b_2)=0$，该零点处 $f'=0$，不是简单零点。都不可能恰有 2 个简单零点，所以这样的 $f$ 不存在。</p>` }
+  ]
 }
 };
 
@@ -552,7 +777,7 @@ for (const L of Object.values(LESSONS)) for (const m of L.methods) methodById[m.
 /* ================= 导航 ================= */
 function renderNav() {
   const nav = $("#nav");
-  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>导出作答</span></a>`;
+  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>进度与同步</span></a>`;
   for (const u of UNITS) {
     h += `<span class="grp">${esc(u.title)}</span>`;
     if (u.soon) { h += `<a class="soon"><span>待生成</span></a>`; continue; }
@@ -574,21 +799,28 @@ function refreshNavProgress() {
     el.style.width = Math.round(100 * s.done / Math.max(1, s.total)) + "%";
   });
 }
-function markNav(v) { document.querySelectorAll("#nav a[data-v]").forEach(a => a.classList.toggle("cur", a.dataset.v === v)); }
+function markNav(v) {
+  let cur = null;
+  document.querySelectorAll("#nav a[data-v]").forEach(a => { const on = a.dataset.v === v; a.classList.toggle("cur", on); if (on) cur = a; });
+  const nav = $("#nav");
+  if (cur && nav.scrollWidth > nav.clientWidth + 4) nav.scrollTo({ left: cur.offsetLeft - nav.clientWidth / 2 + cur.offsetWidth / 2, behavior: "smooth" });
+}
+const LIVE = UNITS.filter(u => !u.soon).flatMap(u => u.lessons);
+function unitOf(lid) { return UNITS.find(u => u.lessons.includes(lid)); }
 
 /* ================= 首页 ================= */
 function viewHome() {
   const yrs = ["2021", "2022", "2023", "2025"];
   const rows = EXAM_MAP.map(([t, ys, s, note]) => `<tr><td>${esc(t)}${note ? `<div class="small muted">${esc(note)}</div>` : ""}</td>${ys.map(y => `<td class="yr">${y ? '<span class="dot" title="考了"></span>' : '<span class="no">·</span>'}</td>`).join("")}<td><span class="stars">${"★".repeat(s)}${"☆".repeat(5 - s)}</span></td></tr>`).join("");
   const weeks = SCHEDULE.map(([w, days]) => `<div class="week"><div class="wk">${w}</div><div class="days">${days.map(([d, t, l]) => l ? `<span class="live">${d} · <a href="#${l}">${esc(t)}</a></span>` : `<span class="later">${d} · ${esc(t)}</span>`).join("")}</div></div>`).join("");
-  const tl = UNITS[0].lessons.map(lid => { const L = LESSONS[lid]; return `<a href="#${lid}"><span class="n">TAYLOR · 第 ${L.n} 课 · 约 30 分钟</span><b>${esc(L.title)}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`; }).join("");
+  const tl = LIVE.map(lid => { const L = LESSONS[lid]; return `<a href="#${lid}"><span class="n">${esc(unitOf(lid).title)} · 第 ${L.n} 课</span><b>${esc(L.title)}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`; }).join("");
   return `
   <section class="stack">
     <span class="eyebrow">2026 秋 · 高等微积分(1) · 期末复习</span>
     <h1>六周，每天 30 分钟</h1>
     <p class="lede">这一页按往年期末卷的分值排复习顺序，不按讲义章节。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
   </section>
-  <section class="stack"><div class="sec-head"><h2>现在开始：Taylor 公式</h2><span class="t">往年期末每年必考</span></div><div class="lesson-cards">${tl}</div></section>
+  <section class="stack"><div class="sec-head"><h2>已上线的课</h2><span class="t">按日程顺序，每课约 30 分钟</span></div><div class="lesson-cards">${tl}</div></section>
   <section class="block">
     <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">据 2021–2023、2025 四套期末卷整理</span></div>
     <div class="table-wrap"><table><thead><tr><th>考点</th>${yrs.map(y => `<th style="text-align:center">${y}秋</th>`).join("")}<th>优先级</th></tr></thead><tbody>${rows}</tbody></table></div>
@@ -640,11 +872,84 @@ function buildMarkdown() {
   }
   return md;
 }
+/* ---------- 跨设备同步：文件 + 同步码，按每条记录的修改时间合并 ---------- */
+const META_KEY = "gw1-meta-v1";
+function getMeta() { try { return JSON.parse(localStorage.getItem(META_KEY) || "{}") || {}; } catch (e) { return {}; } }
+function setMeta(p) { try { localStorage.setItem(META_KEY, JSON.stringify(Object.assign(getMeta(), p))); } catch (e) {} }
+function snapshot() { return { app: "gw1", v: 1, exportedAt: Date.now(), state }; }
+function putRecord(id, rec) {
+  state[id] = JSON.parse(JSON.stringify(rec));
+  if (db) { const body = state[id]; chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {}); }
+}
+function mergeIn(obj) {
+  if (!obj || obj.app !== "gw1" || typeof obj.state !== "object") throw new Error("不是这个页面导出的进度");
+  let added = 0, updated = 0, kept = 0;
+  for (const [id, inc] of Object.entries(obj.state)) {
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !inc || typeof inc !== "object") continue;
+    const cur = state[id];
+    if (!cur) { putRecord(id, inc); added++; }
+    else if ((inc.updatedAt || 0) > (cur.updatedAt || 0)) { putRecord(id, inc); updated++; }
+    else kept++;
+  }
+  cacheLocal(); refreshNavProgress();
+  return { added, updated, kept };
+}
+function b64FromBytes(u8) { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+function bytesFromB64(b) { const s = atob(b); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+async function encodeCode(obj) {
+  const bytes = new TextEncoder().encode(JSON.stringify(obj));
+  if (window.CompressionStream) {
+    const gz = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new CompressionStream("gzip"))).arrayBuffer());
+    return "GW1z." + b64FromBytes(gz);
+  }
+  return "GW1." + b64FromBytes(bytes);
+}
+async function decodeCode(code) {
+  code = code.replace(/\s+/g, "");
+  let bytes;
+  if (code.startsWith("GW1z.")) {
+    if (!window.DecompressionStream) throw new Error("这个浏览器太旧，解不开压缩的同步码");
+    bytes = new Uint8Array(await new Response(new Blob([bytesFromB64(code.slice(5))]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
+  } else if (code.startsWith("GW1.")) bytes = bytesFromB64(code.slice(4));
+  else throw new Error("同步码应以 GW1 开头，请完整复制");
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+function ago(t) { if (!t) return "从未"; const m = Math.round((Date.now() - t) / 60000); return m < 1 ? "刚刚" : m < 60 ? `${m} 分钟前` : m < 1440 ? `${Math.round(m / 60)} 小时前` : `${Math.round(m / 1440)} 天前`; }
 function viewExport() {
   const md = buildMarkdown();
-  return `<section class="stack"><span class="eyebrow">导出</span><h1>我的作答</h1><p class="lede">${IN_CLAUDE ? "作答已经自动保存。想让 Claude 批改，直接在对话里说“批改我的高微作答”即可，Claude 能读到这里的记录；也可以复制下面的 Markdown 发给别的工具。" : "作答保存在这个浏览器里，换设备或清除浏览数据会丢失。复制下面的 Markdown 发给 Claude 批改，也顺便留个备份。"}</p></section>
-  <section class="stack"><div class="row"><button class="btn primary" id="copyMd">复制 Markdown</button><span class="small muted" id="copyMsg"></span></div><pre class="md" id="mdBox">${esc(md)}</pre></section>`;
+  const recs = Object.keys(state).length;
+  const answered = Object.values(state).filter(r => r && r.answer).length;
+  const last = Math.max(0, ...Object.values(state).map(r => (r && r.updatedAt) || 0));
+  const meta = getMeta();
+  const fileCard = IN_CLAUDE ? "" : `<div class="sync-card"><h3>进度文件</h3><p class="small muted">导出一个 .json 文件，用 AirDrop、iCloud 或微信传到另一台设备，再在那边“导入文件”。</p><div class="row"><button class="btn primary" id="expFile">导出进度文件</button><label class="btn" for="impFile">导入文件</label><input id="impFile" type="file" accept=".json,application/json" hidden></div></div>`;
+  return `<section class="stack"><span class="eyebrow">进度与同步</span><h1>在几台设备之间接着做</h1>
+    <p class="lede">${IN_CLAUDE ? "在 Claude 里打开时，进度会自动同步到云端，登录同一账号的手机、平板都能接着做。要和 GitHub 版互通，用下面的同步码。" : "进度自动保存在这个浏览器里。换设备时，先在旧设备导出，再到新设备导入。合并时每道题保留较新的那份记录，不会把另一台设备上的作答清空。"}</p></section>
+  <section class="block"><div class="stat-row"><span><b>${recs}</b>条记录</span><span><b>${answered}</b>道题写了作答</span><span>最后修改：${ago(last)}</span><span>上次导出：${ago(meta.lastExport)}</span></div><div id="syncMsg"></div></section>
+  <section class="sync-grid">
+    ${fileCard}
+    <div class="sync-card"><h3>同步码</h3><p class="small muted">把整份进度压缩成一段文字。点“复制”，发给自己（微信文件传输助手、备忘录），在另一台设备粘贴进来点“导入”。</p>
+      <div class="row"><button class="btn primary" id="copyCode">复制同步码</button></div>
+      <label for="codeIn" class="small muted">粘贴同步码：</label><textarea id="codeIn" placeholder="GW1z.H4sI…"></textarea>
+      <div class="row"><button class="btn" id="impCode">导入同步码</button></div></div>
+  </section>
+  <section class="stack"><div class="sec-head"><h2>作答汇总（Markdown）</h2><span class="t">发给 Claude 批改用</span></div><div class="row"><button class="btn" id="copyMd">复制 Markdown</button><span class="small muted" id="copyMsg"></span></div><pre class="md" id="mdBox">${esc(md)}</pre></section>`;
 }
+function syncNote(ok, text) { const el = $("#syncMsg"); if (el) el.innerHTML = `<div class="note ${ok ? "ok" : "no"}">${esc(text)}</div>`; }
+function mergedText(r) { return `导入完成：新增 ${r.added} 条，更新 ${r.updated} 条，本机较新而保留 ${r.kept} 条。`; }
+async function copyText(text, fallbackEl) {
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch (e) { if (fallbackEl) { fallbackEl.value = text; fallbackEl.focus(); fallbackEl.select(); } return false; }
+}
+document.addEventListener("change", e => {
+  if (e.target.id !== "impFile") return;
+  const file = e.target.files && e.target.files[0];
+  if (!file) return;
+  const rd = new FileReader();
+  rd.onload = () => { try { const r = mergeIn(JSON.parse(rd.result)); render(); syncNote(true, mergedText(r)); } catch (err) { syncNote(false, "导入失败：" + (err.message || "文件格式不对")); } };
+  rd.onerror = () => syncNote(false, "读不了这个文件，换一个试试。");
+  rd.readAsText(file);
+  e.target.value = "";
+});
 
 /* ================= 课程页 ================= */
 const STATUS = [["", "未做"], ["solved", "做出来了"], ["partial", "做了一部分"], ["failed", "没做出来"]];
@@ -693,16 +998,15 @@ function probHTML(p) {
 }
 function viewLesson(lid) {
   const L = LESSONS[lid];
-  const secs = L.sections.map(s => `<section class="stack" id="${s.id}"><h3>${s.h}</h3><div class="prose">${s.html === "__MUST__" ? mustTable() + R`<p class="small muted">$\tan x$、$\arctan x$ 可由前几个推出；$\frac1{1-x}$ 是等比级数。$\sin$ 只有奇次项、$\cos$ 只有偶次项，所以余项能多写一阶。</p>` : s.html}</div>${L.widget && s === L.sections[0] && L.widget === "taylorPlot" ? `<div id="widget"></div>` : ""}${L.widget === "lagrangeXi" && s === L.sections[0] ? `<div id="widget"></div>` : ""}</section>`).join("");
+  const secs = L.sections.map(s => `<section class="stack" id="${s.id}"><h3>${s.h}</h3><div class="prose">${s.html === "__MUST__" ? mustTable() + R`<p class="small muted">$\tan x$、$\arctan x$ 可由前几个推出；$\frac1{1-x}$ 是等比级数。$\sin$ 只有奇次项、$\cos$ 只有偶次项，所以余项能多写一阶。</p>` : s.html}</div>${L.widget && s === L.sections[0] ? `<div id="widget"></div>` : ""}</section>`).join("");
   const concepts = L.concepts.map(conceptHTML).join("");
   const probs = L.problems.map(probHTML).join("");
   const vars = L.variants.length ? `<details class="opt-zone" open><summary>变种题（${L.variants.length}）：换个外形，同一个套路</summary><div class="stack">${L.variants.map(probHTML).join("")}</div></details>` : "";
   const exts = L.extensions.length ? `<details class="opt-zone"><summary>延伸题（${L.extensions.length}，选做）：防超纲</summary><div class="stack">${L.extensions.map(probHTML).join("")}</div></details>` : "";
   const fin = (state["lesson-" + lid] || {}).done;
-  const idx = UNITS[0].lessons.indexOf(lid);
-  const next = UNITS[0].lessons[idx + 1];
+  const next = LIVE[LIVE.indexOf(lid) + 1];
   return `
-  <section class="stack"><span class="eyebrow">TAYLOR 公式 · 第 ${L.n} 课 · 约 30 分钟</span><h1>${L.title}</h1><p class="lede">${L.goal}</p></section>
+  <section class="stack"><span class="eyebrow">${esc(unitOf(lid).title)} · 第 ${L.n} 课 · 约 30 分钟</span><h1>${L.title}</h1><p class="lede">${L.goal}</p></section>
   <section class="block"><div class="sec-head"><h2>讲解</h2><span class="t">约 8 分钟</span></div>${secs}</section>
   <section class="stack"><div class="sec-head"><h2>概念检测</h2><span class="t">约 5 分钟 · 先做这里</span></div>${concepts}</section>
   <section class="stack"><div class="sec-head"><h2>做题</h2><span class="t">约 15 分钟 · 基础 → 真题</span></div>${probs}${vars}${exts}</section>
@@ -726,7 +1030,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) (LESSONS[v].widget === "taylorPlot" ? taylorPlot : lagrangeXi)(w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -816,6 +1120,34 @@ document.addEventListener("click", async e => {
     save("lesson-" + lid, { done: fin });
     t.textContent = fin ? "已完成本课 ✓（点击取消）" : "完成本课";
     t.classList.toggle("primary", !fin);
+    return;
+  }
+  if (t.id === "expFile") {
+    const blob = new Blob([JSON.stringify(snapshot(), null, 1)], { type: "application/json" });
+    const a = document.createElement("a");
+    const d = new Date();
+    a.href = URL.createObjectURL(blob);
+    a.download = `高微1进度_${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}_${String(d.getHours()).padStart(2, "0")}${String(d.getMinutes()).padStart(2, "0")}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    setMeta({ lastExport: Date.now() });
+    syncNote(true, "已导出进度文件。到另一台设备上点“导入文件”选择它。");
+    return;
+  }
+  if (t.id === "copyCode") {
+    try {
+      const code = await encodeCode(snapshot());
+      const ok = await copyText(code, $("#codeIn"));
+      setMeta({ lastExport: Date.now() });
+      syncNote(true, ok ? `同步码已复制（${Math.ceil(code.length / 1024)} KB 文字）。` : "浏览器不让直接复制，同步码已放进下面的框里并选中，请手动复制。");
+    } catch (err) { syncNote(false, "生成同步码失败：" + (err.message || err)); }
+    return;
+  }
+  if (t.id === "impCode") {
+    const code = ($("#codeIn").value || "").trim();
+    if (!code) { syncNote(false, "先把同步码粘贴到框里。"); return; }
+    try { const r = mergeIn(await decodeCode(code)); render(); syncNote(true, mergedText(r)); }
+    catch (err) { syncNote(false, "导入失败：" + (err.message || "同步码不完整")); }
     return;
   }
   if (t.id === "copyMd") {
@@ -947,9 +1279,82 @@ function taylorPlot(mount) {
   }
   sel.addEventListener("change", () => { setProbe(); draw(); });
   nIn.addEventListener("input", draw); xIn.addEventListener("input", draw);
+  const dragTo = e => { const r = cv.getBoundingClientRect(); xIn.value = Math.round(1000 * Math.min(1, Math.max(0, (e.clientX - r.left) / r.width))); draw(); };
+  cv.addEventListener("pointerdown", e => { try { cv.setPointerCapture(e.pointerId); } catch (_) {} dragTo(e); });
+  cv.addEventListener("pointermove", e => { if (cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId)) dragTo(e); });
   window.addEventListener("resize", draw);
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
   setProbe(); requestAnimationFrame(draw);
+}
+
+/* ================= 交互图：Lagrange 中值定理 ================= */
+function mvtPlot(mount) {
+  const f = x => 0.12 * x * x * x - 0.9 * x + 0.8 * Math.sin(1.6 * x) + 1;
+  const df = x => 0.36 * x * x - 0.9 + 1.28 * Math.cos(1.6 * x);
+  const X0 = -4, X1 = 4;
+  let ymin = Infinity, ymax = -Infinity;
+  for (let i = 0; i <= 400; i++) { const y = f(X0 + (X1 - X0) * i / 400); ymin = Math.min(ymin, y); ymax = Math.max(ymax, y); }
+  const pad = (ymax - ymin) * 0.12; ymin -= pad; ymax += pad;
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl">
+      <label for="ma">a = <b class="mono" id="mav"></b> <input id="ma" type="range" min="-380" max="380" value="-300"></label>
+      <label for="mb">b = <b class="mono" id="mbv"></b> <input id="mb" type="range" min="-380" max="380" value="250"></label>
+    </div>
+    <canvas id="mc" role="img" aria-label="函数图像、弦与满足中值定理的切点"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>f(x)</span><span><i style="background:var(--accent)"></i>弦 AB</span><span><i style="background:var(--teal)"></i>切线平行于弦的点 ξ</span></div>
+    <div class="readout" id="mr"></div>
+    <p class="small muted">在图上左右拖动会移动离手指更近的那个端点。试着让 a、b 包住两个“弯”，满足条件的 ξ 会变成 3 个。</p>
+  </div>`;
+  const cv = $("#mc", mount), aIn = $("#ma", mount), bIn = $("#mb", mount);
+  function roots(a, b, k) {
+    const out = [], N = 600; let px = a, pv = df(a) - k;
+    for (let i = 1; i <= N; i++) {
+      const x = a + (b - a) * i / N, v = df(x) - k;
+      if (pv === 0 && i > 1) out.push(px);
+      else if (pv * v < 0) { let lo = px, hi = x; for (let j = 0; j < 40; j++) { const m = (lo + hi) / 2; if ((df(lo) - k) * (df(m) - k) <= 0) hi = m; else lo = m; } out.push((lo + hi) / 2); }
+      px = x; pv = v;
+    }
+    return out.filter(x => x > a + 1e-6 && x < b - 1e-6);
+  }
+  function draw() {
+    let a = +aIn.value / 100, b = +bIn.value / 100;
+    if (b - a < 0.3) { if (document.activeElement === aIn) { a = b - 0.3; aIn.value = Math.round(a * 100); } else { b = a + 0.3; bIn.value = Math.round(b * 100); } }
+    $("#mav", mount).textContent = a.toFixed(2); $("#mbv", mount).textContent = b.toFixed(2);
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const X = x => (x - X0) / (X1 - X0) * W, Y = y => H - (y - ymin) / (ymax - ymin) * H;
+    g.strokeStyle = css("--grid"); g.lineWidth = 1;
+    for (let i = Math.ceil(X0); i <= X1; i++) { g.beginPath(); g.moveTo(X(i), 0); g.lineTo(X(i), H); g.stroke(); }
+    g.strokeStyle = css("--muted"); g.beginPath(); g.moveTo(0, Y(0)); g.lineTo(W, Y(0)); g.stroke();
+    g.fillStyle = css("--accent-soft"); g.fillRect(X(a), 0, X(b) - X(a), H);
+    g.strokeStyle = css("--ink"); g.lineWidth = 2.2; g.beginPath();
+    for (let i = 0; i <= W; i++) { const x = X0 + (X1 - X0) * i / W; i ? g.lineTo(i, Y(f(x))) : g.moveTo(i, Y(f(x))); }
+    g.stroke();
+    const fa = f(a), fb = f(b), k = (fb - fa) / (b - a);
+    g.strokeStyle = css("--accent"); g.lineWidth = 2; g.beginPath(); g.moveTo(X(a), Y(fa)); g.lineTo(X(b), Y(fb)); g.stroke();
+    const xs = roots(a, b, k), half = (X1 - X0) * 0.09;
+    g.setLineDash([6, 4]); g.strokeStyle = css("--teal"); g.lineWidth = 1.8;
+    for (const x of xs) { const y = f(x); g.beginPath(); g.moveTo(X(x - half), Y(y - k * half)); g.lineTo(X(x + half), Y(y + k * half)); g.stroke(); }
+    g.setLineDash([]);
+    g.fillStyle = css("--teal"); for (const x of xs) { g.beginPath(); g.arc(X(x), Y(f(x)), 4.5, 0, 7); g.fill(); }
+    g.fillStyle = css("--accent"); for (const [x, y] of [[a, fa], [b, fb]]) { g.beginPath(); g.arc(X(x), Y(y), 5, 0, 7); g.fill(); }
+    g.font = "12px " + css("--f-mono"); g.fillStyle = css("--accent"); g.fillText("A", X(a) - 14, Y(fa) - 8); g.fillText("B", X(b) + 6, Y(fb) - 8);
+    $("#mr", mount).innerHTML = `<span>弦斜率 k = <b>${k.toFixed(3)}</b></span><span>满足 f′(ξ) = k 的点：<b>${xs.length}</b> 个${xs.length ? "（ξ = " + xs.map(x => x.toFixed(2)).join("、") + "）" : ""}</span>`;
+  }
+  aIn.addEventListener("input", draw); bIn.addEventListener("input", draw);
+  let drag = null;
+  const xAt = e => { const r = cv.getBoundingClientRect(); return X0 + (X1 - X0) * Math.min(1, Math.max(0, (e.clientX - r.left) / r.width)); };
+  cv.addEventListener("pointerdown", e => {
+    const x = xAt(e); drag = Math.abs(x - aIn.value / 100) <= Math.abs(x - bIn.value / 100) ? aIn : bIn;
+    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    drag.value = Math.round(Math.max(-3.8, Math.min(3.8, x)) * 100); drag.focus({ preventScroll: true }); draw();
+  });
+  cv.addEventListener("pointermove", e => { if (!drag || !(cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId))) return; drag.value = Math.round(Math.max(-3.8, Math.min(3.8, xAt(e))) * 100); draw(); });
+  cv.addEventListener("pointerup", () => { drag = null; });
+  window.addEventListener("resize", draw);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  requestAnimationFrame(draw);
 }
 
 /* ================= 交互图：Lagrange 中值点 ================= */
