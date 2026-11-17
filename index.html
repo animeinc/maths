@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="清华《高等微积分(1)》期末复习：按往年期末考点排序，含交互图、概念检测、分层提示与作答记录。">
+<style>html,body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>高微1 期末冲刺</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$']], processEscapes: true },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg-full.js"></script>
+<style>
+/* Layout: left rail of units/lessons + one reading column; rail becomes a scrolling top strip on phones. */
+:root {
+  --bg: #f5f4f7;
+  --surface: #ffffff;
+  --ink: #1e1a24;
+  --muted: #6a6375;
+  --line: #e1dce8;
+  --accent: #6a2477;
+  --accent-ink: #ffffff;
+  --accent-soft: #f1e6f4;
+  --teal: #0f7480;
+  --good: #2c7a4b;
+  --good-soft: #e3f2e8;
+  --warn: #9c5c00;
+  --warn-soft: #fbefd9;
+  --bad: #b3261e;
+  --bad-soft: #fbe5e3;
+  --grid: #ece8f1;
+  --f-display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --f-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131116; --surface: #1c1a21; --ink: #ece8f2; --muted: #a49dae; --line: #2f2a36;
+    --accent: #cf9fdc; --accent-ink: #1c1121; --accent-soft: #2d2234; --teal: #55c6d1;
+    --good: #72c793; --good-soft: #1d2f24; --warn: #e3a64c; --warn-soft: #33281a;
+    --bad: #f18c82; --bad-soft: #3a2220; --grid: #26222c; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131116; --surface: #1c1a21; --ink: #ece8f2; --muted: #a49dae; --line: #2f2a36;
+  --accent: #cf9fdc; --accent-ink: #1c1121; --accent-soft: #2d2234; --teal: #55c6d1;
+  --good: #72c793; --good-soft: #1d2f24; --warn: #e3a64c; --warn-soft: #33281a;
+  --bad: #f18c82; --bad-soft: #3a2220; --grid: #26222c; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15.5px; line-height: 1.75; }
+a { color: var(--accent); }
+button, select, textarea, input { font: inherit; color: inherit; }
+button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.shell { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100%; }
+.rail { border-right: 1px solid var(--line); padding-block: 28px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 18px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.brand { font-family: var(--f-display); font-size: 21px; font-weight: 700; letter-spacing: .02em; line-height: 1.3; }
+.brand small { display: block; font-family: var(--f-body); font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: .06em; margin-top: 4px; }
+.sync { font-size: 12px; color: var(--muted); margin-top: 10px; display: flex; gap: 6px; align-items: center; }
+.sync i { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); display: inline-block; }
+.sync.on i { background: var(--good); }
+.nav { display: grid; gap: 2px; margin-top: 26px; }
+.nav .grp { font-size: 11.5px; letter-spacing: .12em; color: var(--muted); margin: 16px 0 4px; }
+.nav a { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; text-decoration: none; color: var(--ink); padding: 6px 10px; border-radius: 7px; font-size: 14px; }
+.nav a:hover { background: var(--accent-soft); }
+.nav a.cur { background: var(--accent); color: var(--accent-ink); }
+.nav a .pc { font-family: var(--f-mono); font-size: 11.5px; opacity: .75; }
+.nav a.soon { color: var(--muted); pointer-events: none; }
+main { min-width: 0; padding-block: 34px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.col { max-width: 820px; margin: 0 auto; display: grid; gap: 28px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.35; margin: 0; }
+h1 { font-size: 30px; }
+h2 { font-size: 22px; }
+h3 { font-size: 17.5px; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 64ch; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; color: var(--accent); font-weight: 700; }
+.stack { display: grid; gap: 12px; }
+.prose { display: grid; gap: 12px; max-width: 68ch; }
+.prose ul, .prose ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.block { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 22px; display: grid; gap: 14px; min-width: 0; }
+.sec-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.sec-head .t { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; font-size: 12px; padding: 1px 9px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.chip.src { border-color: transparent; background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+.chip.lv-基础 { background: var(--good-soft); color: var(--good); border-color: transparent; }
+.chip.lv-真题 { background: var(--accent-soft); color: var(--accent); border-color: transparent; }
+.chip.lv-变种 { background: var(--warn-soft); color: var(--warn); border-color: transparent; }
+.chip.lv-延伸 { background: var(--bad-soft); color: var(--bad); border-color: transparent; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 5px 13px; cursor: pointer; font-size: 13.5px; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); color: var(--accent-ink); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; }
+td.yr { text-align: center; font-family: var(--f-mono); }
+td.yr .dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--accent); }
+td.yr .no { color: var(--line); }
+.stars { color: var(--warn); letter-spacing: 2px; font-size: 13px; white-space: nowrap; }
+.week { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 4px 14px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.week:last-child { border-bottom: 0; }
+.week .wk { font-family: var(--f-display); font-weight: 700; font-size: 16px; }
+.week .days { display: grid; gap: 3px; font-size: 14px; }
+.week .days span.live { color: var(--accent); font-weight: 500; }
+.week .days span.later { color: var(--muted); }
+.callout { border-left: 3px solid var(--teal); background: color-mix(in srgb, var(--teal) 8%, var(--surface)); padding: 12px 16px; border-radius: 0 8px 8px 0; font-size: 14.5px; }
+.callout.warn { border-left-color: var(--warn); background: var(--warn-soft); }
+.method { border: 1px dashed var(--accent); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 8px; background: var(--surface); }
+.method h4 { margin: 0; font-family: var(--f-display); font-size: 15.5px; color: var(--accent); }
+.method ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.cmp { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cmp > div { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 6px; align-content: start; }
+.cmp b { font-family: var(--f-display); }
+.widget { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.widget canvas { width: 100%; height: 320px; display: block; border-radius: 6px; background: var(--bg); }
+.ctrl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; font-size: 13.5px; }
+.ctrl label { display: flex; gap: 8px; align-items: center; }
+.ctrl input[type=range] { width: 150px; accent-color: var(--accent); }
+.ctrl select { border: 1px solid var(--line); border-radius: 6px; background: var(--surface); padding: 3px 6px; }
+.readout { font-family: var(--f-mono); font-size: 13px; display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--muted); }
+.readout b { color: var(--ink); font-weight: 600; }
+.legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+.legend i { display: inline-block; width: 18px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px; }
+.poly { overflow-x: auto; font-size: 14px; min-height: 2.2em; }
+.xi-line { position: relative; height: 54px; margin: 6px 12px; }
+.xi-line .bar { position: absolute; left: 0; right: 0; top: 24px; height: 2px; background: var(--line); }
+.xi-line .seg { position: absolute; top: 23px; height: 4px; background: var(--accent-soft); }
+.xi-line .pt { position: absolute; top: 17px; width: 2px; height: 16px; background: var(--muted); }
+.xi-line .pt span { position: absolute; top: 18px; left: 50%; transform: translateX(-50%); font-family: var(--f-mono); font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.xi-line .xi { position: absolute; top: 15px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--accent); transition: left .15s; }
+.xi-line .xi span { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--accent); font-weight: 700; white-space: nowrap; }
+.q { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); padding: 16px 18px; display: grid; gap: 10px; }
+.q .opts { display: grid; gap: 6px; }
+.q .opt { text-align: left; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 7px 12px; cursor: pointer; }
+.q .opt:hover { border-color: var(--accent); }
+.q .opt.right { border-color: var(--good); background: var(--good-soft); }
+.q .opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.verdict { font-size: 14px; padding: 8px 12px; border-radius: 8px; }
+.verdict.ok { background: var(--good-soft); color: var(--good); }
+.verdict.no { background: var(--bad-soft); color: var(--bad); }
+.verdict .ex { color: var(--ink); display: block; margin-top: 2px; }
+.prob { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); display: grid; min-width: 0; }
+.prob > header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.prob > header .pid { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.prob > header .st { margin-left: auto; font-size: 12.5px; }
+.prob .body { padding: 14px 18px 18px; display: grid; gap: 12px; min-width: 0; }
+.prob .stmt { overflow-x: auto; }
+.reveal { display: grid; gap: 8px; }
+.reveal .card { border-radius: 8px; padding: 10px 14px; font-size: 14.5px; overflow-x: auto; }
+.reveal .card.hint { background: var(--warn-soft); }
+.reveal .card.meth { background: var(--accent-soft); }
+.reveal .card.sol { background: var(--bg); border: 1px solid var(--line); }
+.reveal .card .lab { font-size: 12px; font-weight: 700; letter-spacing: .08em; display: block; margin-bottom: 2px; color: var(--muted); }
+.ans { display: grid; gap: 8px; }
+.ans textarea { width: 100%; min-height: 110px; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; background: var(--bg); font-size: 14.5px; line-height: 1.6; }
+.ans .pv { font-size: 14.5px; border-left: 2px solid var(--line); padding-left: 12px; color: var(--ink); overflow-x: auto; }
+.ans .pv:empty { display: none; }
+.fb { background: var(--bg); border: 1px solid var(--teal); border-radius: 8px; padding: 10px 14px; font-size: 14.5px; white-space: pre-wrap; overflow-x: auto; }
+.fb .lab { font-size: 12px; font-weight: 700; color: var(--teal); letter-spacing: .08em; display: block; }
+.opt-zone > summary { cursor: pointer; font-weight: 500; color: var(--accent); }
+.opt-zone[open] > summary { margin-bottom: 12px; }
+.progress { height: 6px; background: var(--grid); border-radius: 99px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--accent); }
+.lesson-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.lesson-cards a { text-decoration: none; color: var(--ink); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; display: grid; gap: 8px; background: var(--surface); }
+.lesson-cards a:hover { border-color: var(--accent); }
+.lesson-cards .n { font-family: var(--f-mono); font-size: 12px; color: var(--muted); }
+.done-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 16px; }
+.mono { font-family: var(--f-mono); }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+pre.md { white-space: pre-wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; font-family: var(--f-mono); font-size: 12.5px; max-height: 420px; overflow: auto; }
+@media (max-width: 860px) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); padding-block: 16px 10px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .nav { display: flex; overflow-x: auto; gap: 6px; margin-top: 12px; padding-bottom: 6px; }
+  .nav .grp { display: none; }
+  .nav a { white-space: nowrap; border: 1px solid var(--line); }
+  .lesson-cards, .cmp { grid-template-columns: minmax(0, 1fr); }
+  h1 { font-size: 25px; }
+  .widget canvas { height: 260px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">高微1 期末冲刺<small>2026 秋 · 高等微积分(1)</small></div>
+    <div class="sync" id="sync"><i></i><span>本浏览器保存</span></div>
+    <nav class="nav" id="nav"></nav>
+  </aside>
+  <main><div class="col" id="view"></div></main>
+</div>
+
+<script>
+/* ================= 内容数据 ================= */
+const R = String.raw;
+
+const EXAM_MAP = [
+  // topic, [2021,2022,2023,2025], stars, note
+  ["Taylor 公式（Peano / Lagrange 余项）", [1,1,1,1], 5, "每年必考，常与极限、证明结合"],
+  ["定积分计算：换元、分部、递推", [1,1,1,1], 5, "Wallis 型递推、面积"],
+  ["反常积分敛散性", [1,1,1,1], 5, "用 Taylor 判阶后比较"],
+  ["变上限积分：求导、极限", [1,1,1,1], 4, ""],
+  ["凸函数 / 拐点", [1,1,1,1], 4, "斜率不等式、二阶导判别"],
+  ["微积分基本定理：叙述并证明", [1,1,1,0], 4, "背诵型送分题"],
+  ["中值定理证明（构造辅助函数）", [0,1,1,1], 4, "Rolle、Lagrange、Cauchy"],
+  ["积分不等式（Cauchy–Schwarz）", [1,1,0,0], 3, ""],
+  ["级数敛散性", [1,1,0,0], 2, "近两年没考，待确认是否在大纲内"],
+  ["积分应用：面积、体积、极坐标", [0,0,0,1], 3, "2025 年新出现"],
+  ["微分方程（一阶线性、二阶常系数）", [0,0,0,1], 3, "2025 年新出现，占 2 题"],
+  ["数列极限（Stolz、积分和）", [0,0,0,1], 2, ""]
+];
+
+const SCHEDULE = [
+  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4–5", "中值定理证明：构造辅助函数", null], ["Day 6", "凸函数与拐点", null], ["Day 7", "复盘 + 订正今年期中卷", null]]],
+  ["第 2 周", [["Day 1–3", "定积分计算：换元、分部、Wallis 递推", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
+  ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
+  ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
+  ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "整理速查表 + 模拟卷 1（周末整块 2 小时）", null]]],
+  ["第 6 周", [["Day 1–5", "模拟卷 2、3 + 错题回炉", null], ["Day 6–7", "考前过速查表", null]]]
+];
+
+const MUST = [
+  [R`e^x`, R`1+x+\frac{x^2}{2!}+\cdots+\frac{x^n}{n!}+o(x^n)`],
+  [R`\sin x`, R`x-\frac{x^3}{3!}+\frac{x^5}{5!}-\cdots+(-1)^{m}\frac{x^{2m+1}}{(2m+1)!}+o(x^{2m+2})`],
+  [R`\cos x`, R`1-\frac{x^2}{2!}+\frac{x^4}{4!}-\cdots+(-1)^m\frac{x^{2m}}{(2m)!}+o(x^{2m+1})`],
+  [R`\ln(1+x)`, R`x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots+(-1)^{n-1}\frac{x^n}{n}+o(x^n)`],
+  [R`(1+x)^\alpha`, R`1+\alpha x+\frac{\alpha(\alpha-1)}{2!}x^2+\cdots+\binom{\alpha}{n}x^n+o(x^n)`],
+  [R`\tan x`, R`x+\frac{x^3}{3}+o(x^4)`],
+  [R`\arctan x`, R`x-\frac{x^3}{3}+o(x^4)`],
+  [R`\frac{1}{1-x}`, R`1+x+x^2+\cdots+x^n+o(x^n)`]
+];
+
+const UNITS = [
+  { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
+  { id: "mvt", title: "中值定理证明", lessons: [], soon: true },
+  { id: "int", title: "定积分计算", lessons: [], soon: true },
+  { id: "improper", title: "反常积分", lessons: [], soon: true },
+  { id: "ode", title: "微分方程", lessons: [], soon: true }
+];
+
+const LESSONS = {
+/* ---------------- T1 ---------------- */
+t1: {
+  unit: "taylor", n: 1, title: "从切线到多项式：Taylor 公式是什么",
+  goal: "看懂两种余项的区别，背熟 8 个常用展开，知道“有展开式”和“有高阶导数”不是一回事。",
+  sections: [
+    { id: "t1-s1", h: "1. 切线只是第一步", html: R`
+      <p>在 $x_0$ 附近用直线 $f(x_0)+f'(x_0)(x-x_0)$ 代替 $f$，误差是 $o(x-x_0)$：这就是“可微”的意思。切线只对上了函数值和一阶导数。想更准，就再对上二阶、三阶……导数：</p>
+      $$T_n(x)=f(x_0)+f'(x_0)(x-x_0)+\frac{f''(x_0)}{2!}(x-x_0)^2+\cdots+\frac{f^{(n)}(x_0)}{n!}(x-x_0)^n.$$
+      <p>系数为什么是 $\frac{f^{(k)}(x_0)}{k!}$？因为对 $(x-x_0)^k$ 求 $k$ 次导恰好得到 $k!$，除掉它，$T_n$ 在 $x_0$ 处的各阶导数就和 $f$ 完全一样。讲义第 7 周例 1 就是这个推导。</p>
+      <p>下面拖动滑块试试：$n$ 越大，多项式贴住曲线的范围越宽；但对 $\ln(1+x)$ 和 $\frac1{1-x}$，越过某个边界之后，加项反而越来越离谱。</p>` },
+    { id: "t1-s2", h: "2. 两种余项：一个说“多小”，一个说“具体是多少”", html: R`
+      <p>余项 $R_n(x)=f(x)-T_n(x)$。课上给了两种写法，条件和用途完全不同：</p>
+      <div class="cmp">
+        <div><b>Peano 余项</b><span>$R_n(x)=o\big((x-x_0)^n\big)\ (x\to x_0)$</span><span class="small muted">条件：$f$ 在 <u>$x_0$ 这一点</u> 有 $n$ 阶导数。</span><span class="small">用途：<b>求极限、判阶、展开到指定阶</b>。只说明 $x\to x_0$ 时余项比 $(x-x_0)^n$ 小，不给具体大小。</span></div>
+        <div><b>Lagrange 余项</b><span>$R_n(x)=\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}$</span><span class="small muted">条件：$f$ 在 <u>整个区间上</u> 有 $n+1$ 阶导数；$\xi$ 介于 $x_0$ 与 $x$ 之间，且随 $x$ 变化。</span><span class="small">用途：<b>证明不等式、误差估计、“存在 $\xi$ 使得 $f''(\xi)\ge\cdots$”</b>。在固定的 $x$ 处也成立，不需要 $x\to x_0$。</span></div>
+      </div>
+      <p class="callout">判断用哪个：题目里出现 $\lim$ 或“展开到 $o(x^3)$”→ Peano；题目要你证明 “存在 $\xi$”、“对所有 $x$ 有不等式”、“误差小于 $10^{-5}$”→ Lagrange。</p>` },
+    { id: "t1-s3", h: "3. 必背的 8 个展开（$x_0=0$）", html: "__MUST__" },
+    { id: "t1-s4", h: "4. 唯一性定理和一个陷阱", html: R`
+      <p><b>唯一性（讲义第 7 周定理 3）</b>：若 $f(x)=a_0+a_1(x-x_0)+\cdots+a_n(x-x_0)^n+o((x-x_0)^n)$，<u>并且 $f$ 在 $x_0$ 处有 $n$ 阶导数</u>，则 $a_k=\frac{f^{(k)}(x_0)}{k!}$。</p>
+      <p>它的用处：复杂函数不用逐个求导，拼出展开式后直接读系数。例如 $\ln x$ 在 $x_0=3$ 处：$\ln x=\ln 3+\ln\big(1+\frac{x-3}{3}\big)$，再套 $\ln(1+u)$ 即可。</p>
+      <p class="callout warn"><b>陷阱</b>：反过来不成立。“$f$ 有 $n$ 阶展开式”推不出“$f^{(n)}(x_0)$ 存在”（$n\ge2$ 时）。反例：$f(x)=x^3D(x)$，$D$ 是 Dirichlet 函数。$f(x)=o(x^2)$，但 $f$ 在 $x\ne0$ 处都不连续，$f''(0)$ 根本没定义。所以题目问“求 $g''(0)$”时，<u>要先证明它存在</u>，不能直接读系数。第二课的 2025 期末第 5 题就考这个。</p>` }
+  ],
+  widget: "taylorPlot",
+  concepts: [
+    { id: "t1-c1", sec: "t1-s2", q: R`Peano 余项形式的 $n$ 阶 Taylor 公式成立，最少需要什么条件？`,
+      opts: [R`$f$ 在 $x_0$ 的某邻域内有 $n+1$ 阶导数`, R`$f$ 在 $x_0$ 处有 $n$ 阶导数`, R`$f^{(n)}$ 在 $x_0$ 处连续`, R`$f$ 在 $x_0$ 附近无穷次可导`], a: 1,
+      ex: R`讲义定理 1（Peano）只要求在 $x_0$ 这一点有 $n$ 阶导数（隐含 $n-1$ 阶导数在邻域内存在）。$n+1$ 阶、区间上可导是 Lagrange 余项的条件。` },
+    { id: "t1-c2", sec: "t1-s3", q: R`$\sin x=x-\frac{x^3}{6}+o(\ ?\ )$，括号里最精确的合法写法是：`,
+      opts: [R`$o(x^3)$`, R`$o(x^4)$`, R`$o(x^5)$`, R`$o(x^2)$`], a: 1,
+      ex: R`$\sin x$ 的 $x^4$ 项系数是 $0$，下一个非零项是 $\frac{x^5}{120}$，所以余项是 $O(x^5)$，可以写 $o(x^4)$，但不能写 $o(x^5)$。$o(x^3)$ 也对，只是不够精确。` },
+    { id: "t1-c3", sec: "t1-s3", q: R`$\sqrt{1+x}=1+\frac x2+c\,x^2+o(x^2)$，$c=$？`,
+      opts: [R`$\frac18$`, R`$-\frac18$`, R`$-\frac14$`, R`$\frac14$`], a: 1,
+      ex: R`$\alpha=\frac12$：$\frac{\alpha(\alpha-1)}{2}=\frac{\frac12\cdot(-\frac12)}{2}=-\frac18$。` },
+    { id: "t1-c4", sec: "t1-s4", q: R`已知 $f(x)=1+2x+3x^2+o(x^2)\ (x\to0)$。下列说法正确的是：`,
+      opts: [R`一定有 $f''(0)=6$`, R`若 $f''(0)$ 存在，则 $f''(0)=6$`, R`一定有 $f''(0)=3$`, R`$f'(0)$ 不一定存在`], a: 1,
+      ex: R`唯一性定理需要先知道 $f''(0)$ 存在。$f'(0)=2$ 倒是一定存在：$\frac{f(x)-f(0)}{x}=2+3x+o(x)\to2$（一阶展开和可导是等价的）。` },
+    { id: "t1-c5", sec: "t1-s2", q: R`算 $\lim_{x\to0}\frac{\tan x-\sin x}{x^3}$，分子至少要展开到几阶？`,
+      opts: [R`一阶`, R`二阶`, R`三阶`, R`五阶`], a: 2,
+      ex: R`分母是 $x^3$，分子要展开到 $x^3$ 项，余项写成 $o(x^3)$。展开到一阶只能得到 $\frac{o(x)}{x^3}$，什么也推不出。` },
+    { id: "t1-c6", sec: "t1-s2", q: R`Lagrange 余项 $\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}$ 中的 $\xi$：`,
+      opts: [R`是与 $x$ 无关的常数`, R`介于 $x_0$ 和 $x$ 之间，一般随 $x$ 变化`, R`一定是 $\frac{x_0+x}{2}$`, R`可以取区间里任意一点`], a: 1,
+      ex: R`$\xi$ 依赖于 $x$（和 $n$）。证明题里常常要对两个不同的点各展开一次，得到两个不同的 $\xi_1,\xi_2$，这一点在第三课会反复用到。` }
+  ],
+  methods: [
+    { id: "m-which", title: "选 Peano 还是 Lagrange", steps: [
+      R`题目有 $\lim$、“求展开式”、“判断阶” → Peano。`,
+      R`题目要证“存在 $\xi$”、“对所有 $x$ 成立的不等式”、“误差估计” → Lagrange。`,
+      R`用 Lagrange 前检查：$f$ 在区间上有 $n+1$ 阶导数。`,
+      R`要读出 $f^{(n)}(x_0)$ 时，先确认 $f^{(n)}(x_0)$ 存在，再用唯一性定理。`] }
+  ],
+  problems: [
+    { id: "t1-p1", lv: "基础", src: "讲义第 7 周例 6", stmt: R`写出 $\ln x$ 在 $x_0=3$ 处带 Peano 余项的 $n$ 阶 Taylor 公式。`,
+      hints: [R`不要逐个求导，先把 $\ln x$ 写成 $\ln 3+\ln(\text{某个}1+u)$。`, R`$\ln x=\ln3+\ln\big(1+\frac{x-3}{3}\big)$，令 $u=\frac{x-3}{3}$，$x\to3$ 时 $u\to0$。`, R`套 $\ln(1+u)=\sum_{k=1}^n\frac{(-1)^{k-1}}{k}u^k+o(u^n)$，再把 $u$ 代回。注意 $o(u^n)=o((x-3)^n)$。`],
+      method: "m-which",
+      sol: R`$$\ln x=\ln3+\sum_{k=1}^{n}\frac{(-1)^{k-1}}{k\cdot3^k}(x-3)^k+o\big((x-3)^n\big)\quad(x\to3).$$
+      <p>由于 $\ln x$ 在 $x=3$ 处任意阶可导，由唯一性定理，这就是它的 Taylor 公式；顺带得到 $\ln^{(k)}(3)=\frac{(-1)^{k-1}(k-1)!}{3^k}$。</p>` },
+    { id: "t1-p2", lv: "基础", src: "作业 11/2", stmt: R`举一个例子说明：$f(x)=a_0+a_1x+a_2x^2+o(x^2)\ (x\to0)$ 成立，但 $f''(0)$ 不存在。`,
+      hints: [R`要让 $f$ 在 $0$ 附近“很小”，但在 $0$ 以外的点很不光滑。`, R`试试 $x^3$ 乘一个处处不连续的有界函数。`, R`$f(x)=x^3D(x)$，$D$ 为 Dirichlet 函数。检查：$|f(x)|\le|x|^3$，所以 $f(x)=o(x^2)$；再看 $f'(x)$ 在 $x\ne0$ 处是否存在。`],
+      method: "m-which",
+      sol: R`<p>取 $f(x)=x^3D(x)$，其中 $D(x)=1\ (x\in\mathbb Q)$，$D(x)=0\ (x\notin\mathbb Q)$。</p>
+      <p>(1) $|f(x)|\le|x|^3$，故 $\frac{f(x)}{x^2}\to0$，即 $f(x)=0+0\cdot x+0\cdot x^2+o(x^2)$。</p>
+      <p>(2) 对 $x_1\ne0$，$f$ 在 $x_1$ 处不连续（沿有理点趋近得 $x_1^3$，沿无理点趋近得 $0$），因而 $f$ 在 $x_1$ 处不可导。所以 $f'$ 只在 $x=0$ 处有定义（$f'(0)=0$），在 $0$ 的任何邻域上都不存在，$f''(0)$ 无从谈起。</p>` }
+  ],
+  variants: [],
+  extensions: []
+},
+/* ---------------- T2 ---------------- */
+t2: {
+  unit: "taylor", n: 2, title: "用 Peano 余项求极限与展开",
+  goal: "掌握“阶数匹配”四步法，能处理复合函数展开，并能严格回答“求 $g''(0)$”这类题。",
+  sections: [
+    { id: "t2-s1", h: R`1. $o(\cdot)$ 的运算规则（$x\to0$）`, html: R`
+      <ul>
+        <li>$o(x^m)\pm o(x^n)=o(x^{\min(m,n)})$：低阶的“吞掉”高阶的。</li>
+        <li>$x^k\cdot o(x^n)=o(x^{n+k})$，$\ o(x^m)\cdot o(x^n)=o(x^{m+n})$。</li>
+        <li>$\frac{o(x^n)}{x^k}=o(x^{n-k})$（$k\le n$）。</li>
+        <li><b>没有</b> $o(x^n)-o(x^n)=0$：两个 $o$ 是两个不同的未知函数，差还是 $o(x^n)$。</li>
+        <li>复合：若 $u(x)\to0$ 且 $u(x)=O(x)$，则 $o(u^n)=o(x^n)$。所以 $e^{u}$、$\ln(1+u)$ 可以先按 $u$ 展开，再把 $u$ 的展开代进去。</li>
+      </ul>` },
+    { id: "t2-s2", h: "2. 阶数匹配：展开到几阶？", html: R`
+      <p>分式极限 $\lim\frac{A(x)}{B(x)}$ 的关键是：分子、分母各自的<b>最低阶非零项</b>。先把容易的一边（通常是分母）化成 $c\,x^k$，那么另一边就展开到 $x^k$，余项留 $o(x^k)$，多展开是浪费，少展开会得到 $\frac{o(x)}{x^k}$ 这种无法判断的式子。</p>
+      <p>复合函数的内层展开到几阶？看外层的最低阶：$e^{u}-1-u=\frac{u^2}{2}+o(u^2)$ 里外层从 $u^2$ 起，若 $u\sim\lambda x$，内层只要展开到一阶就够了。</p>
+      <p class="callout">洛必达也能做这些题，但对 $\frac{\int_0^x\cdots}{\sin x-x}$ 这类要求导两三次的题，Taylor 更快也更不容易算错；而且 Taylor 能顺手给出“阶”，这正是反常积分判敛散需要的。</p>` }
+  ],
+  widget: null,
+  concepts: [
+    { id: "t2-c1", sec: "t2-s1", q: R`$x\to0$ 时，$o(x^2)+x\cdot o(x)-o(x^3)=\ ?$`,
+      opts: [R`$o(x^3)$`, R`$o(x^2)$`, R`$0$`, R`$o(x)$`], a: 1, ex: R`$x\cdot o(x)=o(x^2)$；$o(x^2)+o(x^2)-o(x^3)=o(x^2)$。` },
+    { id: "t2-c2", sec: "t2-s2", q: R`求 $\lim_{x\to0}\frac{e^{x^2}-1-x^2}{x^4}$，$e^{u}$ 需要展开到：`,
+      opts: [R`$u$ 的一阶`, R`$u$ 的二阶`, R`$u$ 的四阶`, R`不需要展开`], a: 1,
+      ex: R`$u=x^2$，分母是 $x^4=u^2$，所以 $e^u=1+u+\frac{u^2}{2}+o(u^2)$，极限是 $\frac12$。` },
+    { id: "t2-c3", sec: "t2-s1", q: R`下面哪一步是错的？`,
+      opts: [R`$\sin x - x = -\frac{x^3}{6}+o(x^3)$`, R`$\ln(1+x)-x=-\frac{x^2}{2}+o(x^2)$`, R`$(x+o(x))-(x+o(x))=0$`, R`$\frac{o(x^3)}{x^2}=o(x)$`], a: 2,
+      ex: R`两个 $o(x)$ 是不同的函数，相减得 $o(x)$，不是 $0$。很多“算出来极限是 0”的错误都出在这里。` }
+  ],
+  methods: [
+    { id: "m-limit", title: "Peano 求极限四步法", steps: [
+      R`<b>定阶</b>：先把最简单的一边（常是分母）化成 $c\,x^k$（用等价无穷小或展开）。`,
+      R`<b>展开</b>：另一边每一项都展开到 $x^k$，余项统一写 $o(x^k)$；复合函数先按内层 $u$ 展开再代入。`,
+      R`<b>合并</b>：按 $o$ 的运算规则合并，同阶项系数相加，注意不要把两个 $o$ 相消。`,
+      R`<b>读结果</b>：$\frac{a x^k+o(x^k)}{c x^k}\to\frac ac$。若 $a=0$，说明展开阶数不够，回到第 2 步。`] },
+    { id: "m-exist", title: "求 $g^{(n)}(0)$：先证存在，再读系数", steps: [
+      R`分段函数在 $0$ 处的导数，<b>只能用定义</b>：$g'(0)=\lim\frac{g(x)-g(0)}{x}$。`,
+      R`$x\ne0$ 时用求导法则写出 $g'(x)$，再用定义求 $g''(0)=\lim\frac{g'(x)-g'(0)}{x}$。`,
+      R`这些极限都用 Peano 展开算；展开用的是 $f$ 的已知导数（$f$ 有 3 阶导数 ⇒ $f'$ 有 2 阶导数，可以展开 $f'$）。`,
+      R`最后可以用“读系数”的结果做验算，但不能代替证明。`] }
+  ],
+  problems: [
+    { id: "t2-p1", lv: "基础", src: "热身", stmt: R`求 $\displaystyle\lim_{x\to0}\frac{\tan x-\sin x}{x^3}$。`,
+      hints: [R`分母已经是 $x^3$，分子展开到 $x^3$。`, R`$\tan x=x+\frac{x^3}{3}+o(x^3)$，$\sin x=x-\frac{x^3}{6}+o(x^3)$。`, R`分子 $=\left(\frac13+\frac16\right)x^3+o(x^3)$。`],
+      method: "m-limit", sol: R`$$\tan x-\sin x=\Big(x+\frac{x^3}{3}\Big)-\Big(x-\frac{x^3}{6}\Big)+o(x^3)=\frac{x^3}{2}+o(x^3),$$ 所以极限为 $\frac12$。` },
+    { id: "t2-p2", lv: "真题", src: "2023 秋期末 2(1)", stmt: R`计算 $\displaystyle\lim_{x\to0^+}\frac{\left(\int_0^x e^{-t^2}\,dt\right)-x}{\sin x-x}$。`,
+      hints: [R`分母 $\sin x-x$ 是几阶？`, R`分母 $=-\frac{x^3}{6}+o(x^3)$，所以分子要展开到 $x^3$。先展开被积函数 $e^{-t^2}=1-t^2+o(t^2)$。`, R`把展开式逐项积分：$\int_0^x(1-t^2)\,dt=x-\frac{x^3}{3}$；还要说明 $\int_0^x o(t^2)\,dt=o(x^3)$。也可以直接用洛必达。`],
+      method: "m-limit",
+      sol: R`<p><b>方法一（Taylor）</b>：$e^{-t^2}=1-t^2+r(t)$，$r(t)=o(t^2)$。对任意 $\varepsilon>0$，$t$ 充分小时 $|r(t)|\le\varepsilon t^2$，于是 $\left|\int_0^x r(t)\,dt\right|\le\frac{\varepsilon x^3}{3}$，即 $\int_0^x r=o(x^3)$。故分子 $=-\frac{x^3}{3}+o(x^3)$，分母 $=-\frac{x^3}{6}+o(x^3)$，极限为 $2$。</p>
+      <p><b>方法二（洛必达）</b>：分子分母在 $0$ 处都趋于 $0$，求导得 $\lim\frac{e^{-x^2}-1}{\cos x-1}=\lim\frac{-x^2}{-x^2/2}=2$。</p>` },
+    { id: "t2-p3", lv: "真题", src: "2023 秋期末 2(2)", stmt: R`求 $f(x)=\ln(1+x)-\sin x$ 在 $x=0$ 处带 Peano 余项的 Taylor 公式，余项为 $o(x^3)$。`,
+      hints: [R`两项分别展开到 $x^3$。`, R`$\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}+o(x^3)$。`, R`$\sin x=x-\frac{x^3}{6}+o(x^3)$，相减。`],
+      method: "m-limit", sol: R`$$f(x)=-\frac{x^2}{2}+\Big(\frac13+\frac16\Big)x^3+o(x^3)=-\frac{x^2}{2}+\frac{x^3}{2}+o(x^3).$$` },
+    { id: "t2-p4", lv: "真题", src: "2025 秋期中 1(1)", stmt: R`计算 $\displaystyle\lim_{x\to0}\left(\frac{\ln(1+x)}{x}\right)^{\frac{1}{e^x-1}}$。`,
+      hints: [R`$1^\infty$ 型：先取对数。`, R`$K=\lim\frac{\ln\left(\frac{\ln(1+x)}{x}\right)}{e^x-1}$，分母 $\sim x$，分子展开到一阶。`, R`$\frac{\ln(1+x)}{x}=1-\frac x2+o(x)$，再用 $\ln(1+u)=u+o(u)$。`],
+      method: "m-limit", sol: R`<p>$\frac{\ln(1+x)}{x}=1-\frac x2+o(x)$，所以 $\ln\frac{\ln(1+x)}{x}=-\frac x2+o(x)$；又 $e^x-1=x+o(x)$，故 $K=-\frac12$。</p><p>由 $e^u$ 的连续性，原极限 $=e^{-1/2}$。</p>` },
+    { id: "t2-p5", lv: "真题", src: "2026 秋期中 5(1)（本学期）", stmt: R`已知 $f(0)=0$，$f(1)=1$，$f'(0)=\lambda$，且 $f'$ 连续。求 $\displaystyle\lim_{x\to0^+}\frac{e^{f(x)}-1-f(x)}{e^x-1-x}$。`,
+      hints: [R`分子分母结构一样：都是 $e^{u}-1-u$。`, R`$e^u-1-u=\frac{u^2}{2}+o(u^2)\ (u\to0)$。分子里 $u=f(x)\to0$。`, R`把分子、分母都除以 $x^2$：分子变成 $\left(\frac{f(x)}{x}\right)^2\cdot\big(\frac12+o(1)\big)$，而 $\frac{f(x)}{x}\to\lambda$。注意 $\lambda=0$ 时也要成立。`],
+      method: "m-limit",
+      sol: R`<p>记 $\varphi(u)=\frac{e^u-1-u}{u^2}\ (u\ne0)$，$\varphi(0)=\frac12$，则 $\varphi$ 在 $0$ 处连续，且 $e^u-1-u=u^2\varphi(u)$ 对所有 $u$ 成立（$u=0$ 时两边都是 $0$）。</p>
+      <p>于是 $$\frac{e^{f(x)}-1-f(x)}{e^x-1-x}=\frac{f(x)^2\,\varphi(f(x))}{x^2\,\varphi(x)}=\Big(\frac{f(x)}{x}\Big)^2\frac{\varphi(f(x))}{\varphi(x)}.$$</p>
+      <p>$f$ 可导 ⇒ $f(x)\to0$，$\frac{f(x)}{x}\to f'(0)=\lambda$；$\varphi$ 连续 ⇒ $\varphi(f(x))\to\frac12$。故极限 $=\lambda^2$。（这样写对 $\lambda=0$ 也成立，不需要分类。）</p>` },
+    { id: "t2-p6", lv: "真题", src: "2025 秋期末 5(1)", stmt: R`设 $f:\mathbb R\to\mathbb R$ 处处有 3 阶导数，$f(0)=0$。求实数 $a$，使 $g(x)=\begin{cases}\frac{f(x)}{x},&x\ne0\\ a,&x=0\end{cases}$ 在 $\mathbb R$ 上连续，并求 $g''(0)$。`,
+      hints: [R`连续性：$a=\lim_{x\to0}\frac{f(x)}{x}$，这是哪个导数的定义？`, R`$g'(0)$ 用定义：$\lim\frac{f(x)/x-f'(0)}{x}=\lim\frac{f(x)-f'(0)x}{x^2}$，用二阶 Peano 展开。$x\ne0$ 时 $g'(x)=\frac{xf'(x)-f(x)}{x^2}$。`, R`$g''(0)=\lim\frac{g'(x)-g'(0)}{x}=\lim\frac{xf'(x)-f(x)-\frac{f''(0)}2x^2}{x^3}$。把 $f$ 展开到 $x^3$、$f'$ 展开到 $x^2$。`],
+      method: "m-exist",
+      sol: R`<p>(1) $a=\lim_{x\to0}\frac{f(x)-f(0)}{x}=f'(0)$；$x\ne0$ 处 $g$ 显然连续。</p>
+      <p>(2) Peano 展开：$f(x)=f'(0)x+\frac{f''(0)}2x^2+\frac{f'''(0)}6x^3+o(x^3)$；$f'$ 在 $0$ 处有 2 阶导数，故 $f'(x)=f'(0)+f''(0)x+\frac{f'''(0)}2x^2+o(x^2)$。</p>
+      <p>$g'(0)=\lim\frac{f(x)-f'(0)x}{x^2}=\frac{f''(0)}2$。$x\ne0$ 时 $g'(x)=\frac{xf'(x)-f(x)}{x^2}$，而 $$xf'(x)-f(x)=\frac{f''(0)}2x^2+\Big(\frac12-\frac16\Big)f'''(0)x^3+o(x^3).$$</p>
+      <p>所以 $g''(0)=\lim\frac{g'(x)-\frac{f''(0)}2}{x}=\lim\frac{\frac{f'''(0)}3x^3+o(x^3)}{x^3}=\frac{f'''(0)}3$。</p>
+      <p class="small muted">验算：$g(x)=f'(0)+\frac{f''(0)}2x+\frac{f'''(0)}6x^2+o(x^2)$，读系数得 $2\cdot\frac{f'''(0)}6=\frac{f'''(0)}3$，一致。但这一步本身不能当证明，因为没先说明 $g''(0)$ 存在。</p>` }
+  ],
+  variants: [
+    { id: "t2-v1", lv: "变种", src: "仿 2023 期末 2(1)", stmt: R`求 $\displaystyle\lim_{x\to0}\frac{\cos x-e^{-x^2/2}}{x^4}$。`,
+      hints: [R`分母 $x^4$，两项都展开到 $x^4$。`, R`$\cos x=1-\frac{x^2}2+\frac{x^4}{24}+o(x^4)$；$e^{u}$ 中 $u=-\frac{x^2}2$，展开到 $u^2$。`, R`$e^{-x^2/2}=1-\frac{x^2}2+\frac{x^4}8+o(x^4)$。`],
+      method: "m-limit", sol: R`分子 $=\big(\frac1{24}-\frac18\big)x^4+o(x^4)=-\frac{x^4}{12}+o(x^4)$，极限为 $-\frac1{12}$。` },
+    { id: "t2-v2", lv: "变种", src: "仿 2026 期中 5(1)", stmt: R`设 $f(0)=0$，$f'(0)=\lambda$。求 $\displaystyle\lim_{x\to0}\frac{\ln(1+f(x))-f(x)}{\ln(1+x)-x}$。`,
+      hints: [R`结构和原题一样，换成了 $\ln(1+u)-u$。`, R`$\ln(1+u)-u=-\frac{u^2}2+o(u^2)$。`, R`同样写成 $u^2\psi(u)$，$\psi$ 在 $0$ 连续、$\psi(0)=-\frac12$。`],
+      method: "m-limit", sol: R`令 $\psi(u)=\frac{\ln(1+u)-u}{u^2}$，$\psi(0)=-\frac12$。原式 $=\big(\frac{f(x)}x\big)^2\frac{\psi(f(x))}{\psi(x)}\to\lambda^2\cdot\frac{-1/2}{-1/2}=\lambda^2$。` },
+    { id: "t2-v3", lv: "变种", src: "2022 秋期末 4(1)", stmt: R`求 $f(x)=\tan x$ 在 $x=\frac\pi4$ 处带 Peano 余项的 Taylor 公式，展开到二阶。`,
+      hints: [R`这里直接求导最快：需要 $f(\frac\pi4),f'(\frac\pi4),f''(\frac\pi4)$。`, R`$(\tan x)'=\sec^2x=1+\tan^2x$。`, R`$(\tan x)''=2\tan x\cdot(1+\tan^2x)$。代入 $\tan\frac\pi4=1$。`],
+      method: "m-which", sol: R`$f(\frac\pi4)=1$，$f'(\frac\pi4)=2$，$f''(\frac\pi4)=4$，故 $$\tan x=1+2\Big(x-\frac\pi4\Big)+2\Big(x-\frac\pi4\Big)^2+o\Big(\big(x-\tfrac\pi4\big)^2\Big).$$` }
+  ],
+  extensions: [
+    { id: "t2-e1", lv: "延伸", src: "x→∞ 的情形", stmt: R`求 $\displaystyle\lim_{x\to+\infty}\Big[x-x^2\ln\Big(1+\frac1x\Big)\Big]$。`,
+      hints: [R`令 $t=\frac1x\to0^+$。`, R`原式 $=\frac{t-\ln(1+t)}{t^2}$。`, R`$\ln(1+t)=t-\frac{t^2}2+o(t^2)$。`],
+      method: "m-limit", sol: R`令 $t=\frac1x$，原式 $=\lim_{t\to0^+}\frac{t-\ln(1+t)}{t^2}=\lim\frac{\frac{t^2}2+o(t^2)}{t^2}=\frac12$。` },
+    { id: "t2-e2", lv: "延伸", src: "2023 秋期末 2(3)，预告反常积分单元", stmt: R`判断 $\displaystyle\int_1^{+\infty}\Big(\ln\Big(1+\frac1x\Big)-\sin\frac1x\Big)dx$ 的敛散性。`,
+      hints: [R`被积函数在 $[1,+\infty)$ 上连续，只需看 $x\to+\infty$。`, R`令 $t=\frac1x$，把 $\ln(1+t)-\sin t$ 展开到第一个非零项。`, R`被积函数 $=-\frac{1}{2x^2}+o\big(\frac1{x^2}\big)$，和 $\frac1{x^2}$ 比较。`],
+      method: "m-limit", sol: R`<p>$t\to0$ 时 $\ln(1+t)-\sin t=-\frac{t^2}2+o(t^2)$，所以 $x\to+\infty$ 时被积函数 $h(x)=-\frac1{2x^2}+o\big(\frac1{x^2}\big)$。</p><p>于是存在 $X$，当 $x>X$ 时 $|h(x)|\le\frac1{x^2}$。$\int_1^{\infty}\frac{dx}{x^2}$ 收敛，由比较判别法原积分（绝对）收敛。</p><p class="small muted">这就是 Taylor 在反常积分里的用法：先判阶，再比较。</p>` }
+  ]
+},
+/* ---------------- T3 ---------------- */
+t3: {
+  unit: "taylor", n: 3, title: "Lagrange 余项：证明题与误差估计",
+  goal: "学会“选展开点 → 代入已知点 → 相加或相减 → 介值定理或取最大值”这套证明模板，能独立写完期末第 5 题这一类。",
+  sections: [
+    { id: "t3-s1", h: R`1. $\xi$ 到底在哪里？`, html: R`
+      <p>Lagrange 余项说：对固定的 $x$，存在 $\xi$ 介于 $x_0$ 和 $x$ 之间，使 $f(x)=T_n(x)+\frac{f^{(n+1)}(\xi)}{(n+1)!}(x-x_0)^{n+1}$。下面以 $f=e^x$、$x_0=0$ 为例，把这个 $\xi$ 真的算出来（$e^\xi=\frac{(n+1)!\,R_n(x)}{x^{n+1}}$）。</p>
+      <p>拖动 $x$ 和 $n$：$\xi$ 一直落在 $0$ 与 $x$ 之间，并且随 $x$ 移动。还能看到一个有趣的事实：$x\to0$ 时比值 $\theta=\xi/x\to\frac1{n+2}$。</p>` },
+    { id: "t3-s2", h: "2. 证明题的套路", html: R`
+      <p>期末的 Taylor 证明题几乎都长这样：给你 $f$ 在几个点的值或导数，要你证“存在 $\xi$ 使 $|f''(\xi)|\ge$ 某个数”或“$f''(\xi)=$ 某个式子”。思路固定：</p>
+      <ol>
+        <li><b>选展开中心</b>：选导数信息最多的点（已知 $f'=0$ 的点、极值点、对称中心）。中心处的 $f'$ 已知，展开式里就少一个未知数。</li>
+        <li><b>选代入点</b>：选函数值已知的点（端点、题目给的点），对每个点各写一个 Lagrange 展开，得到不同的 $\xi_1,\xi_2$。</li>
+        <li><b>消元</b>：两式相加消掉 $f'$（对称点 $\pm a$），或相减消掉 $f$（同一个点从两边展开）。</li>
+        <li><b>收尾</b>：要等式 → $f''$ 连续时用介值定理（$\frac{f''(\xi_1)+f''(\xi_2)}2$ 介于两者之间）；要不等式 → 取 $\max\{|f''(\xi_1)|,|f''(\xi_2)|\}$。</li>
+      </ol>
+      <p class="callout warn">常见扣分点：介值定理要在<b>自变量区间</b>上使用，不能在函数值区间上用。收尾时要说清楚：$f''$ 在 $[\xi_1,\xi_2]$ 上连续，而 $\frac{f''(\xi_1)+f''(\xi_2)}2$ 介于 $f''(\xi_1)$ 与 $f''(\xi_2)$ 之间，所以存在 $\xi\in[\xi_1,\xi_2]$。</p>` }
+  ],
+  widget: "lagrangeXi",
+  concepts: [
+    { id: "t3-c1", sec: "t3-s2", q: R`已知 $f(0)=0$，要证 $\exists\xi$ 使 $f''(\xi)=\frac{f(a)+f(-a)}{a^2}$。展开中心和代入点应选：`,
+      opts: [R`中心 $a$，代入 $-a$`, R`中心 $0$，代入 $a$ 和 $-a$`, R`中心 $-a$，代入 $0$`, R`中心 $\frac a2$，代入 $0$`], a: 1,
+      ex: R`$f(0)$ 已知，$\pm a$ 对称：两式相加正好消掉 $f'(0)$。` },
+    { id: "t3-c2", sec: "t3-s2", q: R`得到 $f(a)+f(-a)=\frac{a^2}2\big(f''(\xi_1)+f''(\xi_2)\big)$ 后，要得到单个 $\xi$，还需要：`,
+      opts: [R`什么都不需要`, R`$f''$ 连续，然后用介值定理`, R`$f'''$ 存在`, R`$\xi_1=\xi_2$`], a: 1,
+      ex: R`导函数也有介值性（Darboux 定理），所以其实只要 $f''$ 存在就行；但考试里题目一般给“二阶导数连续”，直接用连续函数的介值定理最稳妥。` },
+    { id: "t3-c3", sec: "t3-s1", q: R`用 $e=\sum_{k=0}^n\frac1{k!}+\frac{e^\theta}{(n+1)!}$（$0\lt\theta\lt1$）估计误差，为什么常用 $e^\theta\lt3$？`,
+      opts: [R`因为 $e\lt3$ 且 $e^\theta\lt e$`, R`因为 $\theta\lt1$ 时 $e^\theta\lt1$`, R`因为 Lagrange 余项总小于 3`, R`为了凑整`], a: 0,
+      ex: R`$0\lt\theta\lt1$，所以 $e^\theta\lt e\lt3$。估计时要用已知的上界，不能用正在估计的量 $e$ 的精确值。` }
+  ],
+  methods: [
+    { id: "m-proof", title: "Lagrange 证明四步法", steps: [
+      R`<b>选中心</b>：导数信息最多的点（$f'(x_0)=0$、极值点、对称中心）。`,
+      R`<b>选代入点</b>：函数值已知的点，每个点写一个展开式，得到 $\xi_1,\xi_2$。`,
+      R`<b>消元</b>：对称点相加消 $f'$，同一点两侧展开相减消 $f$。`,
+      R`<b>收尾</b>：等式用介值定理（写明 $f''$ 连续及区间）；不等式取 $\max|f''(\xi_i)|$。`] },
+    { id: "m-err", title: "误差估计", steps: [
+      R`写出 $R_n=\frac{f^{(n+1)}(\xi)}{(n+1)!}x^{n+1}$，用已知量给 $|f^{(n+1)}|$ 一个上界 $M$。`,
+      R`解不等式 $\frac{M|x|^{n+1}}{(n+1)!}\lt$ 允许误差，求最小的 $n$。`,
+      R`不要用被估计的量本身做上界（如估计 $e$ 时用 $e^\theta\lt3$）。`] }
+  ],
+  problems: [
+    { id: "t3-p1", lv: "基础", src: "作业 11/2", stmt: R`用 $e^x$ 在 $0$ 处的 Taylor 公式近似计算 $e$，使误差小于 $10^{-5}$。至少要取到哪一项？`,
+      hints: [R`$e=\sum_{k=0}^n\frac1{k!}+\frac{e^\theta}{(n+1)!}$，$0\lt\theta\lt1$。`, R`误差 $\lt\frac3{(n+1)!}$，要它 $\lt10^{-5}$。`, R`$(n+1)!\gt3\times10^5$，查阶乘表：$8!=40320$，$9!=362880$。`],
+      method: "m-err", sol: R`<p>误差 $=\frac{e^\theta}{(n+1)!}\lt\frac{3}{(n+1)!}$。要 $\frac3{(n+1)!}\lt10^{-5}$，即 $(n+1)!\gt3\times10^5$，最小取 $n+1=9$，$n=8$。</p><p>$\sum_{k=0}^{8}\frac1{k!}\approx2.7182788$，与 $e=2.7182818\ldots$ 相差约 $3\times10^{-6}$。</p>` },
+    { id: "t3-p2", lv: "真题", src: "2023 秋期末 5(1)", stmt: R`设 $f$ 在 $[-a,a]$ 上有连续的二阶导数，$f(0)=0$。证明：存在 $\xi\in(-a,a)$，使 $f''(\xi)=\frac{f(a)+f(-a)}{a^2}$。`,
+      hints: [R`中心选 $0$，代入 $\pm a$。`, R`$f(\pm a)=\pm f'(0)a+\frac{f''(\xi_{1,2})}2a^2$，$\xi_1\in(0,a)$，$\xi_2\in(-a,0)$。`, R`相加得 $\frac{f(a)+f(-a)}{a^2}=\frac{f''(\xi_1)+f''(\xi_2)}2$，再用介值定理。`],
+      method: "m-proof", sol: R`<p>在 $0$ 处带 Lagrange 余项展开：存在 $\xi_1\in(0,a)$，$\xi_2\in(-a,0)$，使 $$f(a)=f'(0)a+\frac{f''(\xi_1)}2a^2,\qquad f(-a)=-f'(0)a+\frac{f''(\xi_2)}2a^2.$$</p><p>相加：$\frac{f(a)+f(-a)}{a^2}=\frac{f''(\xi_1)+f''(\xi_2)}2$。</p><p>右边介于 $f''(\xi_2)$ 与 $f''(\xi_1)$ 之间，而 $f''$ 在闭区间 $[\xi_2,\xi_1]$ 上连续，由介值定理存在 $\xi\in[\xi_2,\xi_1]\subset(-a,a)$ 使 $f''(\xi)=\frac{f(a)+f(-a)}{a^2}$。</p>` },
+    { id: "t3-p3", lv: "真题", src: "2023 秋期末 5(2)", stmt: R`设 $f$ 在 $[-a,a]$ 上有连续的二阶导数，且在 $(-a,a)$ 内有极值点。证明：存在 $\eta\in(-a,a)$，使 $|f''(\eta)|\ge\frac1{2a^2}|f(a)-f(-a)|$。`,
+      hints: [R`极值点 $x_0$ 处 $f'(x_0)=0$（Fermat），所以中心选 $x_0$。`, R`分别代入 $a$ 和 $-a$，两式相减消掉 $f(x_0)$。`, R`$(a-x_0)^2+(a+x_0)^2=2a^2+2x_0^2\le4a^2$。`],
+      method: "m-proof", sol: R`<p>设极值点为 $x_0\in(-a,a)$，由 Fermat 定理 $f'(x_0)=0$。在 $x_0$ 处展开：存在 $\eta_1,\eta_2\in(-a,a)$，$$f(a)=f(x_0)+\frac{f''(\eta_1)}2(a-x_0)^2,\quad f(-a)=f(x_0)+\frac{f''(\eta_2)}2(a+x_0)^2.$$</p><p>记 $M=\max\{|f''(\eta_1)|,|f''(\eta_2)|\}$，相减得 $$|f(a)-f(-a)|\le\frac M2\big[(a-x_0)^2+(a+x_0)^2\big]=\frac M2(2a^2+2x_0^2)\le2a^2M.$$</p><p>取 $\eta$ 为 $\eta_1,\eta_2$ 中使 $|f''|$ 较大的那个即可。</p>` },
+    { id: "t3-p4", lv: "真题", src: "2025 秋期末 5(2)", stmt: R`设 $h:\mathbb R\to\mathbb R$ 处处有 2 阶导数，$h(0)=h'(0)=h'(1)=0$，$h(1)=1$。证明：存在 $\xi\in[0,1]$，使 $|h''(\xi)|\ge4$。`,
+      hints: [R`$0$ 和 $1$ 两点的导数都已知，分别以它们为中心。`, R`代入哪个点？选两边“一样远”的中点 $\frac12$。`, R`$h(\frac12)=\frac{h''(\xi_1)}8$，$h(\frac12)=1+\frac{h''(\xi_2)}8$，相减。`],
+      method: "m-proof", sol: R`<p>分别在 $0$ 和 $1$ 处展开并代入 $x=\frac12$：存在 $\xi_1\in(0,\frac12)$，$\xi_2\in(\frac12,1)$，$$h\Big(\frac12\Big)=h(0)+h'(0)\cdot\frac12+\frac{h''(\xi_1)}2\cdot\frac14=\frac{h''(\xi_1)}8,$$ $$h\Big(\frac12\Big)=h(1)-h'(1)\cdot\frac12+\frac{h''(\xi_2)}2\cdot\frac14=1+\frac{h''(\xi_2)}8.$$</p><p>相减：$h''(\xi_1)-h''(\xi_2)=8$，所以 $|h''(\xi_1)|+|h''(\xi_2)|\ge8$，二者中至少一个 $\ge4$。</p><p class="small muted">注意这里只要求 $h''$ 存在，不需要连续：不等式结论不用介值定理。</p>` },
+    { id: "t3-p5", lv: "真题", src: "2021 秋期末 7(2)", stmt: R`设 $f$ 是 $\mathbb R$ 上的 $C^2$ 函数，$f(x)\ge0$，$f(0)=f'(0)=0$。给定 $h\gt0$，令 $M=\max_{x\in[-2h,2h]}|f''(x)|$。证明：对 $x\in[-h,h]$，有 $f'(x)^2\le2Mf(x)$。`,
+      hints: [R`对固定的 $x\in[-h,h]$ 和 $|t|\le h$，在 $x$ 处展开到 $x+t$：$0\le f(x+t)\le f(x)+f'(x)t+\frac M2t^2$。`, R`右边是 $t$ 的二次函数，对 $|t|\le h$ 都非负。想取 $t=-\frac{f'(x)}M$ 让它最小，但要保证 $|t|\le h$。`, R`用 $f'(0)=0$：$|f'(x)|=|f'(x)-f'(0)|\le M|x|\le Mh$，所以 $\big|\frac{f'(x)}M\big|\le h$。别忘了 $M=0$ 的情形。`],
+      method: "m-proof", sol: R`<p>固定 $x\in[-h,h]$。若 $M=0$，则 $f''\equiv0$ 于 $[-2h,2h]$，$f'(x)=f'(0)=0$，结论成立。下设 $M\gt0$。</p><p>对 $|t|\le h$ 有 $x+t\in[-2h,2h]$，由 Lagrange 余项与 $f\ge0$：$$0\le f(x+t)=f(x)+f'(x)t+\frac{f''(\xi)}2t^2\le f(x)+f'(x)t+\frac M2t^2.$$</p><p>由中值定理 $|f'(x)|=|f'(x)-f'(0)|\le M|x|\le Mh$，故 $t_0=-\frac{f'(x)}M$ 满足 $|t_0|\le h$。代入得 $0\le f(x)-\frac{f'(x)^2}{2M}$，即 $f'(x)^2\le2Mf(x)$。</p>` }
+  ],
+  variants: [
+    { id: "t3-v1", lv: "变种", src: "经典题（Landau 不等式）", stmt: R`设 $f$ 在 $[0,1]$ 上二阶可导，$|f(x)|\le A$，$|f''(x)|\le B$。证明：对 $x\in[0,1]$，$|f'(x)|\le2A+\frac B2$。`,
+      hints: [R`这次要估计的是 $f'(x)$，所以中心选 $x$ 本身。`, R`代入两个端点 $0$ 和 $1$，两式相减消掉 $f(x)$。`, R`$x^2+(1-x)^2\le1$ 对 $x\in[0,1]$ 成立。`],
+      method: "m-proof", sol: R`<p>在 $x$ 处展开到 $0$ 和 $1$：$$f(0)=f(x)-f'(x)x+\frac{f''(\xi_1)}2x^2,\quad f(1)=f(x)+f'(x)(1-x)+\frac{f''(\xi_2)}2(1-x)^2.$$</p><p>相减：$f'(x)=f(1)-f(0)-\frac{f''(\xi_2)}2(1-x)^2+\frac{f''(\xi_1)}2x^2$，所以 $|f'(x)|\le2A+\frac B2\big[(1-x)^2+x^2\big]\le2A+\frac B2$。</p>` },
+    { id: "t3-v2", lv: "变种", src: "仿 2025 期末 5(2)", stmt: R`设 $f$ 在 $[0,1]$ 上二阶可导，$f(0)=f(1)=0$，$\min_{[0,1]}f=-1$。证明：存在 $\xi\in(0,1)$，使 $f''(\xi)\ge8$。`,
+      hints: [R`最小值点 $c$ 在哪里？它不可能是端点（端点处 $f=0\gt-1$）。`, R`$c\in(0,1)$ 是极小值点，$f'(c)=0$，以 $c$ 为中心，代入 $0$ 和 $1$。`, R`得到 $f''(\xi_1)=\frac2{c^2}$，$f''(\xi_2)=\frac2{(1-c)^2}$；$c$ 和 $1-c$ 中总有一个 $\le\frac12$。`],
+      method: "m-proof", sol: R`<p>$f$ 连续，在 $[0,1]$ 上取到最小值 $-1$，最小值点 $c\in(0,1)$，于是 $f'(c)=0$，$f(c)=-1$。</p><p>以 $c$ 为中心代入 $0,1$：$0=-1+\frac{f''(\xi_1)}2c^2$，$0=-1+\frac{f''(\xi_2)}2(1-c)^2$，即 $f''(\xi_1)=\frac2{c^2}$，$f''(\xi_2)=\frac2{(1-c)^2}$。</p><p>若 $c\le\frac12$，$f''(\xi_1)\ge8$；否则 $1-c\lt\frac12$，$f''(\xi_2)\gt8$。</p>` }
+  ],
+  extensions: [
+    { id: "t3-e1", lv: "延伸", src: "2021 秋期末 7(1)", stmt: R`设 $f$ 是 $\mathbb R$ 上的 $C^2$ 函数，$f\ge0$。在哪些点 $x_0$ 处 $\sqrt{f(x)}$ 可导？`,
+      hints: [R`$f(x_0)\gt0$ 的点很简单：复合函数求导。`, R`$f(x_0)=0$ 的点是 $f$ 的最小值点，所以 $f'(x_0)=0$。用 Peano 展开 $f(x)=\frac{f''(x_0)}2(x-x_0)^2+o((x-x_0)^2)$。`, R`$\frac{\sqrt{f(x)}}{x-x_0}$ 的左右极限分别是 $\mp\sqrt{f''(x_0)/2}$ 和 $\pm\cdots$，什么时候相等？`],
+      method: "m-which", sol: R`<p>(1) $f(x_0)\gt0$：$\sqrt{\cdot}$ 在正数处可导，$\sqrt f$ 在 $x_0$ 处可导。</p><p>(2) $f(x_0)=0$：$x_0$ 是最小值点，$f'(x_0)=0$，$f''(x_0)\ge0$，且 $f(x)=\frac{f''(x_0)}2(x-x_0)^2+o((x-x_0)^2)$。于是 $$\frac{\sqrt{f(x)}-0}{x-x_0}=\frac{|x-x_0|}{x-x_0}\sqrt{\frac{f''(x_0)}2+o(1)}\to\pm\sqrt{\frac{f''(x_0)}2}\ (x\to x_0^\pm).$$ 左右导数相等当且仅当 $f''(x_0)=0$。</p><p><b>结论</b>：$\sqrt f$ 在 $x_0$ 可导 ⇔ $f(x_0)\gt0$，或 $f(x_0)=0$ 且 $f''(x_0)=0$。</p>` }
+  ]
+}
+};
+
+/* ================= 状态与存储 ================= */
+const IN_CLAUDE = !!(window.claude && window.claude.use);
+const LS_KEY = "gw1-progress-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch (e) { state = {}; }
+let db = null;
+const chains = {};
+function cacheLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function save(id, patch) {
+  state[id] = Object.assign({}, state[id] || {}, patch, { updatedAt: Date.now() });
+  cacheLocal();
+  refreshNavProgress();
+  if (!db) return;
+  const body = JSON.parse(JSON.stringify(state[id]));
+  chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {});
+}
+function setSync(on, text) {
+  const el = document.getElementById("sync");
+  el.classList.toggle("on", on);
+  el.querySelector("span").textContent = text;
+}
+(async () => {
+  if (!window.claude || !window.claude.use) return;
+  try { db = await window.claude.use("db"); } catch (e) { db = null; }
+  if (!db) return;
+  setSync(false, "正在连接云端…");
+  const timer = setTimeout(() => setSync(false, "云端暂时连不上，先存在本浏览器"), 10000);
+  db.collection("progress").onSnapshot(snap => {
+    if (!snap.metadata.fromCache) { clearTimeout(timer); setSync(true, "已同步到云端"); }
+    for (const d of snap.docs) {
+      const cur = state[d.id];
+      const inc = d.data();
+      if (!cur || (inc.updatedAt || 0) >= (cur.updatedAt || 0)) state[d.id] = JSON.parse(JSON.stringify(inc));
+    }
+    cacheLocal();
+    refreshNavProgress();
+    syncVisible();
+  }, () => { clearTimeout(timer); db = null; setSync(false, "云端不可用，存在本浏览器"); });
+})();
+
+/* ================= 工具函数 ================= */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function typeset(el) {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([el]).catch(() => {});
+  } else {
+    setTimeout(() => typeset(el), 300);
+  }
+}
+function textOf(html) { const d = document.createElement("div"); d.innerHTML = html; return d.textContent.replace(/\s+\n/g, "\n").trim(); }
+function allItems(L) { return [...L.problems, ...L.variants, ...L.extensions]; }
+function lessonStats(lid) {
+  const L = LESSONS[lid];
+  const items = allItems(L);
+  const core = L.problems;
+  const doneCore = core.filter(p => ["solved", "partial", "failed"].includes((state[p.id] || {}).status)).length;
+  const concepts = L.concepts.filter(c => (state[c.id] || {}).picked != null).length;
+  return { total: core.length + L.concepts.length, done: doneCore + concepts, finished: !!(state["lesson-" + lid] || {}).done, items };
+}
+const methodById = {};
+for (const L of Object.values(LESSONS)) for (const m of L.methods) methodById[m.id] = m;
+
+/* ================= 导航 ================= */
+function renderNav() {
+  const nav = $("#nav");
+  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>导出作答</span></a>`;
+  for (const u of UNITS) {
+    h += `<span class="grp">${esc(u.title)}</span>`;
+    if (u.soon) { h += `<a class="soon"><span>待生成</span></a>`; continue; }
+    for (const lid of u.lessons) {
+      const L = LESSONS[lid];
+      h += `<a href="#${lid}" data-v="${lid}"><span>第 ${L.n} 课</span><span class="pc" data-pc="${lid}"></span></a>`;
+    }
+  }
+  nav.innerHTML = h;
+  refreshNavProgress();
+}
+function refreshNavProgress() {
+  document.querySelectorAll("[data-pc]").forEach(el => {
+    const s = lessonStats(el.dataset.pc);
+    el.textContent = s.finished ? "✓" : `${s.done}/${s.total}`;
+  });
+  document.querySelectorAll("[data-lp]").forEach(el => {
+    const s = lessonStats(el.dataset.lp);
+    el.style.width = Math.round(100 * s.done / Math.max(1, s.total)) + "%";
+  });
+}
+function markNav(v) { document.querySelectorAll("#nav a[data-v]").forEach(a => a.classList.toggle("cur", a.dataset.v === v)); }
+
+/* ================= 首页 ================= */
+function viewHome() {
+  const yrs = ["2021", "2022", "2023", "2025"];
+  const rows = EXAM_MAP.map(([t, ys, s, note]) => `<tr><td>${esc(t)}${note ? `<div class="small muted">${esc(note)}</div>` : ""}</td>${ys.map(y => `<td class="yr">${y ? '<span class="dot" title="考了"></span>' : '<span class="no">·</span>'}</td>`).join("")}<td><span class="stars">${"★".repeat(s)}${"☆".repeat(5 - s)}</span></td></tr>`).join("");
+  const weeks = SCHEDULE.map(([w, days]) => `<div class="week"><div class="wk">${w}</div><div class="days">${days.map(([d, t, l]) => l ? `<span class="live">${d} · <a href="#${l}">${esc(t)}</a></span>` : `<span class="later">${d} · ${esc(t)}</span>`).join("")}</div></div>`).join("");
+  const tl = UNITS[0].lessons.map(lid => { const L = LESSONS[lid]; return `<a href="#${lid}"><span class="n">TAYLOR · 第 ${L.n} 课 · 约 30 分钟</span><b>${esc(L.title)}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`; }).join("");
+  return `
+  <section class="stack">
+    <span class="eyebrow">2026 秋 · 高等微积分(1) · 期末复习</span>
+    <h1>六周，每天 30 分钟</h1>
+    <p class="lede">这一页按往年期末卷的分值排复习顺序，不按讲义章节。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
+  </section>
+  <section class="stack"><div class="sec-head"><h2>现在开始：Taylor 公式</h2><span class="t">往年期末每年必考</span></div><div class="lesson-cards">${tl}</div></section>
+  <section class="block">
+    <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">据 2021–2023、2025 四套期末卷整理</span></div>
+    <div class="table-wrap"><table><thead><tr><th>考点</th>${yrs.map(y => `<th style="text-align:center">${y}秋</th>`).join("")}<th>优先级</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted">2024 秋期末目前只有手写答案扫描件，还没计入。2025 年起课程统一开设，2025 卷最接近你今年的期末，它新出现了积分应用和微分方程。</p>
+  </section>
+  <section class="block">
+    <div class="sec-head"><h2>六周日程</h2><span class="t">紫色 = 已上线，灰色 = 待生成</span></div>
+    <div>${weeks}</div>
+    <p class="small muted">模拟卷每套 2 小时，没法拆进 30 分钟，安排在周末做。</p>
+  </section>
+  <section class="block">
+    <div class="sec-head"><h2>怎么用这一页</h2></div>
+    <div class="prose"><ol>
+      <li><b>概念题先做</b>。错了就点“回到讲解”，看懂再往下。</li>
+      <li><b>做题时提示一层一层点</b>。先自己想 3 分钟，卡住再点提示 1；“方法步骤”是这一类题的通用套路；最后才看完整解答。</li>
+      <li><b>作答写在框里</b>，可以用 <span class="mono">$...$</span> 写公式，下方实时预览。${IN_CLAUDE ? "写完点“AI 批改”当场打分，或者回到对话里跟 Claude 说“批改我的作答”。" : "写完到“导出作答”复制 Markdown，发给 Claude 批改。"}</li>
+      <li><b>方法卡</b>汇总在“速查表”里。如果期末允许带 cheatsheet，就照着它抄。</li>
+    </ol></div>
+  </section>`;
+}
+
+/* ================= 速查表 ================= */
+function mustTable() {
+  return `<div class="table-wrap"><table><tbody>${MUST.map(([f, e]) => `<tr><td style="white-space:nowrap">$${f}$</td><td>$${e}$</td></tr>`).join("")}</tbody></table></div>`;
+}
+function viewSheet() {
+  const cards = Object.values(LESSONS).flatMap(L => L.methods.map(m => methodCard(m, L)));
+  return `<section class="stack"><span class="eyebrow">速查表</span><h1>方法卡汇总</h1><p class="lede">每一课的解题套路都汇总在这里。考试允许带 cheatsheet 的话，按这一页抄。</p></section>
+  <section class="block"><div class="sec-head"><h2>常用 Taylor 展开（$x\\to0$）</h2></div>${mustTable()}</section>
+  <section class="stack">${cards.join("")}</section>`;
+}
+function methodCard(m, L) {
+  return `<div class="method"><h4>${m.title}${L ? `<span class="small muted" style="font-family:var(--f-body);font-weight:400"> · 第 ${L.n} 课</span>` : ""}</h4><ol>${m.steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`;
+}
+
+/* ================= 导出 ================= */
+function buildMarkdown() {
+  let md = "# 高微1 期末冲刺：我的作答\n";
+  for (const [lid, L] of Object.entries(LESSONS)) {
+    md += `\n## 第 ${L.n} 课 ${textOf(L.title)}\n`;
+    const wrongC = L.concepts.filter(c => state[c.id] && state[c.id].picked != null && state[c.id].picked !== c.a);
+    if (wrongC.length) md += `\n概念题答错：${wrongC.map(c => c.id).join("、")}\n`;
+    for (const p of allItems(L)) {
+      const r = state[p.id] || {};
+      if (!r.answer && !r.status) continue;
+      md += `\n### ${p.id}（${p.lv} · ${p.src}）\n**题目**：${textOf(p.stmt)}\n\n**状态**：${statusLabel(r.status)}，用了 ${r.hints || 0} 层提示${r.sawSol ? "，看过解答" : ""}\n\n**我的作答**：\n${r.answer || "（未写）"}\n`;
+      if (r.feedback) md += `\n**AI 批改**：\n${r.feedback}\n`;
+    }
+  }
+  return md;
+}
+function viewExport() {
+  const md = buildMarkdown();
+  return `<section class="stack"><span class="eyebrow">导出</span><h1>我的作答</h1><p class="lede">${IN_CLAUDE ? "作答已经自动保存。想让 Claude 批改，直接在对话里说“批改我的高微作答”即可，Claude 能读到这里的记录；也可以复制下面的 Markdown 发给别的工具。" : "作答保存在这个浏览器里，换设备或清除浏览数据会丢失。复制下面的 Markdown 发给 Claude 批改，也顺便留个备份。"}</p></section>
+  <section class="stack"><div class="row"><button class="btn primary" id="copyMd">复制 Markdown</button><span class="small muted" id="copyMsg"></span></div><pre class="md" id="mdBox">${esc(md)}</pre></section>`;
+}
+
+/* ================= 课程页 ================= */
+const STATUS = [["", "未做"], ["solved", "做出来了"], ["partial", "做了一部分"], ["failed", "没做出来"]];
+function statusLabel(s) { return (STATUS.find(x => x[0] === (s || "")) || STATUS[0])[1]; }
+function conceptHTML(c) {
+  const r = state[c.id] || {};
+  const picked = r.picked;
+  const opts = c.opts.map((o, i) => {
+    let cls = "opt";
+    if (picked != null) { if (i === c.a) cls += " right"; else if (i === picked) cls += " wrong"; }
+    return `<button class="${cls}" data-c="${c.id}" data-i="${i}">${String.fromCharCode(65 + i)}. ${o}</button>`;
+  }).join("");
+  let verdict = "";
+  if (picked != null) {
+    const ok = picked === c.a;
+    verdict = `<div class="verdict ${ok ? "ok" : "no"}">${ok ? "答对了。" : `答错了，正确答案是 ${String.fromCharCode(65 + c.a)}。<a href="#" data-goto="${c.sec}">回到讲解</a>`}<span class="ex">${c.ex}</span></div>`;
+  }
+  return `<div class="q" id="q-${c.id}"><div>${c.q}</div><div class="opts">${opts}</div>${verdict}</div>`;
+}
+function probHTML(p) {
+  const r = state[p.id] || {};
+  const nh = r.hints || 0;
+  const hintCards = p.hints.slice(0, nh).map((h, i) => `<div class="card hint"><span class="lab">提示 ${i + 1}</span>${h}</div>`).join("");
+  const meth = r.sawMethod && p.method ? `<div class="card meth"><span class="lab">方法步骤 · ${methodById[p.method].title}</span><ol style="margin:0;padding-left:1.2em">${methodById[p.method].steps.map(s => `<li>${s}</li>`).join("")}</ol></div>` : "";
+  const sol = r.sawSol ? `<div class="card sol"><span class="lab">完整解答</span>${p.sol}</div>` : "";
+  const fb = r.feedback ? `<div class="fb"><span class="lab">AI 批改</span><span data-fbt>${esc(r.feedback)}</span></div>` : "";
+  return `<article class="prob" id="p-${p.id}">
+    <header><span class="chip lv-${p.lv}">${p.lv}</span><span class="chip src">${esc(p.src)}</span><span class="pid">${p.id}</span>
+      <select class="st" data-st="${p.id}" aria-label="做题状态">${STATUS.map(([v, l]) => `<option value="${v}"${(r.status || "") === v ? " selected" : ""}>${l}</option>`).join("")}</select></header>
+    <div class="body">
+      <div class="stmt">${p.stmt}</div>
+      <div class="row">
+        <button class="btn" data-hint="${p.id}"${nh >= p.hints.length ? " disabled" : ""}>${nh >= p.hints.length ? "提示已全部展开" : `提示 ${nh + 1}`}</button>
+        <button class="btn" data-meth="${p.id}"${r.sawMethod ? " disabled" : ""}>方法步骤</button>
+        <button class="btn" data-sol="${p.id}"${r.sawSol ? " disabled" : ""}>看解答</button>
+      </div>
+      <div class="reveal">${hintCards}${meth}${sol}</div>
+      <div class="ans">
+        <textarea id="ans-${p.id}" data-ans="${p.id}" placeholder="写下你的解答。公式用 $...$，例如 $f''(\\xi)=\\frac{f(a)+f(-a)}{a^2}$">${esc(r.answer || "")}</textarea>
+        <div class="pv" data-pv="${p.id}"></div>
+        ${IN_CLAUDE ? `<div class="row"><button class="btn primary" data-grade="${p.id}">AI 批改</button><span class="small muted" data-gmsg="${p.id}"></span></div>` : ""}
+        ${fb}
+      </div>
+    </div>
+  </article>`;
+}
+function viewLesson(lid) {
+  const L = LESSONS[lid];
+  const secs = L.sections.map(s => `<section class="stack" id="${s.id}"><h3>${s.h}</h3><div class="prose">${s.html === "__MUST__" ? mustTable() + R`<p class="small muted">$\tan x$、$\arctan x$ 可由前几个推出；$\frac1{1-x}$ 是等比级数。$\sin$ 只有奇次项、$\cos$ 只有偶次项，所以余项能多写一阶。</p>` : s.html}</div>${L.widget && s === L.sections[0] && L.widget === "taylorPlot" ? `<div id="widget"></div>` : ""}${L.widget === "lagrangeXi" && s === L.sections[0] ? `<div id="widget"></div>` : ""}</section>`).join("");
+  const concepts = L.concepts.map(conceptHTML).join("");
+  const probs = L.problems.map(probHTML).join("");
+  const vars = L.variants.length ? `<details class="opt-zone" open><summary>变种题（${L.variants.length}）：换个外形，同一个套路</summary><div class="stack">${L.variants.map(probHTML).join("")}</div></details>` : "";
+  const exts = L.extensions.length ? `<details class="opt-zone"><summary>延伸题（${L.extensions.length}，选做）：防超纲</summary><div class="stack">${L.extensions.map(probHTML).join("")}</div></details>` : "";
+  const fin = (state["lesson-" + lid] || {}).done;
+  const idx = UNITS[0].lessons.indexOf(lid);
+  const next = UNITS[0].lessons[idx + 1];
+  return `
+  <section class="stack"><span class="eyebrow">TAYLOR 公式 · 第 ${L.n} 课 · 约 30 分钟</span><h1>${L.title}</h1><p class="lede">${L.goal}</p></section>
+  <section class="block"><div class="sec-head"><h2>讲解</h2><span class="t">约 8 分钟</span></div>${secs}</section>
+  <section class="stack"><div class="sec-head"><h2>概念检测</h2><span class="t">约 5 分钟 · 先做这里</span></div>${concepts}</section>
+  <section class="stack"><div class="sec-head"><h2>做题</h2><span class="t">约 15 分钟 · 基础 → 真题</span></div>${probs}${vars}${exts}</section>
+  <section class="stack"><div class="sec-head"><h2>本课方法卡</h2><span class="t">抄进速查表</span></div>${L.methods.map(m => methodCard(m)).join("")}</section>
+  <div class="done-row"><button class="btn${fin ? "" : " primary"}" id="finish">${fin ? "已完成本课 ✓（点击取消）" : "完成本课"}</button>${next ? `<a href="#${next}">下一课：${textOf(LESSONS[next].title)} →</a>` : `<a href="#home">回到日程 →</a>`}</div>`;
+}
+
+/* ================= 交互 ================= */
+let currentView = null;
+function render() {
+  const v = (location.hash || "#home").slice(1);
+  const view = $("#view");
+  let html;
+  if (LESSONS[v]) html = viewLesson(v);
+  else if (v === "sheet") html = viewSheet();
+  else if (v === "export") html = viewExport();
+  else html = viewHome();
+  currentView = LESSONS[v] ? v : (["sheet", "export"].includes(v) ? v : "home");
+  view.innerHTML = html;
+  markNav(currentView);
+  refreshNavProgress();
+  if (LESSONS[v] && LESSONS[v].widget) {
+    const w = $("#widget");
+    if (w) (LESSONS[v].widget === "taylorPlot" ? taylorPlot : lagrangeXi)(w);
+  }
+  view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
+  typeset(view);
+  window.scrollTo(0, 0);
+}
+window.addEventListener("hashchange", render);
+
+function syncVisible() {
+  if (!LESSONS[currentView]) return;
+  for (const p of allItems(LESSONS[currentView])) {
+    const ta = document.getElementById("ans-" + p.id);
+    const r = state[p.id] || {};
+    if (ta && document.activeElement !== ta && ta.value !== (r.answer || "")) { ta.value = r.answer || ""; updatePreview(p.id); }
+    const st = document.querySelector(`[data-st="${p.id}"]`);
+    if (st && document.activeElement !== st) st.value = r.status || "";
+  }
+}
+
+const pvTimers = {};
+function updatePreview(id, now) {
+  clearTimeout(pvTimers[id]);
+  const run = () => {
+    const ta = document.getElementById("ans-" + id), pv = document.querySelector(`[data-pv="${id}"]`);
+    if (!ta || !pv) return;
+    pv.innerHTML = ta.value.trim() ? esc(ta.value).replace(/\n/g, "<br>") : "";
+    if (pv.innerHTML) typeset(pv);
+  };
+  if (now) run(); else pvTimers[id] = setTimeout(run, 500);
+}
+const saveTimers = {};
+document.addEventListener("input", e => {
+  const id = e.target.dataset && e.target.dataset.ans;
+  if (!id) return;
+  updatePreview(id);
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => save(id, { answer: e.target.value }), 1200);
+});
+document.addEventListener("focusout", e => {
+  const id = e.target.dataset && e.target.dataset.ans;
+  if (!id) return;
+  clearTimeout(saveTimers[id]);
+  if ((state[id] || {}).answer !== e.target.value) save(id, { answer: e.target.value });
+});
+document.addEventListener("change", e => {
+  const id = e.target.dataset && e.target.dataset.st;
+  if (id) save(id, { status: e.target.value });
+});
+
+function findProb(id) { for (const L of Object.values(LESSONS)) for (const p of allItems(L)) if (p.id === id) return p; return null; }
+function findConcept(id) { for (const L of Object.values(LESSONS)) for (const c of L.concepts) if (c.id === id) return c; return null; }
+function rerenderProb(id) {
+  const el = document.getElementById("p-" + id);
+  if (!el) return;
+  const ta = document.getElementById("ans-" + id);
+  const draft = ta ? ta.value : null;
+  el.outerHTML = probHTML(findProb(id));
+  const fresh = document.getElementById("p-" + id);
+  if (draft != null) document.getElementById("ans-" + id).value = draft;
+  updatePreview(id, true);
+  typeset(fresh);
+}
+const solArm = {};
+document.addEventListener("click", async e => {
+  const t = e.target.closest("button, a");
+  if (!t) return;
+  const d = t.dataset;
+  if (d.goto) { e.preventDefault(); const s = document.getElementById(d.goto); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (d.c != null && d.i != null) {
+    const c = findConcept(d.c);
+    if ((state[c.id] || {}).picked != null) return;
+    save(c.id, { picked: Number(d.i), correct: Number(d.i) === c.a });
+    const box = document.getElementById("q-" + c.id);
+    box.outerHTML = conceptHTML(c);
+    typeset(document.getElementById("q-" + c.id));
+    return;
+  }
+  if (d.hint) { const p = findProb(d.hint); const n = Math.min(p.hints.length, ((state[p.id] || {}).hints || 0) + 1); save(p.id, { hints: n }); rerenderProb(p.id); return; }
+  if (d.meth) { save(d.meth, { sawMethod: true }); rerenderProb(d.meth); return; }
+  if (d.sol) {
+    if (!solArm[d.sol]) { solArm[d.sol] = true; t.textContent = "确定先看解答？再点一次"; setTimeout(() => { solArm[d.sol] = false; if (document.body.contains(t)) t.textContent = "看解答"; }, 4000); return; }
+    save(d.sol, { sawSol: true }); rerenderProb(d.sol); return;
+  }
+  if (d.grade) { gradeProb(d.grade, t); return; }
+  if (t.id === "finish") {
+    const lid = currentView;
+    const fin = !(state["lesson-" + lid] || {}).done;
+    save("lesson-" + lid, { done: fin });
+    t.textContent = fin ? "已完成本课 ✓（点击取消）" : "完成本课";
+    t.classList.toggle("primary", !fin);
+    return;
+  }
+  if (t.id === "copyMd") {
+    const md = buildMarkdown();
+    const msg = $("#copyMsg");
+    try { await navigator.clipboard.writeText(md); msg.textContent = "已复制。"; }
+    catch (err) { const r = document.createRange(); r.selectNodeContents($("#mdBox")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); msg.textContent = "浏览器不让直接复制，已帮你选中，按 ⌘C / Ctrl+C。"; }
+  }
+});
+
+/* ================= AI 批改 ================= */
+let samplePromise = null;
+function getSample() {
+  if (!samplePromise) samplePromise = (window.claude && window.claude.use) ? window.claude.use("sample").catch(() => null) : Promise.resolve(null);
+  return samplePromise;
+}
+const SAMPLE_MSG = { not_granted: "你没有允许这一页调用 Claude，批改功能已关闭。可以回到对话里让 Claude 批改。", sampling_disabled: "这个账号暂时不能在页面里调用 Claude。", rate_limited: "调用太频繁了，过一会儿再试。", session_expired: "登录过期了，刷新后再试。", refused: "这次没有得到批改结果，换个写法再试。", empty_completion: "没有得到批改结果，再试一次。" };
+async function gradeProb(id, btn) {
+  const p = findProb(id);
+  const ta = document.getElementById("ans-" + id);
+  const msg = document.querySelector(`[data-gmsg="${id}"]`);
+  const answer = (ta.value || "").trim();
+  if (!answer) { msg.textContent = "先写一点作答再批改。"; return; }
+  save(id, { answer: ta.value });
+  const sample = await getSample();
+  if (!sample) { msg.textContent = "这里调用不了 Claude。作答已保存，回到对话里说“批改我的高微作答”即可。"; return; }
+  btn.disabled = true;
+  msg.textContent = "批改中，通常要 10–40 秒…";
+  const prompt = `你是清华大学《高等微积分(1)》的阅卷助教，批改一道期末复习题。\n\n【题目】\n${textOf(p.stmt)}\n\n【参考解答】\n${textOf(p.sol)}\n\n【学生作答】\n${answer}\n\n请按以下格式用中文回答，简洁，公式用 $...$：\n得分：x/10\n问题：逐条列出逻辑漏洞或计算错误（特别检查：中值点或极值点的存在依据、介值定理是否在自变量区间上使用、o(·) 运算是否合法、需要证明的存在性是否证明了、特殊情形是否漏掉）。没有问题就写“无”。\n建议：一条最关键的改进建议。`;
+  let out = "";
+  try {
+    const { text } = await sample(prompt, { cache: false, onText: ({ text }) => { out = text; msg.textContent = "批改中…"; } });
+    out = text;
+    save(id, { feedback: out, gradedAt: Date.now() });
+    rerenderProb(id);
+  } catch (err) {
+    const code = err && err.code;
+    if (code === "cancelled") { msg.textContent = ""; }
+    else msg.textContent = SAMPLE_MSG[code] || "批改中断了，稍后再试。";
+    if (err && err.text) { save(id, { feedback: err.text + "\n（批改中断）" }); rerenderProb(id); }
+  } finally {
+    const b = document.querySelector(`[data-grade="${id}"]`);
+    if (b) b.disabled = false;
+  }
+}
+
+/* ================= 交互图：Taylor 多项式 ================= */
+function css(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+function fact(n) { let r = 1; for (let i = 2; i <= n; i++) r *= i; return r; }
+const FUNCS = {
+  exp: { tex: "e^x", f: Math.exp, c: k => 1 / fact(k), view: [-4, 3.2, -2, 10], probe: 2,
+    term: k => k === 0 ? "1" : k === 1 ? "x" : `\\frac{x^{${k}}}{${k}!}`, sign: () => 1,
+    note: "对任何 x，只要 n 足够大，误差都会趋于 0。把 x 拖到 −3 或 3 再加大 n 看看。" },
+  sin: { tex: "\\sin x", f: Math.sin, c: k => k % 2 ? ((k - 1) / 2 % 2 ? -1 : 1) / fact(k) : 0, view: [-8, 8, -2.6, 2.6], probe: 4,
+    term: k => k === 1 ? "x" : `\\frac{x^{${k}}}{${k}!}`, sign: k => ((k - 1) / 2 % 2 ? -1 : 1),
+    note: "只有奇次项，所以 n 从偶数加到下一个奇数时曲线才变。n 越大，贴合的范围越宽。" },
+  cos: { tex: "\\cos x", f: Math.cos, c: k => k % 2 ? 0 : ((k / 2) % 2 ? -1 : 1) / fact(k), view: [-8, 8, -2.6, 2.6], probe: 4,
+    term: k => k === 0 ? "1" : `\\frac{x^{${k}}}{${k}!}`, sign: k => ((k / 2) % 2 ? -1 : 1),
+    note: "只有偶次项。和 sin 一样，在整条实轴上都能越加越准。" },
+  ln: { tex: "\\ln(1+x)", f: x => x > -1 ? Math.log1p(x) : NaN, c: k => k === 0 ? 0 : (k % 2 ? 1 : -1) / k, view: [-1.6, 3, -4, 3], probe: 1.6,
+    term: k => k === 1 ? "x" : `\\frac{x^{${k}}}{${k}}`, sign: k => (k % 2 ? 1 : -1),
+    note: "把 x 拖到 1 的右边，再加大 n：多项式反而越来越离谱。Taylor 多项式只在 |x| < 1 内越加越准，这是 Peano 余项“只管 x→0”的直观体现。" },
+  geo: { tex: "\\frac{1}{1-x}", f: x => x < 1 ? 1 / (1 - x) : NaN, c: () => 1, view: [-2.2, 1.6, -3, 7], probe: -1.4,
+    term: k => k === 0 ? "1" : k === 1 ? "x" : `x^{${k}}`, sign: () => 1,
+    note: "x < −1 时多项式在正负之间来回剧烈摆动，同样只在 |x| < 1 内收敛。" }
+};
+function taylorPlot(mount) {
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl">
+      <label for="tf">函数 <select id="tf">${Object.entries(FUNCS).map(([k, v]) => `<option value="${k}">${k === "geo" ? "1/(1−x)" : k === "ln" ? "ln(1+x)" : k === "exp" ? "e^x" : k === "sin" ? "sin x" : "cos x"}</option>`).join("")}</select></label>
+      <label for="tn">阶数 n = <b class="mono" id="tnv">3</b> <input id="tn" type="range" min="0" max="14" value="3"></label>
+      <label for="tx">观察点 x = <b class="mono" id="txv"></b> <input id="tx" type="range" min="0" max="1000" value="700"></label>
+    </div>
+    <canvas id="tc" role="img" aria-label="函数与其 Taylor 多项式的图像"></canvas>
+    <div class="legend"><span><i style="background:var(--ink)"></i>f(x)</span><span><i style="background:var(--accent)"></i>Taylor 多项式 T<sub>n</sub>(x)</span><span><i style="background:var(--bad)"></i>观察点处的误差</span></div>
+    <div class="readout" id="tr"></div>
+    <div class="poly" id="tp"></div>
+    <p class="small muted" id="tnote"></p>
+  </div>`;
+  const cv = $("#tc", mount), sel = $("#tf", mount), nIn = $("#tn", mount), xIn = $("#tx", mount);
+  let polyTimer;
+  function setProbe() { const F = FUNCS[sel.value]; const [a, b] = F.view; xIn.value = Math.round(1000 * (F.probe - a) / (b - a)); }
+  function T(F, n, x) { let s = 0, p = 1; for (let k = 0; k <= n; k++) { s += F.c(k) * p; p *= x; } return s; }
+  function draw() {
+    const F = FUNCS[sel.value], n = +nIn.value;
+    const [x0, x1, y0, y1] = F.view;
+    const px = x0 + (x1 - x0) * (+xIn.value) / 1000;
+    $("#tnv", mount).textContent = n; $("#txv", mount).textContent = px.toFixed(2);
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const X = x => (x - x0) / (x1 - x0) * W, Y = y => H - (y - y0) / (y1 - y0) * H;
+    g.lineWidth = 1; g.strokeStyle = css("--grid");
+    for (let i = Math.ceil(x0); i <= x1; i++) { g.beginPath(); g.moveTo(X(i), 0); g.lineTo(X(i), H); g.stroke(); }
+    for (let j = Math.ceil(y0); j <= y1; j++) { g.beginPath(); g.moveTo(0, Y(j)); g.lineTo(W, Y(j)); g.stroke(); }
+    g.strokeStyle = css("--muted"); g.lineWidth = 1.2;
+    g.beginPath(); g.moveTo(X(0), 0); g.lineTo(X(0), H); g.moveTo(0, Y(0)); g.lineTo(W, Y(0)); g.stroke();
+    g.fillStyle = css("--muted"); g.font = "11px " + css("--f-mono");
+    for (let i = Math.ceil(x0); i <= x1; i++) if (i) g.fillText(i, X(i) + 3, Math.min(H - 4, Y(0) + 13));
+    function curve(fn, color, w) {
+      g.strokeStyle = color; g.lineWidth = w; g.beginPath(); let pen = false;
+      for (let i = 0; i <= W; i++) {
+        const x = x0 + (x1 - x0) * i / W, y = fn(x);
+        if (!isFinite(y) || y > y1 + (y1 - y0) * 3 || y < y0 - (y1 - y0) * 3) { pen = false; continue; }
+        if (!pen) { g.moveTo(i, Y(y)); pen = true; } else g.lineTo(i, Y(y));
+      }
+      g.stroke();
+    }
+    g.save(); g.beginPath(); g.rect(0, 0, W, H); g.clip();
+    curve(F.f, css("--ink"), 2.2);
+    curve(x => T(F, n, x), css("--accent"), 2.2);
+    const fy = F.f(px), ty = T(F, n, px);
+    if (isFinite(fy)) {
+      g.strokeStyle = css("--bad"); g.lineWidth = 2.5; g.beginPath(); g.moveTo(X(px), Y(fy)); g.lineTo(X(px), Y(ty)); g.stroke();
+      g.fillStyle = css("--ink"); g.beginPath(); g.arc(X(px), Y(fy), 4, 0, 7); g.fill();
+    }
+    g.fillStyle = css("--accent"); g.beginPath(); g.arc(X(px), Y(ty), 4, 0, 7); g.fill();
+    g.restore();
+    const fmt = v => !isFinite(v) ? "无定义" : Math.abs(v) >= 1e5 || (Math.abs(v) < 1e-3 && v !== 0) ? v.toExponential(2) : v.toFixed(4);
+    $("#tr", mount).innerHTML = `<span>f(x) = <b>${fmt(fy)}</b></span><span>T<sub>${n}</sub>(x) = <b>${fmt(ty)}</b></span><span>误差 |f − T<sub>${n}</sub>| = <b>${isFinite(fy) ? fmt(Math.abs(fy - ty)) : "—"}</b></span>`;
+    $("#tnote", mount).textContent = F.note;
+    clearTimeout(polyTimer);
+    polyTimer = setTimeout(() => {
+      let s = ""; let first = true;
+      for (let k = 0; k <= n; k++) { if (F.c(k) === 0) continue; const sg = F.sign(k); s += (first ? (sg < 0 ? "-" : "") : (sg < 0 ? "-" : "+")) + F.term(k); first = false; }
+      if (!s) s = "0";
+      const tp = $("#tp", mount); tp.innerHTML = `$$T_{${n}}(x)=${s}$$`; typeset(tp);
+    }, 250);
+  }
+  sel.addEventListener("change", () => { setProbe(); draw(); });
+  nIn.addEventListener("input", draw); xIn.addEventListener("input", draw);
+  window.addEventListener("resize", draw);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  setProbe(); requestAnimationFrame(draw);
+}
+
+/* ================= 交互图：Lagrange 中值点 ================= */
+function lagrangeXi(mount) {
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl">
+      <label for="lx">x = <b class="mono" id="lxv"></b> <input id="lx" type="range" min="-30" max="30" value="20"></label>
+      <label for="ln">n = <b class="mono" id="lnv"></b> <input id="ln" type="range" min="0" max="6" value="1"></label>
+    </div>
+    <div class="xi-line" id="ll"></div>
+    <div class="readout" id="lr"></div>
+    <p class="small muted">f(x) = eˣ，在 0 处展开：eˣ = Tₙ(x) + e^ξ · xⁿ⁺¹/(n+1)!。图中的点就是真正满足这个等式的 ξ。</p>
+  </div>`;
+  const xIn = $("#lx", mount), nIn = $("#ln", mount);
+  function draw() {
+    let x = (+xIn.value) / 10; if (Math.abs(x) < 0.1) x = x < 0 ? -0.1 : 0.1;
+    const n = +nIn.value;
+    let T = 0, p = 1; for (let k = 0; k <= n; k++) { T += p / fact(k); p *= x; }
+    const Rn = Math.exp(x) - T;
+    const xi = Math.log(Rn * fact(n + 1) / Math.pow(x, n + 1));
+    $("#lxv", mount).textContent = x.toFixed(1); $("#lnv", mount).textContent = n;
+    const lo = -3.2, hi = 3.2, P = v => (v - lo) / (hi - lo) * 100;
+    const a = Math.min(0, x), b = Math.max(0, x);
+    $("#ll", mount).innerHTML = `<div class="bar"></div><div class="seg" style="left:${P(a)}%;width:${P(b) - P(a)}%"></div>
+      <div class="pt" style="left:${P(0)}%"><span>0</span></div><div class="pt" style="left:${P(x)}%"><span>x = ${x.toFixed(1)}</span></div>
+      <div class="xi" style="left:${P(xi)}%"><span>ξ = ${xi.toFixed(3)}</span></div>`;
+    $("#lr", mount).innerHTML = `<span>余项 Rₙ(x) = <b>${Rn.toExponential(3)}</b></span><span>θ = ξ/x = <b>${(xi / x).toFixed(4)}</b></span><span>1/(n+2) = <b>${(1 / (n + 2)).toFixed(4)}</b></span>`;
+  }
+  xIn.addEventListener("input", draw); nIn.addEventListener("input", draw);
+  draw();
+}
+
+renderNav();
+render();
+</script>
+</body>
+</html>
