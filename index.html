@@ -200,6 +200,7 @@ pre.md { white-space: pre-wrap; background: var(--surface); border: 1px solid va
 }
 /* 网格子元素允许收缩，长公式在自己的框里横向滚动，不把页面撑宽 */
 .col > *, .stack > *, .block > *, .prose > *, .prob .body > *, .widget > *, .q > *, .reveal > * { min-width: 0; }
+mjx-container.wide-math { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-block: 4px; }
 mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hidden; max-width: 100%; margin: .5em 0 !important; padding-bottom: 2px; }
 .widget canvas { touch-action: pan-y; cursor: ew-resize; }
 .sync-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
@@ -326,7 +327,7 @@ t1: {
       <p class="callout">判断用哪个：题目里出现 $\lim$ 或“展开到 $o(x^3)$”→ Peano；题目要你证明 “存在 $\xi$”、“对所有 $x$ 有不等式”、“误差小于 $10^{-5}$”→ Lagrange。</p>` },
     { id: "t1-s3", h: "3. 必背的 8 个展开（$x_0=0$）", html: "__MUST__" },
     { id: "t1-s4", h: "4. 唯一性定理和一个陷阱", html: R`
-      <p><b>唯一性（讲义第 7 周定理 3）</b>：若 $f(x)=a_0+a_1(x-x_0)+\cdots+a_n(x-x_0)^n+o((x-x_0)^n)$，<u>并且 $f$ 在 $x_0$ 处有 $n$ 阶导数</u>，则 $a_k=\frac{f^{(k)}(x_0)}{k!}$。</p>
+      <p><b>唯一性（讲义第 7 周定理 3）</b>：若</p>$$f(x)=a_0+a_1(x-x_0)+\cdots+a_n(x-x_0)^n+o\big((x-x_0)^n\big),$$<p><u>并且 $f$ 在 $x_0$ 处有 $n$ 阶导数</u>，则 $a_k=\frac{f^{(k)}(x_0)}{k!}$。</p>
       <p>它的用处：复杂函数不用逐个求导，拼出展开式后直接读系数。例如 $\ln x$ 在 $x_0=3$ 处：$\ln x=\ln 3+\ln\big(1+\frac{x-3}{3}\big)$，再套 $\ln(1+u)$ 即可。</p>
       <p class="callout warn"><b>陷阱</b>：反过来不成立。“$f$ 有 $n$ 阶展开式”推不出“$f^{(n)}(x_0)$ 存在”（$n\ge2$ 时）。反例：$f(x)=x^3D(x)$，$D$ 是 Dirichlet 函数。$f(x)=o(x^2)$，但 $f$ 在 $x\ne0$ 处都不连续，$f''(0)$ 根本没定义。所以题目问“求 $g''(0)$”时，<u>要先证明它存在</u>，不能直接读系数。第二课的 2025 期末第 5 题就考这个。</p>` }
   ],
@@ -754,9 +755,20 @@ function setSync(on, text) {
 /* ================= 工具函数 ================= */
 const $ = (s, el = document) => el.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+/* 行内公式比所在段落还宽时（手机上常见），改成可横向滑动的独立一行，避免撑宽整页 */
+function fixWide(root) {
+  root.querySelectorAll("mjx-container:not([display])").forEach(c => {
+    c.classList.remove("wide-math");
+    const host = c.parentElement;
+    if (host && c.getBoundingClientRect().width > host.clientWidth + 1) c.classList.add("wide-math");
+  });
+}
+document.addEventListener("toggle", e => { if (e.target.open) fixWide(e.target); }, true);
+let wideTimer;
+window.addEventListener("resize", () => { clearTimeout(wideTimer); wideTimer = setTimeout(() => fixWide(document.getElementById("view")), 200); });
 function typeset(el) {
   if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise([el]).catch(() => {});
+    MathJax.typesetPromise([el]).then(() => fixWide(el)).catch(() => {});
   } else {
     setTimeout(() => typeset(el), 300);
   }
