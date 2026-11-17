@@ -253,6 +253,17 @@ mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hi
 .method { grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .method ol { grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .method li { min-width: 0; }
+.prob { grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.prob header, .prob .body, .prob .reveal, .prob .ans, .prob .stmt { min-width: 0; max-width: 100%; }
+.prob .body, .prob .reveal, .prob .ans { grid-template-columns: minmax(0, 1fr); }
+.prob .body > *, .prob .reveal > *, .prob .ans > * { min-width: 0; max-width: 100%; }
+.prob .src { white-space: normal; overflow-wrap: anywhere; }
+.prob .card p, .prob .stmt { overflow-wrap: anywhere; }
+.exam-audit summary { cursor: pointer; overflow-wrap: anywhere; }
+.exam-audit > .prose { margin-top: 16px; min-width: 0; }
+.exam-audit table { min-width: 640px; }
+.exam-audit th { max-width: 140px; }
+.exam-audit td p { margin: 4px 0; }
 </style>
 </head>
 <body>
@@ -269,29 +280,399 @@ mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hi
 /* ================= 内容数据 ================= */
 const R = String.raw;
 
-const EXAM_YEARS = ["2022 期末"];
+const EXAM_YEARS = [R`2015 史灵生期末`,R`2016 史灵生期末`,R`2017 史灵生期末`,R`2018 史灵生期末`,R`2019秋期末·史灵生`,R`2022秋期末·史灵生`,R`2022秋期末·艾颖华`];
 const EXAM_MAP = [
-  // topic, [2022 期末], stars, note
-  ["普吕弗序列：编码、还原、叶子数", [1], 5, "2022 期末 4、2024 期末 5 连续考，几乎必考"],
-  ["树的性质与生成树", [1], 5, "边数 n−1、加边成圈、删边不连通；2022 期末 1(2)、5(1)"],
-  ["连通分支与边数", [1], 4, "2022 期末 1(1)：n 点 m 个分支，边数最少 n−m"],
-  ["握手定理与按度数计数", [1], 4, "2022 期末 6：角的数目、无 4-圈图的边数上界"],
-  ["双计数：区组设计", [1], 3, "2022 期末 2(3)：数（元素，区组）配对"],
-  ["Hall 匹配定理、二部图", [1], 4, "2022 期末 3、7"],
-  ["平面图 Euler 公式、染色", [1], 4, "2022 期末 2"],
-  ["最便宜生成树", [1], 3, "2022 期末 5(2)，作业 7"],
-  ["欧拉路与欧拉圈", [0], 3, "本学期 11-17 刚讲，适合出小问"],
-  ["中国剩余定理", [0], 3, "数论多在期中考，但期末“考察所有内容”"]
+[R`组合计数`,[1,1,1,1,1,1,0],6,R`按已核资料逐题归类；类别可重叠`],
+[R`双计数与区组设计`,[1,1,1,1,1,1,1],7,R`按已核资料逐题归类；类别可重叠`],
+[R`递推关系`,[1,1,1,1,1,1,0],6,R`按已核资料逐题归类；类别可重叠`],
+[R`整除与同余`,[1,1,1,1,1,1,0],6,R`按已核资料逐题归类；类别可重叠`],
+[R`平面图、对偶与染色`,[1,1,1,1,1,1,1],7,R`按已核资料逐题归类；类别可重叠`],
+[R`图的结构与路径`,[1,1,1,1,1,1,1],7,R`按已核资料逐题归类；类别可重叠`],
+[R`树与编码`,[1,1,0,0,0,0,1],3,R`按已核资料逐题归类；类别可重叠`],
+[R`匹配`,[1,1,1,1,1,1,1],7,R`按已核资料逐题归类；类别可重叠`],
+[R`概率`,[0,null,0,1,0,0,0],1,R`按已核资料逐题归类；类别可重叠`],
+[R`抽屉原理`,[0,null,0,0,1,1,0],2,R`按已核资料逐题归类；类别可重叠`],
+[R`奇偶性`,[0,null,0,0,1,1,0],2,R`按已核资料逐题归类；类别可重叠`],
+[R`交叉数`,[0,null,0,0,0,1,0],1,R`按已核资料逐题归类；类别可重叠`],
+[R`最小生成树`,[0,null,0,0,0,0,1],1,R`按已核资料逐题归类；类别可重叠`]
+];
+const EXAM_AUDIT_META = {"scope":R`逐题核对本地可用期末卷、转录/回忆及补充资料，保留来源性质与不确定项；期中订正和线代不在本轮范围。`,"frequencyLabel":R`7 份带年份卷型，按来源去重`,"frequencyNote":R`● 表示已核到该考点，· 表示完整核对的该份资料未出现，? 表示资料不完整不能判断。同年不同班卷型分列；复习手稿、辅导及无年份样题不计入年度频次。`,"rangeNote":R`陆玫样题已按用户确认排除；其内容不作为本项目缺口。`};
+const EXAM_AUDIT = [
+{
+"id":R`discrete-2015-shi`,
+"label":R`2015 史灵生期末`,
+"year":2015,
+"kind":R`typed-transcription`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`英文重排题表，未见原卷扫描/考试日期；第8题原文“exactly open a week”有转录拼写疑误。此文件仅代表所标年份资料，不作官方原卷真实性背书。（打字转录）`,
+"sourceFiles":[R`离散数学/06_往年题/2015秋_期末_试卷_史灵生_英文.pdf`],
+"questions":[
+{"id":R`1`,"page":R`页/图 1`,"summary":R`Banach火柴盒有限和 Σ C(n+k,k)/2^k`,"topics":[R`计数`,R`双计数`],"topicGroups":[R`组合计数`,R`双计数与区组设计`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-e1`}],"note":R`新增dplus1-e1，用二进制多数串分类证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2`,"page":R`页/图 1`,"summary":R`一元糖1种、二元冰品2种的花完钱方案`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`},{"lessonId":R`count1`,"problemId":R`count1-p2`}],"note":R`新增dplus1-p3，补系数与特征根；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3`,"page":R`页/图 1`,"summary":R`k>2时F_k整除F_n等价k整除n`,"topics":[R`数论`,R`递推`],"topicGroups":[R`整除与同余`,R`递推关系`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`,"problemId":R`dplus2-p1`}],"note":R`新增dplus2-p1，强gcd与指标Euclid；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4`,"page":R`页/图 1`,"summary":R`实数r的整数逼近，0<q<n且误差≤1/n`,"topics":[R`数论`,R`计数`],"topicGroups":[R`整除与同余`,R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus7`,"problemId":R`dplus7-p1`},{"lessonId":R`count1`,"problemId":R`count1-p3`}],"note":R`新增dplus7-p1，单位圆间隙而非误用n−1抽屉；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`二部平面地图的对偶有Euler闭路`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p1`}],"note":R`新增dplus5-p1，面边计数和对偶连通；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6`,"page":R`页/图 1`,"summary":R`3×3×3立方网格Hamilton路由角到中心是否可能`,"topics":[R`图论`,R`计数`],"topicGroups":[R`图的结构与路径`,R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p2`}],"note":R`新增dplus5-p2，黑白奇偶否定；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`树至多一个完美匹配`,"topics":[R`树`,R`匹配`],"topicGroups":[R`树与编码`,R`匹配`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus6`,"problemId":R`dplus6-p1`},{"lessonId":R`h2`,"problemId":R`h2-e1`}],"note":R`新增dplus6-p1直接短证明，明确一般图对称差与树无圈；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`8`,"page":R`页/图 1`,"summary":R`七人每天三人一周每对同行一次的构造`,"topics":[R`双计数`,R`其他`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-p1`},{"lessonId":R`g3`,"problemId":R`g3-p3`},{"lessonId":R`g3`,"problemId":R`g3-e1`}],"note":R`新增dplus8-p1 Fano三元组实际构造；原英文open疑为once；补课前：部分覆盖`,"risk":R``,"confidence":R`interpreted`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`F_n个位与下标n个位相同的全部指标`,"topics":[R`数论`,R`递推`],"topicGroups":[R`整除与同余`,R`递推关系`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`,"problemId":R`dplus2-p3`}],"note":R`新增dplus2-p3，相邻对模10周期60与完整枚举；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`discrete-2016-shi`,
+"label":R`2016 史灵生期末`,
+"year":2016,
+"kind":R`handwritten-recollection`,
+"inFrequency":true,
+"complete":false,
+"sourceNote":R`两张图片是同一手写回忆条目的直接图和拍屏照片，已目视核对内容对应，作为同一份资料计频；第1(1)符号不清，不当作没考或已核验原题。（手写回忆）`,
+"sourceFiles":[R`离散数学/06_往年题/2016秋_期末_试卷_史灵生.jpg`,R`离散数学/06_往年题/2016秋_期末_试卷_史灵生_照片.jpg`],
+"questions":[
+{"id":R`1(1)`,"page":R`页/图 1`,"summary":R`阶乘的上下界；手写指数与适用阈值细节不清`,"topics":[R`计数`,R`其他`],"topicGroups":[R`组合计数`],"level":R`unknown`,"coverageKind":R`unknown`,"beforeLevel":R`unknown`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-v2`}],"note":R`不据模糊式作精确覆盖判定；补独立可证标准界至dplus1-v2`,"risk":R``,"confidence":R`unclear`},
+{"id":R`1(2)`,"page":R`页/图 1`,"summary":R`交替二项式部分和`,"topics":[R`计数`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`}],"note":R`新增dplus1-p2；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2(1)`,"page":R`页/图 1`,"summary":R`路径图完美匹配数`,"topics":[R`树`,R`匹配`],"topicGroups":[R`树与编码`,R`匹配`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus6`,"problemId":R`dplus6-v1`},{"lessonId":R`h2`,"problemId":R`h2-e1`}],"note":R`新增dplus6-v1，奇偶路径的强制匹配；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`2(2)`,"page":R`页/图 1`,"summary":R`路径图全部匹配数z(n)，手记z(1)=1,z(2)=2`,"topics":[R`递推`,R`匹配`],"topicGroups":[R`递推关系`,R`匹配`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-v3`},{"lessonId":R`count1`,"problemId":R`count1-p2`}],"note":R`新增dplus1-v3，按末边/末点递推并保留初值；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3(1)`,"page":R`页/图 1`,"summary":R`六人中是否存在认识人数相同的两人`,"topics":[R`计数`,R`图论`],"topicGroups":[R`组合计数`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-v1`},{"lessonId":R`count1`,"sectionId":R`count1-s3`},{"lessonId":R`g1`,"sectionId":R`g1-s1`}],"note":R`新增dplus5-v1，度0与度5不能并存；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3(2)`,"page":R`页/图 1`,"summary":R`六人中三人互识或互不识`,"topics":[R`图论`,R`计数`],"topicGroups":[R`图的结构与路径`,R`组合计数`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`r1`,"problemId":R`r1-p2`}],"note":R`已有完整R(3,3)=6及K5下界`,"risk":R``,"confidence":R`verified`},
+{"id":R`4`,"page":R`页/图 1`,"summary":R`两种一元糖、一种二元冰品的带权购买递推`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`},{"lessonId":R`count1`,"problemId":R`count1-p2`}],"note":R`新增dplus1-p3，禁止与2015/17系数交换；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`F_k整除F_n推出k整除n（k>2）`,"topics":[R`数论`,R`递推`],"topicGroups":[R`整除与同余`,R`递推关系`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`,"problemId":R`dplus2-p1`}],"note":R`新增dplus2-p1；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6`,"page":R`页/图 1`,"summary":R`解x²≡3x−2 (mod 6)`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`,"problemId":R`n2-p2`}],"note":R`晚年组dplus3补小模数/CRT二次同余；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`平面点最小距离1时距离1点对的线性上界；手写约为3n`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-e1`},{"lessonId":R`p1`,"sectionId":R`p1-s2`}],"note":R`新增dplus5-e1几何嵌入后用平面边界；原上界严格号不清；补课前：部分覆盖`,"risk":R``,"confidence":R`interpreted`},
+{"id":R`8`,"page":R`页/图 1`,"summary":R`八人七天每天分两组四人，每对同组三次`,"topics":[R`双计数`,R`其他`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-p3`},{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`新增dplus8-p3 F₂³超平面分组构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`顶点所在奇圈数受限的充分染色数（手写条件略）`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e1`}],"note":R`新增dplus4-e1，Kempe充分界；补课前：未覆盖`,"risk":R``,"confidence":R`interpreted`}
+]
+},
+{
+"id":R`discrete-2017-shi`,
+"label":R`2017 史灵生期末`,
+"year":2017,
+"kind":R`typed-transcription-with-unofficial-solutions`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`试卷为英文打字转录，解析为个人参考解答，二者同卷不重复计频。解析第9题给出的Kempe充分上界可证明，但其最后宣称每个k都可构造取等并未给构造，本次不采纳该“精确最大值”声称。（转录与非官方解析）`,
+"sourceFiles":[R`离散数学/06_往年题/2017秋_期末_试卷_史灵生.pdf`,R`离散数学/06_往年题/2017秋_期末_解析_史灵生.pdf`],
+"questions":[
+{"id":R`1(a)`,"page":R`页/图 1`,"summary":R`Σ1/[k(k+1)]裂项`,"topics":[R`计数`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p1`}],"note":R`新增dplus1-p1；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1(b)`,"page":R`页/图 1`,"summary":R`Σ C(n,k)C(k,m)吸收求和`,"topics":[R`计数`,R`双计数`],"topicGroups":[R`组合计数`,R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`},{"lessonId":R`g3`,"sectionId":R`g3-s1`}],"note":R`新增dplus1-p2；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2`,"page":R`页/图 1`,"summary":R`一元1种、二元2种购买递推`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`},{"lessonId":R`count1`,"problemId":R`count1-p2`}],"note":R`新增dplus1-p3；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3`,"page":R`页/图 1`,"summary":R`解x²≡5x (mod 6)`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`,"problemId":R`n2-p2`}],"note":R`晚年组dplus3补小模数/CRT二次同余；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4`,"page":R`页/图 1`,"summary":R`前2n个Fibonacci中选n+1个，存在整除对`,"topics":[R`数论`,R`计数`,R`递推`],"topicGroups":[R`整除与同余`,R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`,"problemId":R`dplus2-p2`}],"note":R`新增dplus2-p2，指标奇部抽屉；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`Euler闭路分解成边不交简单圈`,"topics":[R`图论`],"topicGroups":[R`图的结构与路径`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p3`},{"lessonId":R`g1`,"sectionId":R`g1-s3`}],"note":R`新增dplus5-p3补明确分拆算法与证明；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`6`,"page":R`页/图 1`,"summary":R`无完美匹配的图上不重复顶点行走游戏先手必胜`,"topics":[R`匹配`,R`图论`],"topicGroups":[R`匹配`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus6`,"problemId":R`dplus6-p2`},{"lessonId":R`h1`,"problemId":R`h1-e1`}],"note":R`新增dplus6-p2，最大匹配和增广路反证；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`11点简单图及其补图至少一个非平面`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`,"sectionId":R`p1-s2`}],"note":R`现有边数界直接应用；新台账写55>2·27`,"risk":R``,"confidence":R`verified`},
+{"id":R`8`,"page":R`页/图 1`,"summary":R`九人四天三组三人，每对同组一次`,"topics":[R`双计数`,R`其他`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-p2`},{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`新增dplus8-p2 F₃²四斜率构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`每点至多k个奇圈时的充分染色数`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e1`}],"note":R`新增dplus4-e1，Kempe充分上界；不照抄非官方解析末段未经证实的最优性断言；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`discrete-2018-shi`,
+"label":R`2018 史灵生期末`,
+"year":2018,
+"kind":R`recollection-with-hints`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`第1页为回忆题面，第2页仅提示而非官方答案；日期2019-01-11，对应2018秋。公式已目视原PDF第1页核对。（回忆与提示）`,
+"sourceFiles":[R`离散数学/06_往年题/2018秋_期末_回忆版含答案_史灵生.pdf`],
+"questions":[
+{"id":R`1(1)`,"page":R`页/图 1`,"summary":R`Σ C(n,k)/(k+1)`,"topics":[R`计数`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`}],"note":R`新增dplus1-p2；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1(2)`,"page":R`页/图 1`,"summary":R`交替二项式部分和`,"topics":[R`计数`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`}],"note":R`新增dplus1-p2；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2`,"page":R`页/图 1`,"summary":R`小于99的素数个数`,"topics":[R`数论`,R`计数`],"topicGroups":[R`整除与同余`,R`组合计数`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-v4`},{"lessonId":R`count1`,"problemId":R`count1-v2`},{"lessonId":R`n2`,"sectionId":R`n2-s1`}],"note":R`新增dplus1-v4列筛法/容斥结果25，避免只给方法不核数值；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`3`,"page":R`页/图 1`,"summary":R`两种一元糖、一种二元冰品购买递推`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`},{"lessonId":R`count1`,"problemId":R`count1-p2`}],"note":R`新增dplus1-p3；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(1)`,"page":R`页/图 1`,"summary":R`解x²−x+1≡0 (mod 3)`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`,"problemId":R`n2-p2`}],"note":R`晚年组dplus3补小模数二次同余；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(2)`,"page":R`页/图 1`,"summary":R`解x²≡x (mod 6)`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`,"problemId":R`n2-p2`}],"note":R`晚年组dplus3补CRT二次同余；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`六人关系的单色三角形`,"topics":[R`图论`,R`计数`],"topicGroups":[R`图的结构与路径`,R`组合计数`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`r1`,"problemId":R`r1-p2`}],"note":R`已有完整方法与下界构造`,"risk":R``,"confidence":R`verified`},
+{"id":R`6`,"page":R`页/图 1`,"summary":R`m边简单图存在至少m/2边的二部子图`,"topics":[R`图论`,R`概率`],"topicGroups":[R`图的结构与路径`,R`概率`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-v2`},{"lessonId":R`count2`,"sectionId":R`count2-s3`}],"note":R`新增dplus5-v2，随机二染或最大割翻点；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`等大二部图最小度≥n/2有完美匹配`,"topics":[R`匹配`],"topicGroups":[R`匹配`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus6`,"problemId":R`dplus6-v2`},{"lessonId":R`h1`,"problemId":R`h1-p2`}],"note":R`新增dplus6-v2两种S大小分情况，严格保留≥边界；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`8`,"page":R`页/图 1`,"summary":R`八人七天二组四人，每对同行三次`,"topics":[R`双计数`,R`其他`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-p3`},{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`新增dplus8-p3；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`每点至多k个奇圈的充分色数`,"topics":[R`平面染色`,R`图论`],"topicGroups":[R`平面图、对偶与染色`,R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e1`}],"note":R`新增dplus4-e1，Kempe充分界，题目来源明确回忆版；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-2019-shi`,
+"label":R`2019秋期末·史灵生`,
+"year":2019,
+"kind":R`original_photo`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`原图落款2020-01-05，对应2019秋；一页9大题，每题12分末题4分。题2原文两种sundae而一种candy。（原卷照片）`,
+"sourceFiles":[R`离散数学/06_往年题/2019秋_期末_试卷_史灵生.jpg`],
+"questions":[
+{"id":R`1(a)`,"page":R`页/图 1`,"summary":R`倒数二项式系数求和 Σ1/C(k+1,2)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`},{"lessonId":R`dplus1`,"problemId":R`dplus1-p1`}],"note":R`补dplus1裂项求和；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1(b)`,"page":R`页/图 1`,"summary":R`加权二项式和 Σk C(n,k)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`},{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`}],"note":R`补dplus1吸收系数/双计数；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2`,"page":R`页/图 1`,"summary":R`每日买一种1元糖或两种2元圣代，按购买次序计花完n元方案`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`}],"note":R`现count1仅Fibonacci初级；补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3`,"page":R`页/图 1`,"summary":R`用容斥筛法数小于99的素数`,"topics":[R`数论`,R`容斥`,R`素数筛法`],"topicGroups":[R`整除与同余`,R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-p1`}],"note":R`现容斥已讲，补筛法交集与1/筛基素数校正；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(a)`,"page":R`页/图 1`,"summary":R`解x²−8x≡1(mod17)`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-p2`}],"note":R`补配方法与素数整除平方；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(b)`,"page":R`页/图 1`,"summary":R`解x²−8x≡1(mod8)`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-p2`}],"note":R`补合数模平方根不唯一/枚举完备性；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`2019人中任三人至少两人相识，证有人至少认识1009人`,"topics":[R`图论`,R`极值图论`,R`抽屉原理`],"topicGroups":[R`图的结构与路径`,R`抽屉原理`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-p1`}],"note":R`补非邻点形成团的分情况论证；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6`,"page":R`页/图 1`,"summary":R`树若有完美匹配，问有多少个`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h2`,"problemId":R`h2-e1`},{"lessonId":R`dplus6`,"problemId":R`dplus6-p1`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`任两奇圈有公共顶点时，证明5色足够`,"topics":[R`图论`,R`染色`,R`奇圈`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-v1`}],"note":R`补最短奇圈无弦+删圈后二部图；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`8`,"page":R`页/图 1`,"summary":R`七名女生每天三人同行，每对恰一次的排班可否存在`,"topics":[R`区组设计`,R`双计数`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p3`},{"lessonId":R`dplus8`}],"note":R`已有必要计数，补Fano七三元组实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`是否存在d使每个d正则Hamilton图至少有两Hamilton圈`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e2`}],"note":R`选做补奇度图固定边Hamilton圈偶数的旋转辅助图证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-2022-shi`,
+"label":R`2022秋期末·史灵生`,
+"year":2022,
+"kind":R`original`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`原卷2023-01-04；9大题。6(a)分四个结构问题，为逐方法统计展开为3条，不重复计年度频率。（原卷）`,
+"sourceFiles":[R`离散数学/06_往年题/2022秋_期末_试卷_史灵生.pdf`],
+"questions":[
+{"id":R`1(a)`,"page":R`页/图 1`,"summary":R`求Σk 2^(k−1)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补加权有限等比和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1(b)`,"page":R`页/图 1`,"summary":R`求Σ(−1)^k C(n,k)/(k+1)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p2`}],"note":R`补吸收系数或二项式积分；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2`,"page":R`页/图 1`,"summary":R`任给五个整数选三个使和被3整除`,"topics":[R`数论`,R`抽屉原理`],"topicGroups":[R`整除与同余`,R`抽屉原理`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-p3`}],"note":R`补余数抽屉三类分情况；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3`,"page":R`页/图 1`,"summary":R`两种1元糖一种2元圣代的购买序列计数`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`,"problemId":R`dplus1-p3`}],"note":R`补2a(n−1)+a(n−2)与初值；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4`,"page":R`页/图 1`,"summary":R`a−c整除ab+cd，证整除ad+bc`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`,"problemId":R`n2-v1`},{"lessonId":R`dplus3`,"problemId":R`dplus3-v1`}],"note":R`补差为(a−c)(b−d)的代数整除；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5`,"page":R`页/图 1`,"summary":R`n点简单图边数>C(n−1,2)必连通`,"topics":[R`图论`,R`极值图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-p2`}],"note":R`补非连通图最大边数界；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(a)-Euler`,"page":R`页/图 1`,"summary":R`5×5方格36点网格是否有Euler路`,"topics":[R`图论`,R`Euler结构`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(a)-Hamilton`,"page":R`页/图 1`,"summary":R`同网格是否有Hamilton圈与完美匹配`,"topics":[R`图论`,R`Hamilton`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p2`},{"lessonId":R`h1`}],"note":R`补棋盘交替与显式蛇形回路；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(a)-dual`,"page":R`页/图 1`,"summary":R`原网格与其对偶是否二部`,"topics":[R`图论`,R`平面图`,R`对偶`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p1`}],"note":R`补含外部面的对偶与三角圈；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(b)`,"page":R`页/图 1`,"summary":R`同网格左上到右下是否有Hamilton路`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`,"problemId":R`dplus5-p2`}],"note":R`补偶数点路径两端异色条件；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`7`,"page":R`页/图 1`,"summary":R`六平面点无三共线，证至少三个凸四边形`,"topics":[R`图论`,R`交叉数`,R`平面图`],"topicGroups":[R`图的结构与路径`,R`交叉数`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-p3`}],"note":R`补凸四边形/交叉边对双射+删边平面界；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`8(a)`,"page":R`页/图 1`,"summary":R`十一女生每天三人同行，每对一次是否可行`,"topics":[R`区组设计`,R`双计数`],"topicGroups":[R`双计数与区组设计`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p3`},{"lessonId":R`dplus8`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`8(b)`,"page":R`页/图 1`,"summary":R`十一女生每天六人同行同条件是否可行`,"topics":[R`区组设计`,R`双计数`],"topicGroups":[R`双计数与区组设计`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p3`},{"lessonId":R`dplus8`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`9`,"page":R`页/图 1`,"summary":R`求gcd(F99,F2023)`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`,"problemId":R`dplus2-p1`}],"note":R`补Fibonacci强gcd性质；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-2022-ai`,
+"label":R`2022秋期末·艾颖华`,
+"year":2022,
+"kind":R`original`,
+"inFrequency":true,
+"complete":true,
+"sourceNote":R`第3(2)正则度数原文未写>0，现页明确补正；所有小问已核原卷。（原卷）`,
+"sourceFiles":[R`离散数学/06_往年题/2022秋_期末_试卷_艾颖华.pdf`],
+"questions":[
+{"id":R`1(1)`,"page":R`页/图 1`,"summary":R`固定点数与分支数的最少边`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g1`,"problemId":R`g1-p1`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`1(2)`,"page":R`页/图 1`,"summary":R`连通2正则图是圈`,"topics":[R`图论`,R`图论`],"topicGroups":[R`图的结构与路径`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g1`,"problemId":R`g1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`2(1)`,"page":R`页/图 1`,"summary":R`叙述平面Euler`,"topics":[R`图论`,R`平面图`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`p1`,"problemId":R`p1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`2(2)`,"page":R`页/图 1`,"summary":R`最大度Δ图的Δ+1贪心染色`,"topics":[R`图论`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`p1`,"problemId":R`p1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`2(3)`,"page":R`页/图 1`,"summary":R`区组设计每元素出现次数`,"topics":[R`图论`,R`区组设计`],"topicGroups":[R`图的结构与路径`,R`双计数与区组设计`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`3(1)`,"page":R`页/图 1`,"summary":R`Hall定理`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`3(2)`,"page":R`页/图 1`,"summary":R`正则二部图完美匹配，原题漏正度条件`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`3(3)`,"page":R`页/图 1`,"summary":R`8×8每行列三个兵选八个不同行列`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p3`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(1)`,"page":R`页/图 1`,"summary":R`Prüfer序列不同符号数决定叶数`,"topics":[R`图论`,R`Prüfer`],"topicGroups":[R`图的结构与路径`,R`树与编码`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g2`,"problemId":R`g2-p3`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`4(2)`,"page":R`页/图 1`,"summary":R`指定重复序列还原标号树`,"topics":[R`图论`,R`Prüfer`],"topicGroups":[R`图的结构与路径`,R`树与编码`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g2`,"problemId":R`g2-p3`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`5(1)`,"page":R`页/图 2`,"summary":R`生成树外边必落在简单圈`,"topics":[R`图论`,R`生成树`],"topicGroups":[R`图的结构与路径`,R`树与编码`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`},{"lessonId":R`mst1`}],"note":R`树加外边成圈讲解覆盖，非完整原题单列`,"risk":R``,"confidence":R`verified`},
+{"id":R`5(2)`,"page":R`页/图 2`,"summary":R`给定加权图最便宜生成树`,"topics":[R`图论`,R`MST`],"topicGroups":[R`图的结构与路径`,R`最小生成树`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`mst1`,"problemId":R`mst1-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(1)`,"page":R`页/图 2`,"summary":R`按度数数角`,"topics":[R`图论`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`双计数与区组设计`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(2)`,"page":R`页/图 2`,"summary":R`Cauchy角数下界`,"topics":[R`图论`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`双计数与区组设计`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(3)`,"page":R`页/图 2`,"summary":R`无4圈等价公共邻点至多一`,"topics":[R`图论`,R`四圈计数`],"topicGroups":[R`图的结构与路径`,R`双计数与区组设计`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`6(4)`,"page":R`页/图 2`,"summary":R`无4圈边数上界`,"topics":[R`图论`,R`极值图论`],"topicGroups":[R`图的结构与路径`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`7(1)`,"page":R`页/图 2`,"summary":R`给定完美匹配的交错圈`,"topics":[R`图论`,R`交错圈`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`h2`,"problemId":R`h2-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`},
+{"id":R`7(2)`,"page":R`页/图 2`,"summary":R`边数阈值保证第二匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`h2`,"problemId":R`h2-p2`}],"note":R`已有方法覆盖；不重复抄题`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-review-2024-notes`,
+"label":R`2024往届期末小班复习手稿（资料）`,
+"year":2024,
+"kind":R`review_notes`,
+"inFrequency":false,
+"complete":false,
+"sourceNote":R`9页复习提纲，内嵌多年份原题截图；不冒充2024期末卷。第3页两条纯手写补充公式仍不可可靠辨认，逐条保留unknown。（复习笔记）`,
+"sourceFiles":[R`离散数学/07_复习资料/往届_2024期末小班手稿.pdf`],
+"questions":[
+{"id":R`p2-2`,"page":R`页/图 2`,"summary":R`行列式ad−bc≡1的二元线性同余系统`,"topics":[R`数论`,R`一次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e3`}],"note":R`补单位行列式消元与唯一性；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p2-4(1)`,"page":R`页/图 2`,"summary":R`7在模163下的乘法逆元`,"topics":[R`数论`,R`Bezout`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p2-4(2)`,"page":R`页/图 2`,"summary":R`模163二元线性同余：2x+3y=5,3x+8y=7`,"topics":[R`数论`,R`一次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e3`}],"note":R`补消元与逆元，解(26,93)；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p3-2(1)`,"page":R`页/图 3`,"summary":R`素数p整除C(p,k)，0<k<p`,"topics":[R`数论`,R`二项求和`],"topicGroups":[R`整除与同余`,R`组合计数`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补Euclid引理消去k!；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p3-2(2)`,"page":R`页/图 3`,"summary":R`Fermat小定理叙述与证明`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p3-2(3)`,"page":R`页/图 3`,"summary":R`2模53最小正阶`,"topics":[R`数论`,R`乘法阶`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e3`}],"note":R`补最小性而非仅给Euler周期；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p3-extra1`,"page":R`页/图 3`,"summary":R`无穷多个n整除2^n−8`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e4`}],"note":R`补n=3p的素数族构造；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p3-extra2`,"page":R`页/图 3`,"summary":R`手写幂和同余，精确指数与模数未能可靠辨认`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`unknown`,"coverageKind":R`unknown`,"beforeLevel":R`unknown`,"refs":[],"note":R`保留待核原字迹，不猜公式，不计频率`,"risk":R``,"confidence":R`unclear_handwriting`},
+{"id":R`p3-extra3`,"page":R`页/图 3`,"summary":R`手写幂塔同余，右端指数结合顺序不清`,"topics":[R`数论`],"topicGroups":[R`整除与同余`],"level":R`unknown`,"coverageKind":R`unknown`,"beforeLevel":R`unknown`,"refs":[],"note":R`保留待核原字迹；不将可能错误公式发布`,"risk":R``,"confidence":R`unclear_handwriting`},
+{"id":R`p4-4(1)`,"page":R`页/图 4`,"summary":R`逆元存在⇔互素`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-v2`}],"note":R`补dplus3选做或映射n2证明；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`p4-4(2)`,"page":R`页/图 4`,"summary":R`Euler定理证明`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n2`}],"note":R`补dplus3选做或映射n2证明；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`p4-4(3)`,"page":R`页/图 4`,"summary":R`RSA对非互素输入也成立`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`dplus3`,"problemId":R`dplus3-v2`}],"note":R`补dplus3选做或映射n2证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p4-extra1`,"page":R`页/图 4`,"summary":R`a与a^5末位相同`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`n1`},{"lessonId":R`n2`}],"note":R`补dplus3选做或映射n2证明；补课前：method`,"risk":R``,"confidence":R`verified`},
+{"id":R`p4-extra2`,"page":R`页/图 4`,"summary":R`φ(n)=n/2、n/3分类`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e1`}],"note":R`补dplus3选做或映射n2证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p5-1(1)`,"page":R`页/图 5`,"summary":R`n点m边图至少n−m分支`,"topics":[R`图论`,R`连通性`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`,"problemId":R`g1-p1`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p5-1(2)`,"page":R`页/图 5`,"summary":R`不连通n点图最大边数`,"topics":[R`图论`,R`连通性`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p5-2`,"page":R`页/图 5`,"summary":R`连通最大度≤2图为路径或圈`,"topics":[R`图论`,R`连通性`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-v3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p5-lower1`,"page":R`页/图 5`,"summary":R`2022艾颖华1(1)(2)重印`,"topics":[R`图论`,R`连通性`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`,"problemId":R`g1-p1`},{"lessonId":R`g1`,"problemId":R`g1-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p5-lower2`,"page":R`页/图 5`,"summary":R`2022艾颖华2(1)(2)(3)重印`,"topics":[R`图论`,R`连通性`,R`染色`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`,"problemId":R`p1-p2`},{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-4(1)`,"page":R`页/图 6`,"summary":R`Prüfer叶数`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`,"problemId":R`g2-p3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-4(2)`,"page":R`页/图 6`,"summary":R`重复Prüfer编码还原树`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`,"problemId":R`g2-p3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-5(1)`,"page":R`页/图 6`,"summary":R`生成树外边成圈`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`},{"lessonId":R`mst1`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-5(2)`,"page":R`页/图 6`,"summary":R`2022艾颖华原图MST`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`mst1`,"problemId":R`mst1-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-lower4(1)`,"page":R`页/图 6`,"summary":R`Prüfer次数与度数`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-lower4(2)`,"page":R`页/图 6`,"summary":R`指定度数的树数目`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-lower4(3)`,"page":R`页/图 6`,"summary":R`另一重复顺序Prüfer编码`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-lower5(1)`,"page":R`页/图 6`,"summary":R`连通图存在生成树`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p6-lower5(2)`,"page":R`页/图 6`,"summary":R`另一9点加权图MST（原题年份未标）`,"topics":[R`图论`,R`Prüfer`,R`MST`],"topicGroups":[R`图的结构与路径`,R`树与编码`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`mst1`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-3(1)`,"page":R`页/图 7`,"summary":R`Hall定理`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-3(2)`,"page":R`页/图 7`,"summary":R`正则二部图匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-3(3)`,"page":R`页/图 7`,"summary":R`棋盘兵匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-p3`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-lower3(1)`,"page":R`页/图 7`,"summary":R`Hall重述`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-lower3(2)`,"page":R`页/图 7`,"summary":R`两侧n点最小度至少n/2的完美匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`,"problemId":R`h1-v1`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-7(1)`,"page":R`页/图 7`,"summary":R`给定匹配的交错圈`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h2`,"problemId":R`h2-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p7-7(2)`,"page":R`页/图 7`,"summary":R`边数阈值第二匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h2`,"problemId":R`h2-p2`}],"note":R`已有方法覆盖，资料不独立计考频`,"risk":R``,"confidence":R`verified`},
+{"id":R`p8-6(1)`,"page":R`页/图 8`,"summary":R`简单平面边数界`,"topics":[R`图论`,R`平面图`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`,R`双计数与区组设计`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`}],"note":R`已有覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p8-6(2)`,"page":R`页/图 8`,"summary":R`存在度不超过5的点`,"topics":[R`图论`,R`平面图`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`,R`双计数与区组设计`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`}],"note":R`已有覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p8-6(3)`,"page":R`页/图 8`,"summary":R`黑蓝面异色角总数≤4n−8`,"topics":[R`图论`,R`平面图`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`,R`双计数与区组设计`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e3`}],"note":R`补面边界异色角计数；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p8-lower6(1-4)`,"page":R`页/图 8`,"summary":R`2022无4圈角数题完整重印`,"topics":[R`图论`,R`平面图`,R`双计数`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`,R`双计数与区组设计`],"level":R`exact`,"coverageKind":R`exact`,"beforeLevel":R`exact`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p2`}],"note":R`已有覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p9-7(1)`,"page":R`页/图 9`,"summary":R`Steiner系统每点在(v−1)/2个三元组`,"topics":[R`区组设计`,R`双计数`,R`染色`],"topicGroups":[R`双计数与区组设计`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g3`,"problemId":R`g3-p3`}],"note":R`已有双计数`,"risk":R``,"confidence":R`verified`},
+{"id":R`p9-7(2)`,"page":R`页/图 9`,"summary":R`非平凡Steiner系统至少3色`,"topics":[R`区组设计`,R`双计数`,R`染色`],"topicGroups":[R`双计数与区组设计`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-e1`}],"note":R`补Steiner选做证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`p9-7(3)`,"page":R`页/图 9`,"summary":R`存在至少(v−1)/6个两两不相交三元组`,"topics":[R`区组设计`,R`双计数`,R`染色`],"topicGroups":[R`双计数与区组设计`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus8`,"problemId":R`dplus8-e2`}],"note":R`补Steiner选做证明；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-guide-2019-main`,
+"label":R`2019-12-15史灵生考前辅导（资料）`,
+"year":2019,
+"kind":R`review_guide`,
+"inFrequency":false,
+"complete":true,
+"sourceNote":R`参考讲义，含与其他版及历年卷重复题，不作为独立考次频率。年份取文内日期；与文件名简写可能不同。逐Problem按方法核对，全部解答未视为官方答案。（考前辅导）`,
+"sourceFiles":[R`离散数学/07_复习资料/往届_史灵生2019考前辅导.pdf`],
+"questions":[
+{"id":R`1.1`,"page":R`页/图 2`,"summary":R`证明(A ∩ B) ∩ C= A ∩ (B ∩ C)。`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.2`,"page":R`页/图 2`,"summary":R`设A ⊆ B, C ⊆ D，证明A ∪ C ⊆ B ∪ D。`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.3`,"page":R`页/图 2`,"summary":R`证明A∆B = (A ∩ Bc) ∪ (Ac ∩ B)。 2`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.4`,"page":R`页/图 3`,"summary":R`证明C(n, k) = C(n, n− k)。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.5`,"page":R`页/图 3`,"summary":R`证明C(n− 1, k− 1) + C(n− 1, k) = C(n, k)。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.6`,"page":R`页/图 4`,"summary":R`证明C(n, 0) + C(n, 1) +· · · + C(n, n) = 2n 。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.7`,"page":R`页/图 4`,"summary":R`设集合A 满足|A|= n 且x ∈ A，求A 中含有x 的子集个数。`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.1`,"page":R`页/图 6`,"summary":R`计算分母为105 = 3 × 5 × 7 的最简真分数数量。`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`phi与剩余类配对`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.2`,"page":R`页/图 6`,"summary":R`在一个边长为1 的正三角形中任取5 个点，证明必有2 个点之间的距离不大于1 2 。`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.3`,"page":R`页/图 6`,"summary":R`假设任意2 个人之见的关系要么是相互认识、要么是相互不认识，证明6 个人中 要么有3 个人两两相互认识，要么有3 个人两两相互不认识。`,"topics":[R`图论`,R`Ramsey`],"topicGroups":[R`图的结构与路径`,R`Ramsey`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`r1`}],"note":R`Ramsey三角形已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.4`,"page":R`页/图 7`,"summary":R`抽屉内共有6 双黑袜子、5 双白袜子、5 双红袜子、4 双绿袜子，试问至少取出多 少只袜子，使得取出的袜子中一定有两只颜色相同？至少取出多少只袜子，使得取出的袜子中一 定有两只颜色不同？`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.5`,"page":R`页/图 7`,"summary":R`证明对∀r ∈ R, n ∈ N, n > 1，∃p, q ∈ N，满足0 < q < n，且|p− qr| ≤ 1 n 。`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.6`,"page":R`页/图 8`,"summary":R`证明C(n + m, k) = C(n, 0)C(m, k) + C(n, 1)C(m, k− 1) +· · · + C(n, k)C(m, 0)， 其中k ≤ min{n, m}。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.7`,"page":R`页/图 8`,"summary":R`Vandermonde平方配对求和：Σ C(m,k)C(n,k)=C(m+n,m)，m≤n`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.8`,"page":R`页/图 8`,"summary":R`证明C(n + k + 1, k) = C(n + k, k) + C(n + k− 1, k− 1) + C(n + k− 2, k− 2) + · · · + C(n + 1, 1) + C(n, 0)。 8`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.9`,"page":R`页/图 9`,"summary":R`证明C(n, k)C(k, r) = C(n, r)C(n− r, k− r)。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.10`,"page":R`页/图 9`,"summary":R`化简下列和式： (1) ∑n 1 k=1 k(k+1) (2) ∑n k=m Ck nCm k`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.11`,"page":R`页/图 9`,"summary":R`计算∑n k=0 1 2k C(n + k, k)。`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.12`,"page":R`页/图 11`,"summary":R`证明k|n 是Fk|Fn 的充分必要条件。`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.13`,"page":R`页/图 11`,"summary":R`证明若n 是4 的倍数，则Fn 是3 的倍数。`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.14`,"page":R`页/图 11`,"summary":R`试证Weinstein 定理：从Fibonacci 数列的前2n 项F1, F2,· · · , F2n 中任选n + 1 个数，则一定包含两个数，使得其中一个数能够被另一个整除。`,"topics":[R`数论`,R`Fibonacci整除`,R`抽屉原理`],"topicGroups":[R`整除与同余`,R`抽屉原理`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`}],"note":R`补Fibonacci强gcd与奇部抽屉；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.15`,"page":R`页/图 11`,"summary":R`假设某小朋友有n 元钱，他每天可以购买一件价值为1 元的物品A 或价值为2 元的物品B，其中物品B 有两种，计算小朋友花完所有钱的方案数。`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.1`,"page":R`页/图 13`,"summary":R`若a|b 且a|c，则对任意m, n ∈ N，有a|bm + cn。`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.2`,"page":R`页/图 13`,"summary":R`假设n 不是完全平方数，证明√n 是无理数。`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.3`,"page":R`页/图 13`,"summary":R`设p 是质数，0 < k < p，求证p|C(p, k)。`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.4`,"page":R`页/图 14`,"summary":R`设n > 2，计算小于n 的数中与n 互质的数的和，用欧拉函数表示。`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`phi与剩余类配对`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.5`,"page":R`页/图 14`,"summary":R`求解同余方程组： 2x + 3y ≡ 1(mod 11) x + 4y ≡ 4(mod 11)`,"topics":[R`数论`,R`中国剩余定理`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n1`}],"note":R`CRT已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.6`,"page":R`页/图 15`,"summary":R`求解同余方程x2 ≡ 4(mod 23)。`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`}],"note":R`补平方同余与合数模枚举；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.7`,"page":R`页/图 15`,"summary":R`求解同余方程x2 ≡ 5x(mod 6)。`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`}],"note":R`补平方同余与合数模枚举；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.1`,"page":R`页/图 16`,"summary":R`证明G 和其补图¯ G 中至少有一个是连通图。`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.2`,"page":R`页/图 16`,"summary":R`设e 是连通图G 中的一条边，证明将e 删去后G 仍连通当且仅当e 含于图上的 某个圈中。`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.3`,"page":R`页/图 17`,"summary":R`设图G 有欧拉回路，证明存在G 中的圈C1, C2,· · · , Ck，使得G 的边集E(G) = E(C1) ∪ E(C2) ∪ · · · ∪ E(Ck)，且∀i, j, E(Ci) ∩ E(Cj ) = ∅。`,"topics":[R`图论`,R`Euler结构`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`dplus5`}],"note":R`补拆圈或已有Euler`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.4`,"page":R`页/图 17`,"summary":R`证明Petersen 图不是哈密顿图。`,"topics":[R`图论`,R`Hamilton`],"topicGroups":[R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-v2`}],"note":R`补Petersen辐条分情况；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.5`,"page":R`页/图 18`,"summary":R`设有3 × 3 × 3 个小立方体构成的大立方体，任意两个面相邻的小立方体连通，求 是否能够找到一条从其中一个角上的立方体到正中心立方体的路径。`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补Hamilton黑白奇偶；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.6`,"page":R`页/图 19`,"summary":R`设图G 有n 个顶点和m 条边，证明G 至少有n− m 个连通分支。`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.7`,"page":R`页/图 19`,"summary":R`设G 是一棵树，且G 中有一个度数为d 的顶点，证明G 至少有d 个叶子节点。 19`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.8`,"page":R`页/图 20`,"summary":R`设G 是点数不小于2 的连通图，证明G 中至少有一个顶点v，使得删去v 后G 仍然连通。`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.9`,"page":R`页/图 20`,"summary":R`给定图G，且G 中每条边的价格都不相同，证明G 中总价值最小的生成树唯一。`,"topics":[R`图论`,R`MST`],"topicGroups":[R`图的结构与路径`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`mst1`}],"note":R`换边与唯一性已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.10`,"page":R`页/图 21`,"summary":R`若二分图G 的每边都有m 个顶点，且每个顶点的度数都大于m 2 ，证明G 一定 存在完美匹配。`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.11`,"page":R`页/图 21`,"summary":R`证明任意树的完美匹配如果存在则必定唯一。`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.12`,"page":R`页/图 21`,"summary":R`两名玩家在图G 上玩一个游戏，每个人轮流每次从图中选出一个节点来，得到节 点序列v0, v1, v2,· · · ，要求每次选取的节点必须和之前已经被选出过的节点不同，且vi+1 必须与 vi 相邻，如果轮到某位玩家时没有可以选的节点了，则该玩家输掉游戏，证明如果G 没有完美匹 配，则先手玩家有必胜策略。`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus6`}],"note":R`补匹配/增广路游戏策略；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.13`,"page":R`页/图 22`,"summary":R`给定二分图G，若G 是平面图，且顶点数为v，边数为e，证明e ≤ 2v− 4。`,"topics":[R`图论`,R`平面图`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`}],"note":R`Euler与面边计数已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.14`,"page":R`页/图 22`,"summary":R`给定二分图G，若G 是平面图，证明G 的对偶图必有欧拉回路。`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.15`,"page":R`页/图 22`,"summary":R`给定平面图G，若G 的每个顶点度数都是偶数，证明G 的面可以2− 着色。`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.16`,"page":R`页/图 23`,"summary":R`设图G 有11 个顶点，证明G 和其补图¯ G 至少有一个不是平面图。`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.1`,"page":R`页/图 24`,"summary":R`能否找到一个合适的安排，使得7 个女生每天3 个人出去散步，7 天后任意两人都 曾共同散步过一次且仅一次？`,"topics":[R`区组设计`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`},{"lessonId":R`dplus8`}],"note":R`必要计数已有，补实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.2`,"page":R`页/图 24`,"summary":R`能否找到一个合适的安排，使得9 个女生每天分成3 组、每组3 人出去散步，4 天 后任意两人都曾共同散步过一次且仅一次？`,"topics":[R`区组设计`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`},{"lessonId":R`dplus8`}],"note":R`必要计数已有，补实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-guide-2019-supp`,
+"label":R`2019-12-15史灵生补充资料（含2015/2017级题解析）`,
+"year":2019,
+"kind":R`review_guide`,
+"inFrequency":false,
+"complete":true,
+"sourceNote":R`参考讲义，含与其他版及历年卷重复题，不作为独立考次频率。年份取文内日期；与文件名简写可能不同。逐Problem按方法核对，全部解答未视为官方答案。（考前辅导）`,
+"sourceFiles":[R`离散数学/07_复习资料/往届_史灵生2019考前辅导_补充资料.pdf`],
+"questions":[
+{"id":R`1.1`,"page":R`页/图 2`,"summary":R`计算∑n k=0 1 2k C(n + k, k)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.2`,"page":R`页/图 2`,"summary":R`证明k|n 是Fk|Fn 的充分必要条件`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.3`,"page":R`页/图 3`,"summary":R`假设某小朋友有n 元钱，他每天可以购买一件价值为1 元的物品A 或价值为2 元 的物品B，其中物品B 有两种，计算小朋友花完所有钱的方案数`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.4`,"page":R`页/图 3`,"summary":R`证明对∀r ∈ R, n ∈ N, n > 1，∃p, q ∈ N，满足0 < q < n，且|p− qr| ≤ 1 n`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.5`,"page":R`页/图 4`,"summary":R`给定二分图G，若G 是平面图，证明G 的对偶图必有欧拉回路`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.6`,"page":R`页/图 4`,"summary":R`证明任意树的完美匹配如果存在则必定唯一`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.7`,"page":R`页/图 4`,"summary":R`设有3 × 3 × 3 个小立方体构成的大立方体，任意两个面相邻的小立方体连通，求 是否能够找到一条从其中一个角上的立方体到正中心立方体的路径`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补Hamilton黑白奇偶；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.8`,"page":R`页/图 5`,"summary":R`能否找到一个合适的安排，使得7 个女生每天3 个人出去散步，7 天后任意两人都 曾共同散步过一次且仅一次？`,"topics":[R`区组设计`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`},{"lessonId":R`dplus8`}],"note":R`必要计数已有，补实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.9`,"page":R`页/图 6`,"summary":R`试问Fibonacci 数列中哪些项的个位数字和其下标的个位数字相同`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.1`,"page":R`页/图 7`,"summary":R`化简下列和式： (1) ∑n k=1 1 k(k+1) (2) ∑n k=m Ck nCm k`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.2`,"page":R`页/图 7`,"summary":R`假设某小朋友有n 元钱，他每天可以购买一件价值为1 元的物品A 或价值为2 元 的物品B，其中物品B 有两种，计算小朋友花完所有钱的方案数`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.3`,"page":R`页/图 8`,"summary":R`求解同余方程x2 ≡ 5x(mod 6)`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`}],"note":R`补平方同余与合数模枚举；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.4`,"page":R`页/图 8`,"summary":R`试证Weinstein 定理：从Fibonacci 数列的前2n 项F1, F2,· · · , F2n 中任选n + 1 个数，则一定包含两个数，使得其中一个数能够被另一个整除`,"topics":[R`数论`,R`Fibonacci整除`,R`抽屉原理`],"topicGroups":[R`整除与同余`,R`抽屉原理`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus2`}],"note":R`补Fibonacci强gcd与奇部抽屉；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.5`,"page":R`页/图 8`,"summary":R`设图G 有欧拉回路，证明存在G 中的圈C1, C2,· · · , Ck，使得G 的边集E(G) = E(C1) ∪ E(C2) ∪ · · · ∪ E(Ck)，且∀i, j, E(Ci) ∩ E(Cj ) = ∅ 8`,"topics":[R`图论`,R`Euler结构`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`dplus5`}],"note":R`补拆圈或已有Euler`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.6`,"page":R`页/图 9`,"summary":R`两名玩家在图G 上玩一个游戏，每个人轮流每次从图中选出一个节点来，得到节 点序列v0, v1, v2,· · · ，要求每次选取的节点必须和之前已经被选出过的节点不同，且vi+1 必须与 vi 相邻，如果轮到某位玩家时没有可以选的节点了，则该玩家输掉游戏，证明如果G 没有完美匹 配，则先手玩家有必胜策略`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus6`}],"note":R`补匹配/增广路游戏策略；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.7`,"page":R`页/图 9`,"summary":R`设图G 有11 个顶点，证明G 和其补图¯ G 至少有一个不是平面图`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.8`,"page":R`页/图 9`,"summary":R`能否找到一个合适的安排，使得9 个女生每天分成3 组、每组3 人出去散步，4 天 后任意两人都曾共同散步过一次且仅一次？ 9`,"topics":[R`区组设计`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`},{"lessonId":R`dplus8`}],"note":R`必要计数已有，补实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.9`,"page":R`页/图 10`,"summary":R`设图G 中每个顶点至多位于k 个奇圈上，试求G 的最大色数`,"topics":[R`图论`,R`染色`,R`奇圈`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-e1`}],"note":R`补Kempe可靠充分界，原解最优性声明未采信；补课前：未覆盖`,"risk":R``,"confidence":R`verified`}
+]
+},
+{
+"id":R`ds-guide-2018-answer`,
+"label":R`2018-12-30史灵生考前辅导解析版（资料）`,
+"year":2018,
+"kind":R`review_guide`,
+"inFrequency":false,
+"complete":true,
+"sourceNote":R`参考讲义，含与其他版及历年卷重复题，不作为独立考次频率。年份取文内日期；与文件名简写可能不同。逐Problem按方法核对，全部解答未视为官方答案。（考前辅导）`,
+"sourceFiles":[R`离散数学/07_复习资料/往届_史灵生考前辅导讲义_解析版.pdf`],
+"questions":[
+{"id":R`1.1`,"page":R`页/图 2`,"summary":R`证明(A ∩ B) ∩ C= A ∩ (B ∩ C)`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.2`,"page":R`页/图 2`,"summary":R`设A ⊆ B, C ⊆ D，证明A ∪ C ⊆ B ∪ D`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.3`,"page":R`页/图 3`,"summary":R`证明A∆B = (A ∩ Bc) ∪ (Ac ∩ B)`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.4`,"page":R`页/图 3`,"summary":R`证明C(n, k) = C(n, n− k)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.5`,"page":R`页/图 3`,"summary":R`证明C(n− 1, k− 1) + C(n− 1, k) = C(n, k) 3`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.6`,"page":R`页/图 4`,"summary":R`证明C(n, 0) + C(n, 1) +· · · + C(n, n) = 2n`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`1.7`,"page":R`页/图 4`,"summary":R`设集合A 满足|A|= n 且x ∈ A，求A 中含有x 的子集个数`,"topics":[R`计数`,R`集合与映射`],"topicGroups":[R`组合计数`,R`集合与映射`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus3`,"problemId":R`dplus3-e5`}],"note":R`补集合元素追踪/指定元素子集数基础自检；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.1`,"page":R`页/图 5`,"summary":R`计算分母为105 = 3 × 5 × 7 的最简分数数量`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`phi与剩余类配对`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.2`,"page":R`页/图 6`,"summary":R`在一个边长为1 的正三角形中任取5 个点，证明必有2 个点之间的距离不大于1 2`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.3`,"page":R`页/图 6`,"summary":R`假设任意2 个人之见的关系要么是相互认识、要么是相互不认识，证明6 个人中 要么有3 个人两两相互认识，要么有3 个人两两相互不认识`,"topics":[R`图论`,R`Ramsey`],"topicGroups":[R`图的结构与路径`,R`Ramsey`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`r1`}],"note":R`Ramsey三角形已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.4`,"page":R`页/图 6`,"summary":R`抽屉内共有6 双黑袜子、5 双白袜子、5 双红袜子、4 双绿袜子，试问至少取出多 少只袜子，使得取出的袜子中一定有两只颜色相同？至少取出多少只袜子，使得取出的袜子中一 定有两只颜色不同？`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.5`,"page":R`页/图 6`,"summary":R`证明对∀r ∈ R, n ∈ N, n > 1，∃p, q ∈ N，满足0 < q < n，且|p− qr| ≤ 1 n`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.6`,"page":R`页/图 7`,"summary":R`证明C(n+m, k) = C(n, 0)C(m, k)+C(n, 1)C(m, k−1)+· · ·+C(n, k)C(m, 0), k ≤ min{n, m}`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.7`,"page":R`页/图 7`,"summary":R`证明C(m+n, m) = C(m, 0)C(n, 0)+C(m, 1)C(n, 1)+· · ·+C(m, m)C(n, m), m ≤ n`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.8`,"page":R`页/图 8`,"summary":R`证明C(n + k + 1, k) = C(n + k, k) + C(n + k− 1, k− 1) + C(n + k− 2, k− 2) + · · · + C(n + 1, 1) + C(n, 0)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.9`,"page":R`页/图 8`,"summary":R`证明C(n, k)C(k, r) = C(n, r)C(n− r, k− r)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.10`,"page":R`页/图 8`,"summary":R`计算∑n k=0 1 2k C(n + k, k)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.11`,"page":R`页/图 10`,"summary":R`证明k|n 是Fk|Fn 的充分必要条件`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.12`,"page":R`页/图 10`,"summary":R`证明若n 是4 的倍数，则Fn 是3 的倍数`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`2.13`,"page":R`页/图 10`,"summary":R`假设某小朋友有n 元钱，他每天可以购买一件价值为1 元的物品A 或价值为2 元的物品B，其中物品B 有两种，计算小朋友花完所有钱的方案数`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.1`,"page":R`页/图 11`,"summary":R`若a|b 且a|c，则对任意m, n ∈ N，有a|bm + cn`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.2`,"page":R`页/图 11`,"summary":R`假设n 不是完全平方数，证明√n 是无理数`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.3`,"page":R`页/图 12`,"summary":R`设p 是质数，0 < k < p，求证p|C(p, k)`,"topics":[R`数论`,R`整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`补算术基本定理与素数消去小证明；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.4`,"page":R`页/图 12`,"summary":R`设n > 2，计算小于n 的数中与n 互质的数的和，用欧拉函数表示`,"topics":[R`数论`,R`Fermat与Euler`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n2`},{"lessonId":R`dplus3`,"problemId":R`dplus3-e2`}],"note":R`phi与剩余类配对`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.5`,"page":R`页/图 13`,"summary":R`求解同余方程组： 2x + 3y ≡ 1(mod 11) x + 4y ≡ 4(mod 11)`,"topics":[R`数论`,R`中国剩余定理`],"topicGroups":[R`整除与同余`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`n1`}],"note":R`CRT已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`3.6`,"page":R`页/图 13`,"summary":R`求解同余方程x2 ≡ 4(mod 23)`,"topics":[R`数论`,R`二次同余`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus3`}],"note":R`补平方同余与合数模枚举；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.1`,"page":R`页/图 13`,"summary":R`证明G 和其补图¯ G 中至少有一个是连通图 13`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.2`,"page":R`页/图 14`,"summary":R`设e 是连通图G 中的一条边，证明删去e 后G 仍连通当且仅当e 含于图上某个 圈中`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.3`,"page":R`页/图 15`,"summary":R`证明Petersen 图不是哈密顿图`,"topics":[R`图论`,R`Hamilton`],"topicGroups":[R`图的结构与路径`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus4`,"problemId":R`dplus4-v2`}],"note":R`补Petersen辐条分情况；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.4`,"page":R`页/图 15`,"summary":R`设有3 × 3 × 3 个小立方体构成的大立方体，任意两个面相邻的小立方体连通，求 是否能够找到一条从其中一个角上的立方体到正中心立方体的路径`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补Hamilton黑白奇偶；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.5`,"page":R`页/图 17`,"summary":R`设图G 有n 个顶点和m 条边，证明G 至少有n− m 个连通分支`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.6`,"page":R`页/图 17`,"summary":R`设G 是一棵树，且G 中有一个度数为d 的顶点，证明G 至少有d 个叶子节点`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.7`,"page":R`页/图 17`,"summary":R`设G 是点数不小于2 的连通图，证明G 中至少有一个顶点v，使得删去v 后G 仍然连通`,"topics":[R`图论`,R`连通性`],"topicGroups":[R`图的结构与路径`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`g1`},{"lessonId":R`g2`},{"lessonId":R`dplus4`}],"note":R`连通/树结构与极端论证`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.8`,"page":R`页/图 17`,"summary":R`给定图G，且G 中每条边的价格都不相同，证明G 中总价值最小的生成树唯一`,"topics":[R`图论`,R`MST`],"topicGroups":[R`图的结构与路径`,R`最小生成树`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`mst1`}],"note":R`换边与唯一性已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.9`,"page":R`页/图 18`,"summary":R`若二分图G 的每边都有m 个顶点，且每个顶点的度数都大于m 2 ，证明G 一定存 在完美匹配`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.10`,"page":R`页/图 18`,"summary":R`证明任意树的完美匹配如果存在则必定唯一`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.11`,"page":R`页/图 19`,"summary":R`给定二分图G，若G 是平面图，且顶点数为v，边数为e，证明e ≤ 2v− 4`,"topics":[R`图论`,R`平面图`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`p1`}],"note":R`Euler与面边计数已有`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.12`,"page":R`页/图 19`,"summary":R`给定二分图G，若G 是平面图，证明G 的对偶图必有欧拉回路`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`4.13`,"page":R`页/图 19`,"summary":R`给定平面图G，若G 的每个顶点度数都是偶数，证明G 的面可以2− 着色`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.1`,"page":R`页/图 20`,"summary":R`计算∑n k=0 1 2k C(n + k, k)`,"topics":[R`计数`,R`二项求和`],"topicGroups":[R`组合计数`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补吸收系数/换序求和；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.2`,"page":R`页/图 20`,"summary":R`证明k|n 是Fk|Fn 的充分必要条件`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.3`,"page":R`页/图 20`,"summary":R`假设某小朋友有n 元钱，他每天可以购买一件价值为1 元的物品A 或价值为2 元 的物品B，其中物品B 有两种，计算小朋友花完所有钱的方案数`,"topics":[R`计数`,R`递推`],"topicGroups":[R`组合计数`,R`递推关系`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus1`}],"note":R`补带权递推通项；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.4`,"page":R`页/图 20`,"summary":R`证明对∀r ∈ R, n ∈ N, n > 1，∃p, q ∈ N，满足0 < q < n，且|p− qr| ≤ 1 n`,"topics":[R`计数`,R`抽屉原理`],"topicGroups":[R`组合计数`,R`抽屉原理`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`count1`},{"lessonId":R`dplus7`}],"note":R`抽屉划分/丢番图逼近`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.5`,"page":R`页/图 20`,"summary":R`给定二分图G，若G 是平面图，证明G 的对偶图必有欧拉回路`,"topics":[R`图论`,R`对偶`,R`Euler结构`],"topicGroups":[R`图的结构与路径`,R`平面图、对偶与染色`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补对偶与Euler二部互证；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.6`,"page":R`页/图 20`,"summary":R`证明任意树的完美匹配如果存在则必定唯一`,"topics":[R`图论`,R`匹配`],"topicGroups":[R`图的结构与路径`,R`匹配`],"level":R`method`,"coverageKind":R`method`,"beforeLevel":R`method`,"refs":[{"lessonId":R`h1`},{"lessonId":R`h2`},{"lessonId":R`dplus6`}],"note":R`Hall/对称差/唯一性已补`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.7`,"page":R`页/图 20`,"summary":R`设有3 × 3 × 3 个小立方体构成的大立方体，任意两个面相邻的小立方体连通，求 是否能够找到一条从其中一个角上的立方体到正中心立方体的路径`,"topics":[R`图论`,R`Hamilton`,R`奇偶性`],"topicGroups":[R`图的结构与路径`,R`奇偶性`],"level":R`added`,"coverageKind":R`gap`,"beforeLevel":R`gap`,"refs":[{"lessonId":R`dplus5`}],"note":R`补Hamilton黑白奇偶；补课前：未覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.8`,"page":R`页/图 20`,"summary":R`能否找到一个合适的安排，使得7 个女生每天3 个人出去散步，7 天后任意两人都 曾共同散步过一次且仅一次？`,"topics":[R`区组设计`,R`构造`],"topicGroups":[R`双计数与区组设计`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`g3`},{"lessonId":R`dplus8`}],"note":R`必要计数已有，补实际构造；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`},
+{"id":R`5.9`,"page":R`页/图 21`,"summary":R`试问Fibonacci 数列中哪些项的个位数字和其下标的个位数字相同`,"topics":[R`数论`,R`Fibonacci整除`],"topicGroups":[R`整除与同余`],"level":R`added`,"coverageKind":R`partial`,"beforeLevel":R`partial`,"refs":[{"lessonId":R`dplus2`}],"note":R`补强gcd/周期；原资料Fk|Fn⇔k|n须处理k=1,2例外；补课前：部分覆盖`,"risk":R``,"confidence":R`verified`}
+]
+}
 ];
 
-const SCHEDULE = [
-  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "图论复盘：双计数与无 4-圈图（2022 期末 6）", "g3"]]],
-  ["第 2 周", [["Day 1–2", "匹配与 Hall 定理", "h1"], ["Day 3", "交错圈与匹配唯一性", "h2"], ["Day 4–5", "平面图、Euler 公式与染色", "p1"], ["Day 6–7", "综合回炉", "r1"]]],
-  ["第 3 周", [["Day 1–3", "计数回顾：容斥、递推与抽屉", "count1"], ["Day 4–5", "组合概率与期望", "count2"], ["Day 6–7", "概率界与大数定律", "count3"]]],
-  ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", "n2"], ["Day 4–7", "11-17新课：运输表消圈", "g4"]]],
-  ["第 5 周", [["Day 1–5", "混合训练与错题回炉", "r1"], ["Day 6–7", "模拟卷1（120分钟）与速查表", "dmock1"]]],
-  ["第 6 周", [["Day 1–2", "模拟卷2（120分钟）与订正", "dmock2"], ["Day 3–5", "模拟卷3（120分钟）与回炉", "dmock3"], ["Day 6–7", "方法卡总复盘", "r1"]]]
-];
+const SCHEDULE = [[R`第 1 周`,[[R`Day 1`,R`中国剩余定理`,R`n1`],[R`Day 2`,R`图的基本结构与欧拉路`,R`g1`],[R`Day 3`,R`树与普吕弗编码`,R`g2`],[R`Day 4–5`,R`最便宜生成树（作业 7）`,R`mst1`],[R`Day 6–7`,R`图论复盘：双计数与无 4-圈图（2022 期末 6）`,R`g3`]]],[R`第 2 周`,[[R`Day 1–2`,R`匹配与 Hall 定理`,R`h1`],[R`Day 3`,R`交错圈与匹配唯一性`,R`h2`],[R`Day 4–5`,R`平面图、Euler 公式与染色`,R`p1`],[R`Day 6–7`,R`综合回炉`,R`r1`]]],[R`第 3 周`,[[R`Day 1–3`,R`计数回顾：容斥、递推与抽屉`,R`count1`],[R`Day 4–5`,R`组合概率与期望`,R`count2`],[R`Day 6–7`,R`概率界与大数定律`,R`count3`]]],[R`第 4 周`,[[R`Day 1–3`,R`数论回顾：整除、同余、欧拉函数`,R`n2`],[R`Day 4–7`,R`11-17新课：运输表消圈`,R`g4`]]],[R`第 5 周`,[[R`Day 1–5`,R`混合训练与错题回炉`,R`r1`],[R`Day 6–7`,R`模拟卷1（120分钟）与速查表`,R`dmock1`]]],[R`第 6 周`,[[R`Day 1–2`,R`模拟卷2（120分钟）与订正`,R`dmock2`],[R`Day 3–5`,R`模拟卷3（120分钟）与回炉`,R`dmock3`],[R`Day 6–7`,R`方法卡总复盘`,R`r1`]]],[R`按需补漏`,[[R`专题 1`,R`往年补漏：二项式求和与带权递推`,R`dplus1`],[R`专题 2`,R`往年补漏：Fibonacci 整除与模周期`,R`dplus2`],[R`专题 3`,R`数论补漏：筛法、平方同余与余数抽屉`,R`dplus3`],[R`专题 4`,R`图论补漏：极端结构、交叉数与奇圈染色`,R`dplus4`],[R`专题 5`,R`往年补漏：黑白奇偶、Euler 拆圈与平面对偶`,R`dplus5`],[R`专题 6`,R`往年补漏：匹配、增广路与图上游戏`,R`dplus6`],[R`专题 7`,R`往年补漏：抽屉原理与有理逼近`,R`dplus7`],[R`专题 8`,R`往年补漏：区组计数之后，怎样真正构造`,R`dplus8`]]]];
 
 const MUST = [
   ["中国剩余定理", R`$m_i$ 两两互素：$x\equiv\sum a_iN_iL_i\pmod M$，$N_i=M/m_i$，$L_i\equiv N_i^{-1}\pmod{m_i}$`],
@@ -333,15 +714,7 @@ const EXTRA_MUST = [
   ["Ramsey 与单色三角形", R`<p>$R(3,3)=6$：K6 任取一点，五条相接边中至少三条同色，讨论这三个邻点之间的颜色。下界用K5红五圈、蓝补五圈。</p><p>K6二染色若点 $i$ 的红度为 $r_i$，混色角总数 $D=\sum_i r_i(5-r_i)$；每个非单色三角形计两次，故</p>$$T_{\rm 单色}=20-\frac12D\ge2.$$<p>红图取C6、蓝图取其补图，恰有两个单色三角形。</p>`]
 ];
 
-const UNITS = [
-  { id: "nt", title: "数论：中国剩余定理", lessons: ["n1", "n2"] },
-  { id: "graph", title: "图论基础", lessons: ["g1", "g2", "g3", "g4"] },
-  { id: "mst", title: "生成树与匹配", lessons: ["mst1", "h1", "h2"] },
-  { id: "planar", title: "平面图与染色", lessons: ["p1"] },
-  { id: "count", title: "计数与概率回顾", lessons: ["count1", "count2", "count3"] },
-  { id: "practice", title: "混合训练", lessons: ["r1"] },
-  { id: "mock", title: "综合模拟卷", lessons: ["dmock1", "dmock2", "dmock3"] }
-];
+const UNITS = [{"id":R`nt`,"title":R`数论：中国剩余定理`,"lessons":[R`n1`,R`n2`]},{"id":R`graph`,"title":R`图论基础`,"lessons":[R`g1`,R`g2`,R`g3`,R`g4`]},{"id":R`mst`,"title":R`生成树与匹配`,"lessons":[R`mst1`,R`h1`,R`h2`]},{"id":R`planar`,"title":R`平面图与染色`,"lessons":[R`p1`]},{"id":R`count`,"title":R`计数与概率回顾`,"lessons":[R`count1`,R`count2`,R`count3`]},{"id":R`practice`,"title":R`混合训练`,"lessons":[R`r1`]},{"id":R`mock`,"title":R`综合模拟卷`,"lessons":[R`dmock1`,R`dmock2`,R`dmock3`]},{"id":R`past`,"title":R`往年卷专题补漏（按需）`,"lessons":[R`dplus1`,R`dplus2`,R`dplus3`,R`dplus4`,R`dplus5`,R`dplus6`,R`dplus7`,R`dplus8`]}];
 
 const LESSONS = {
 /* ---------------- N1 ---------------- */
@@ -1927,7 +2300,280 @@ R`整数rᵢ∈{0,…,5}时乘积最多6；构造取红边为一个六圈，其�
 "sol":R`<p>混色角总数D=Σrᵢ(5−rᵢ)。每个非单色三角形恰有两处颜色不同的角，单色三角形没有混色角。故非单色三角形数D/2，总三角形20个，T=20−D/2。</p><p>各rᵢ为0到5的整数，rᵢ(5−rᵢ)≤6，故D≤36，T≥2。取红图为C6，蓝图为其补图：红无三角形，蓝三角形恰为交替顶点组{1,3,5}与{2,4,6}，共两个，所以下界可取。</p><p>评分：混色角计数4，三角形换序与除2为5，下界3，取等构造3。</p>`,
 "points":15}],
 "variants":[],
-"extensions":[]}
+"extensions":[]},
+"dplus1":{
+"unit":R`past`,
+"n":1,
+"title":R`往年补漏：二项式求和与带权递推`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus1-s1`,"h":R`1. 求和先识别吸收、裂项和换序`,"html":R`<p>讲义的换序求和仍是主线。先把单项改成可套二项式和的形式：</p>$$k\binom nk=n\binom{n-1}{k-1},\qquad \frac1{k+1}\binom nk=\frac1{n+1}\binom{n+1}{k+1}.$$
+<p>第一式可数“选k人再指定一人”；第二式是阶乘化简。若出现1/[k(k+1)]，拆成1/k−1/(k+1)。不要机械套等比数列而忽略上下限。</p>`},
+{"id":R`dplus1-s2`,"h":R`2. 有颜色的长度一、二步：系数来自选择数`,"html":R`<p>花1元有r种选择、花2元有s种选择，且购买先后算不同。令a_n为恰花n元的方案数，按最后一天分类：</p>$$a_0=1,\quad a_1=r,\quad a_n=r a_{n-1}+s a_{n-2}\ (n\ge2).$$<p>r=1,s=2与r=2,s=1给出不同数列。先写递推和初值，再解特征方程λ²=rλ+s。空购买序列计1，不能取a₀=0。</p>`}
+],
+"widget":R`weightedStepsPlay`,
+"concepts":[
+{"id":R`dplus1-c1`,"sec":R`dplus1-s1`,"q":R`$\sum_{k=0}^n k\binom nk$ 的最直接化简是？`,"opts":[R`$n2^{n-1}$`,R`$2^n$`,R`$n!$`,R`$n^2$`],"a":0,"ex":R`吸收k后，剩n乘一个完整二项式和。n=0时和为0，另行直接解释。`},
+{"id":R`dplus1-c2`,"sec":R`dplus1-s1`,"q":R`$\sum_{k=1}^n1/[k(k+1)]$ 等于？`,"opts":[R`$1/(n+1)$`,R`$n/(n+1)$`,R`$n$`,R`$0$`],"a":1,"ex":R`裂项后中间项相消，留下1−1/(n+1)。`},
+{"id":R`dplus1-c3`,"sec":R`dplus1-s2`,"q":R`两种1元糖、一种2元冰品对应哪条递推？`,"opts":[R`$a_n=a_{n-1}+2a_{n-2}$`,R`$a_n=2a_{n-1}+a_{n-2}$`,R`$a_n=3a_{n-1}$`,R`$a_n=a_{n-1}+a_{n-2}$`],"a":1,"ex":R`最后一天买糖有2种，买冰品只有1种。`},
+{"id":R`dplus1-c4`,"sec":R`dplus1-s2`,"q":R`为什么a₀=1？`,"opts":[R`0元可以买一件商品`,R`存在唯一空购买序列`,R`为了让答案好看`,R`所有递推都必须如此`],"a":1,"ex":R`这是本题计数对象的边界，不是任意递推通用的规定。`}
+],
+"methods":[
+{"id":R`m-dplus1`,"title":R`求和和递推：先改对象再计算`,"steps":[R`求和先化单项：吸收k、移动二项式上下标、裂项；端点随换指标一起移动。`,R`递推按最后一步分类，把不同颜色的选择数乘进去，列a₀和a₁。`,R`解完代小n核对，尤其检查两种商品的种类数有没有交换。`]}
+],
+"problems":[
+{"id":R`dplus1-p1`,"lv":R`真题`,"src":R`2017 秋期末 1(a)；2019同型题由晚年台账核对`,"stmt":R`求 $\sum_{k=1}^n1/[k(k+1)]$，并求 $\sum_{k=1}^n\binom{k+1}{2}^{-1}$。`,"hints":[R`先裂项。`,R`第二个和的单项等于2/[k(k+1)]。`,R`两个答案相差因子2。`],"sol":R`<p>第一和为$\sum(1/k-1/(k+1))=1-1/(n+1)=n/(n+1)$；第二和等于它的2倍，为$2n/(n+1)$。n=1时分别1/2与1，可以直接核对。</p>`,"method":R`m-dplus1`},
+{"id":R`dplus1-p2`,"lv":R`真题`,"src":R`2017 秋期末 1(b)；2018 回忆版 1(1)(2)`,"stmt":R`<p>(1) 求 $\sum_{k=m}^n\binom nk\binom km$。</p><p>(2) 求 $\sum_{k=0}^n\binom nk/(k+1)$ 与 $\sum_{k=0}^m(-1)^k\binom nk$（$0\le m\lt n$）。</p>`,"hints":[R`(1)先选m个核心，再从剩下n−m个任意选。`,R`(2)用吸收恒等式；交替部分和用Pascal拆成两和。`,R`答案依次C(n,m)2^(n−m)、(2^(n+1)−1)/(n+1)、(−1)^m C(n−1,m)。`],"sol":R`<p>(1) 由$\binom nk\binom km=\binom nm\binom{n-m}{k-m}$，求和得$\binom nm2^{n-m}$。</p><p>(2) 第一和为$\frac1{n+1}\sum_{j=1}^{n+1}\binom{n+1}j=(2^{n+1}-1)/(n+1)$。第二和用Pascal式：$\sum_{k=0}^m(-1)^k[\binom{n-1}k+\binom{n-1}{k-1}]$，换指标后除末项外全部抵消，剩$(-1)^m\binom{n-1}m$。</p>`,"method":R`m-dplus1`},
+{"id":R`dplus1-p3`,"lv":R`真题`,"src":R`2015 秋期末 2；2017 秋期末 2；2016 手写回忆 4；2018 回忆版 3`,"stmt":R`分别求：(A)1种1元糖、2种2元冰品；(B)2种1元糖、1种2元冰品。每次只买一件，恰花n元，购买顺序不同算不同。`,"hints":[R`A递推a_n=a_(n−1)+2a_(n−2)，a₀=a₁=1。`,R`B递推b_n=2b_(n−1)+b_(n−2)，b₀=1,b₁=2。`,R`A特征根2、−1；B特征根1±√2。`],"sol":R`<p>A：$a_n=(2^{n+1}+(-1)^n)/3$。B：$b_n=[(1+\sqrt2)^{n+1}-(1-\sqrt2)^{n+1}]/(2\sqrt2)$。两式均可由特征根通解与初值求得。核对n=2：A有糖糖1种或冰品2种，共3；B有两糖4种或冰品1种，共5。</p>`,"method":R`m-dplus1`}
+],
+"variants":[
+{"id":R`dplus1-v1`,"lv":R`变种`,"src":R`自编：晚年卷常见加权和的方法练习`,"stmt":R`求 $\sum_{k=0}^n k\binom nk$、$\sum_{k=1}^n k2^{k-1}$ 及 $\sum_{k=0}^n(-1)^k\binom nk/(k+1)$。`,"hints":[R`第一个吸收k；第二个将和乘2后错位相减。`,R`第三个把分母吸收入C(n+1,k+1)。`,R`答案n2^(n−1)、1+(n−1)2^n、1/(n+1)。`],"sol":R`<p>n≥1时第一和$n\sum_{j=0}^{n-1}\binom{n-1}j=n2^{n-1}$（n=0直接为0）。设第二和S，错位相减得$S=n2^n-(2^n-1)=1+(n-1)2^n$。第三和为$\frac1{n+1}\sum_{j=1}^{n+1}(-1)^{j-1}\binom{n+1}j=1/(n+1)$。</p>`,"method":R`m-dplus1`},
+{"id":R`dplus1-v2`,"lv":R`变种`,"src":R`自编：2016手写阶乘界主题的规范练习，非原题逐字重构`,"stmt":R`证明正整数n满足 $n^{n/2}\le n!\le((n+1)/2)^n$。`,"hints":[R`下界把k与n+1−k配成对。`,R`k(n+1−k)−n=(k−1)(n−k)≥0。`,R`上界对1,…,n用算术-几何平均。`],"method":R`m-dplus1`,"sol":R`<p>由k(n+1−k)≥n，对k=1,…,n相乘得(n!)²≥nⁿ，取平方根即下界。上界由n个正数1,…,n的算术平均为(n+1)/2，AM–GM给n!≤((n+1)/2)ⁿ。此规范练习不等同于原手记模糊不清的指数式。</p>`},
+{"id":R`dplus1-v3`,"lv":R`变种`,"src":R`2016 手写回忆2的路径匹配与递推衔接`,"stmt":R`路径P_n的全部匹配数为何是F_(n+1)，而不是F_n？列n=0,1,2的初值核对。`,"hints":[R`空匹配计入。`,R`z₀=z₁=1，z₂=2。`,R`递推相同但下标由初值决定；完整证明见dplus6。`],"method":R`m-dplus1`,"sol":R`<p>按末边是否选取有z_n=z_(n−1)+z_(n−2)，初值z₀=1、z₁=1，所以z_n=F_(n+1)。P₂的两种匹配为空集与唯一边；F₂=1不匹配计数，而F₃=2正确。匹配对象的具体分拆见dplus6-v1。</p>`},
+{"id":R`dplus1-v4`,"lv":R`变种`,"src":R`2018 秋期末回忆版 2`,"stmt":R`小于99的素数有多少个？给出可复核计数。`,"hints":[R`合数小于99必有不超过√98<10的素因子。`,R`只需筛去2、3、5、7的倍数，但保留这四个素数自身。`,R`可以直接列出剩余素数核对为25个。`],"method":R`m-dplus1`,"sol":R`<p>从2到98筛去2、3、5、7的合数倍数，保留它们本身。剩余素数为2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97，共25个。正确性来自任一合数N<99都有素因子≤√N<10；1不是素数，99也不是题目范围内的数。</p>`}
+],
+"extensions":[
+{"id":R`dplus1-e1`,"lv":R`延伸`,"src":R`2015 秋期末 1（英文转录，Banach matchbox sum）`,"stmt":R`证明 $\sum_{k=0}^n\binom{n+k}k/2^k=2^n$。`,"hints":[R`数长度2n+1的0/1串，按第n+1个1出现的位置分类。`,R`它出现在n+k+1位时，前面n+k位选k个0，后面有n−k位任意。`,R`1占多数的串一半，共2^(2n)个。`],"sol":R`<p>长度2n+1的二进制串不可能0、1数相同；交换0、1配对，恰有$2^{2n}$个串的1占多数。按第n+1个1之前有k个0分类（0≤k≤n），其数目为$\binom{n+k}k2^{n-k}$。所以$\sum_{k=0}^n\binom{n+k}k2^{n-k}=2^{2n}$，除以2ⁿ即得。此证明只数有限集合，没有使用无穷级数。</p>`,"method":R`m-dplus1`}
+]
+},
+"dplus2":{
+"unit":R`past`,
+"n":2,
+"title":R`往年补漏：Fibonacci 整除与模周期`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus2-s1`,"h":R`1. 先用加法公式，建立Euclid式降指标`,"html":R`<p>约定F₀=0、F₁=1。加法公式$F_{m+r}=F_{m-1}F_r+F_mF_{r+1}$可对r归纳证明。相邻Fibonacci数互素，因为反复用gcd(F_{j+1},F_j)=gcd(F_j,F_{j-1})。</p><p>因此m≥1时$\gcd(F_m,F_{m+r})=\gcd(F_m,F_r)$：模F_m后乘子F_(m−1)可消去。仿照整数Euclid算法降指标，得到</p>$$\gcd(F_m,F_n)=F_{\gcd(m,n)}.$$
+<p>不能把Fibonacci整除当成“下标整除”的定义；它是需要上述证明的结论。</p>`},
+{"id":R`dplus2-s2`,"h":R`2. 整除与抽屉：在下标上做文章`,"html":R`<p>若k|n，加法公式或强gcd给F_k|F_n。反之，若k>2且F_k|F_n，强gcd给F_k=F_gcd(k,n)。从F₂起严格递增，故gcd(k,n)=k，即k|n。k=1、2的F_k都为1，不能反推下标。</p><p>从1到2n选n+1个不同下标，把每个下标写成奇数×2的幂。奇数部分只有n种，两个相同奇数部分的下标互相整除，再转成Fibonacci整除。</p>`},
+{"id":R`dplus2-s3`,"h":R`3. 模周期要记录相邻两项的状态`,"html":R`<p>只记录F_n mod10不能决定下一项，记录(F_n,F_(n+1)) mod10才是确定状态。一步(a,b)→(b,a+b)，逆步(a,b)→(b−a,a)，都是模10运算。因此从(0,1)开始终会回到该状态，没有进入别的尾周期。</p><p>逐步算得首次回到(0,1)在第60步。因此“F_n末位等于n末位”可在n mod60的60种情形中完整检查；不能只算前10项就宣称周期10。</p>`}
+],
+"widget":R`fibPeriodPlay`,
+"concepts":[
+{"id":R`dplus2-c1`,"sec":R`dplus2-s1`,"q":R`gcd(F_m,F_n)应化为？`,"opts":[R`$F_{mn}$`,R`$F_{m+n}$`,R`$F_{\gcd(m,n)}$`,R`$\gcd(m,n)$`],"a":2,"ex":R`强整除性质由加法公式和相邻互素配合Euclid算法得到。`},
+{"id":R`dplus2-c2`,"sec":R`dplus2-s2`,"q":R`为什么F_k|F_n反推k|n需要k>2？`,"opts":[R`所有偶数都例外`,R`F₁=F₂=1会造成例外`,R`Fibonacci从不整除`,R`只为方便记号`],"a":1,"ex":R`例如F₂=1整除F₃=2，但2不整除3。`},
+{"id":R`dplus2-c3`,"sec":R`dplus2-s2`,"q":R`奇部抽屉法把j写成什么？`,"opts":[R`素数乘奇数`,R`奇数乘2的非负整数次幂`,R`两个平方之和`,R`任意因数乘积`],"a":1,"ex":R`奇数部分相同则只差2的幂，较小数整除较大数。`},
+{"id":R`dplus2-c4`,"sec":R`dplus2-s3`,"q":R`模m计算Fibonacci周期应追踪：`,"opts":[R`只追踪F_n`,R`追踪相邻对(F_n,F_(n+1))`,R`追踪n的奇偶就够`,R`只看首位`],"a":1,"ex":R`相邻对决定下一步，且递推可逆。`}
+],
+"methods":[
+{"id":R`m-dplus2`,"title":R`Fibonacci数论：加法、降指标、有限状态`,"steps":[R`先证相邻项互素及加法公式，再用Euclid降指标得到强gcd。`,R`整除问题先转下标；抽屉选奇数部分，注意F₁=F₂的例外。`,R`末位问题记录相邻对，找首次回到初态，再穷尽一个周期。`]}
+],
+"problems":[
+{"id":R`dplus2-p1`,"lv":R`真题`,"src":R`2015 秋期末 3；2016 手写回忆 5；2019晚年卷gcd同型`,"stmt":R`证明：k>2、n≥0时，F_k|F_n当且仅当k|n。并求gcd(F₉₉,F₂₀₂₃)。`,"hints":[R`先证明强gcd等式。`,R`gcd(99,2023)=gcd(99,43)=gcd(43,13)=gcd(13,4)=1。`,R`F_k=F_gcd(k,n)，利用k>2的严格增长。`],"sol":R`<p>强gcd等式由本课第一节给出，n=0时gcd(k,0)=k，且任意非零F_k都整除F₀=0，与k|0一致。n>0时，若k|n，gcd(F_k,F_n)=F_k，故整除。若F_k|F_n，则F_k=F_gcd(k,n)；因k>2且Fibonacci在指标≥2后严格增长，只能gcd(k,n)=k。另gcd(99,2023)=1，所以所求gcd=F₁=1。</p>`,"method":R`m-dplus2`},
+{"id":R`dplus2-p2`,"lv":R`真题`,"src":R`2017 秋期末 4（Weinstein）`,"stmt":R`从F₁,…,F₂ₙ中选取n+1个不同下标对应的数，证明其中有一个数整除另一个。`,"hints":[R`把选取的下标分解成奇部×2^幂。`,R`奇部只有1,3,…,2n−1共n种。`,R`两个下标具有相同奇部，整除性再转到Fibonacci。`],"sol":R`<p>把每个选定下标j唯一写成u2ᵃ，u为奇数。u最多有n种取值，n+1个不同下标中两个奇部相同。设i=u2ᵃ、j=u2ᵇ且a<b，则i|j，故F_i|F_j。即使F₁=F₂数值相同，题目仍按不同下标选取；相等的正数当然互相整除。</p>`,"method":R`m-dplus2`},
+{"id":R`dplus2-p3`,"lv":R`真题`,"src":R`2015 秋期末 9（英文转录）`,"stmt":R`求所有使F_n个位数字与n个位数字相同的非负整数n。`,"hints":[R`用相邻对在模10下找周期。`,R`首次回到(0,1)在60步，因此检查n=0,…,59即可。`,R`满足的余数有14个，工具可逐项核对。`],"sol":R`<p>递推模10的60步表可逐项复算，首次回到(0,1)在第60步；同时n mod10也以60为周期，所以完整解为</p>$$n\equiv0,1,5,13,17,25,29,30,35,37,41,49,53,55\pmod{60}.$$
+<p>若只问正指标，排除n=0本身，但60、120等仍保留。用状态递推检查一个完整周期保证没有漏解，不是从少数项猜规律。</p>`,"method":R`m-dplus2`}
+],
+"variants":[
+{"id":R`dplus2-v1`,"lv":R`变种`,"src":R`自编：强gcd可用于所有指标`,"stmt":R`求gcd(F₈₄,F₁₂₆)，并解释为什么F₂|F₃不能推出2|3。`,"hints":[R`gcd(84,126)=42。`,R`强gcd给F₄₂，无需计算两个大整数。`,R`F₂=1。`],"sol":R`<p>答案F₄₂=267914296。F₂=1整除所有整数，包括F₃=2；但2不整除3，所以反向整除判定必须保留k>2。</p>`,"method":R`m-dplus2`}
+],
+"extensions":[
+
+]
+},
+"dplus3":{
+"unit":R`past`,
+"n":3,
+"title":R`数论补漏：筛法、平方同余与余数抽屉`,
+"goal":R`补齐史灵生2019、2022卷中的独立方法：容斥筛素数、二次同余配方、按余数分类。30分钟主线做三题；RSA、欧拉函数方程等资料题作选做，不据异班题源推定本学期必考。`,
+"sections":[
+{"id":R`dplus3-s1`,"h":R`1. 容斥筛法：留下的不全是素数`,"html":R`<p>整数 $2\le n\lt99$ 若合数，必有不大于 $\sqrt{98}$ 的素因子，因此必被 $2,3,5,7$ 中一个整除。容斥先数 $1,\ldots,98$ 中不被这四个数整除的数。</p><p>这个剩余集合含1，却不含筛基素数2、3、5、7。所以“素数个数”还要<b>减1、加4</b>。交集是公倍数：筛基两两互素时用乘积，一般必须用最小公倍数。</p>`},
+{"id":R`dplus3-s2`,"h":R`2. 平方同余：素数模与合数模不能混用`,"html":R`<p>先配方：$x^2-8x\equiv1\pmod m$ 等价于 $(x-4)^2\equiv17\pmod m$。模17时是平方为0；由素数整除乘积，$17\mid(x-4)^2$ 推出 $17\mid x-4$。</p><p>模8时原式直接化为 $x^2\equiv1$。奇数平方都为1模8，偶数平方为0或4，故有四个剩余类，不能套“至多两个根”。合数模有零因子，例如 $3\cdot2\equiv0\pmod6$，两个因子却均不为0模6。</p>`},
+{"id":R`dplus3-s3`,"h":R`3. 余数抽屉：先看某类能否独自完成`,"html":R`<p>五个整数按模3分成三类。如果某类至少3个，取这类的3个就得到和为0模3。若每类至多2个，总共5个迫使三类都非空，于是每类取一个，余数和 $0+1+2\equiv0$。</p><p>不是所有余数题都只比较“物体数大于抽屉数”；有时需将“某抽屉太多”与“每抽屉都不太多”分情况。题目要求恰好取3个，不能用只保证任意非空子集的部分和定理代替。</p>`}
+],
+"widget":R`quadraticResidues`,
+"concepts":[
+{"id":R`dplus3-c1`,"sec":R`dplus3-s1`,"q":R`用2、3、5、7筛完1到98后，剩余数比所求素数集合如何校正？`,"opts":[R`直接就是素数`,R`去掉1并补回2、3、5、7`,R`只去掉1`,R`加上所有偶数`],"a":1,"ex":R`筛基素数被自己的倍数集合删去了，1又不会被任何素数整除。`},
+{"id":R`dplus3-c2`,"sec":R`dplus3-s2`,"q":R`$x^2\equiv0\pmod9$ 是否一定有 $x\equiv0\pmod9$？`,"opts":[R`是`,R`否，例如x=3`,R`只有x为正数时是`,R`因为9奇数所以是`],"a":1,"ex":R`$3^2=9$。素数整除平方可推出整除原数，合数模不能照抄。`},
+{"id":R`dplus3-c3`,"sec":R`dplus3-s2`,"q":R`$x^2\equiv1\pmod8$ 有多少个模8解？`,"opts":[R`1`,R`2`,R`4`,R`8`],"a":2,"ex":R`四个奇剩余类1、3、5、7；枚举或展开(2k+1)²均可证。`},
+{"id":R`dplus3-c4`,"sec":R`dplus3-s3`,"q":R`五个数分到三个模3余数类，每类至多2个时，为什么每类必非空？`,"opts":[R`这是独立性`,R`否则总数至多4`,R`因为每类必须等大`,R`因为三类都是奇数`],"a":1,"ex":R`若有一类空，其余两类各至多2个，合计最多4个，与5个矛盾。`}
+],
+"methods":[
+{"id":R`m-prime-sieve`,"title":R`有限筛法：筛基、容斥、边界校正`,"steps":[R`合数必有不大于平方根的素因子，列出足够的筛基。`,R`用容斥数不被任何筛基整除的整数；交集用最小公倍数。`,R`去掉1，补回筛基本身；小范围直接列素数独立核对。`]},
+{"id":R`m-square-congruence`,"title":R`二次同余：配方后看模数结构`,"steps":[R`配方或因式分解；确认每步是等价变形，不擅自除非单位。`,R`素数模可用素数整除乘积；合数模应枚举或分解模数并用CRT。`,R`给出模m的全部剩余类，并把每个解代回原式。`]},
+{"id":R`m-residue-cases`,"title":R`余数分类：多的一类与均少情况`,"steps":[R`明确要选几个数及其余数目标。`,R`先看某一余数类很大时能否直接取足；否则利用各类容量迫使分布。`,R`逐类构造所取对象，并核对恰好个数与余数和。`]},
+{"id":R`m-set-element`,"title":R`集合基础：把集合等式翻成元素命题`,"steps":[R`集合等式证明双方互含，或对任意元素写等价命题。`,R`交对应且、并对应或、补对应否定；对称差是恰属于一边。`,R`子集计数将每个可自由元素的选/不选视为两种独立选择。`]}
+],
+"problems":[
+{"id":R`dplus3-p1`,"src":R`2019秋期末·史灵生 3（照片原卷）`,"stmt":R`用容斥筛法计算小于99的素数个数。`,"hints":[R`筛2、3、5、7的倍数；范围从1到98。`,R`单项个数49、32、19、14；两两交集16、9、7、6、4、2；三重交集3、2、1、0。`,R`筛后为98−114+44−6=22，再减1加4。`],"method":R`m-prime-sieve`,"sol":R`<p>记A_p为1到98内p的倍数。容斥得不被2、3、5、7整除的数有$98-(49+32+19+14)+(16+9+7+6+4+2)-(3+2+1+0)=22$个（四重交集为空）。其中1不是素数；2、3、5、7这4个素数被筛掉。每个其余合数必有上述筛基因子，已被删去。故素数共$22-1+4=25$个。</p>`,"lv":R`真题`},
+{"id":R`dplus3-p2`,"src":R`2019秋期末·史灵生 4(a)(b)（照片原卷）`,"stmt":R`分别解 $x^2-8x\equiv1\pmod{17}$ 与 $x^2-8x\equiv1\pmod8$。`,"hints":[R`第一式配成(x−4)²≡0(mod17)。`,R`17是素数，因此x≡4(mod17)。`,R`模8时−8x消失；逐个奇偶剩余类检查平方。`],"method":R`m-square-congruence`,"sol":R`<p>模17：$(x-4)^2=x^2-8x+16\equiv17\equiv0$，由17为素数得$x\equiv4\pmod{17}$，反代$16-32=-16\equiv1$。</p><p>模8：等价于$x^2\equiv1$。若x=2k+1，则$x^2=4k(k+1)+1\equiv1$，因为k(k+1)为偶数。若x偶，平方模8为0或4。故全部解为$x\equiv1,3,5,7\pmod8$。</p>`,"lv":R`真题`},
+{"id":R`dplus3-p3`,"src":R`2022秋期末·史灵生 2`,"stmt":R`证明：任给五个整数，可以选出其中三个，使其和被3整除。`,"hints":[R`按模3分成三类。`,R`某类有至少3个时，取同类三个。`,R`否则每类至多2个；五个数迫使三类都非空，各取一个。`],"method":R`m-residue-cases`,"sol":R`<p>若某余数类至少3个，取这类三个，余数和为3r，能被3整除。若各类至多2个，则三类都非空，否则总数最多4。于是从余数0、1、2类各取一个，其和余数为3，仍被3整除。两种情况覆盖所有分布，且都恰好选3个。</p>`,"lv":R`真题`}
+],
+"variants":[
+{"id":R`dplus3-v1`,"src":R`2022秋期末·史灵生 4`,"stmt":R`设整数a,b,c,d满足 $a-c\mid ab+cd$，证明 $a-c\mid ad+bc$。`,"hints":[R`比较两个被整除表达式的差。`,R`$(ab+cd)-(ad+bc)=(a-c)(b-d)$。`,R`整除线性组合，不需要对a−c作除法。`],"method":R`m-residue-cases`,"sol":R`<p>由恒等式$ad+bc=(ab+cd)-(a-c)(b-d)$，右边两项都被a−c整除，故结论成立。论证未擅自约去a−c。若课程整除定义要求除数非零，则沿用题设隐含a−c非零；若采用0只整除0的约定，此恒等式对a=c仍直接成立。</p>`,"lv":R`变种`},
+{"id":R`dplus3-v2`,"src":R`2024复习手稿第4页题4(1)–(3)（资料题，非2024原卷）`,"stmt":R`<p>(1) 证明a有模m乘法逆元当且仅当(a,m)=1，并叙述Euler定理。</p><p>(2) p、q为不同素数，N=pq，正整数d,e满足 $de\equiv1\pmod{\varphi(N)}$。证明对每个整数u，$u^{de}\equiv u\pmod N$，即使(u,N)不为1。</p>`,"hints":[R`(1)逆元给ax−my=1；反向用Bezout。`,R`(2)分别模p和模q：若p整除u直接成立，否则用Fermat。`,R`p−1与q−1都整除φ(N)=(p−1)(q−1)，最后用CRT合并。`],"method":R`m-square-congruence`,"sol":R`<p>(1) 有逆元即存在ax≡1(modm)，所以公因子必须整除1；反之由Bezout构造逆元。Euler定理为(a,m)=1时a^{φ(m)}≡1(modm)，证明见n2。</p><p>(2) 写de=1+k(p−1)(q−1)。模p：若p|u，则两边均0；若p不整除u，Fermat给u^{p−1}≡1，故u^{de}≡u。同理模q成立。因p、q互素，CRT推出模pq成立。不能对非单位u直接套Euler；必须逐素因子分情况。</p>`,"lv":R`变种`}
+],
+"extensions":[
+{"id":R`dplus3-e1`,"src":R`2024复习手稿第4页补充（资料题）`,"stmt":R`求所有满足 $\varphi(n)=n/2$（n≥2）的n，以及满足 $\varphi(n)=n/3$（n≥6）的n。`,"hints":[R`用n/φ(n)=∏p/(p−1)，只与不同素因子有关。`,R`若目标比值为c，得∏p=c∏(p−1)。最大素因子若大于c，则左边含p而右边每个因子均小于p，不可能被p整除。`,R`c=2只可能素因子2；c=3只可能2、3，检查子集。`],"method":R`m-square-congruence`,"sol":R`<p>设n的不同素因子为p_i。第一式等价于$\prod p_i=2\prod(p_i-1)$。若最大素因子p>2，右端的2与各p_i−1均不被p整除，矛盾；故n只能为2^r，r≥1，反之都成立。</p><p>第二式为$\prod p_i=3\prod(p_i-1)$。同理最大素因子不超过3，只可能2、3。仅含2的比值为2，仅含3的比值为3/2，均不对；同时含2、3时比值为3。因此恰为$n=2^r3^s$，r,s≥1。</p>`,"lv":R`延伸`},
+{"id":R`dplus3-e2`,"src":R`史灵生2019考前辅导 §3.2–3.4（自编合并核对）`,"stmt":R`<p>(1) 非完全平方的正整数n的平方根为何无理？</p><p>(2) 素数p、$0\lt k\lt p$时，证明p整除C(p,k)。</p><p>(3) $n\gt2$时，求$1\le a\lt n$且(a,n)=1的所有a之和。</p>`,"hints":[R`(1)最简分数平方后用素因子指数奇偶。`,R`(2)k! C(p,k)=p(p−1)…(p−k+1)，且p与k!互素。`,R`(3)将a与n−a配对，它们都与n互素；无固定点，因为n>2。`],"method":R`m-square-congruence`,"sol":R`<p>(1) 若√n=a/b为最简正分数，则a²=nb²。素因子分解表明每个素数在n中的指数都为偶数，n是完全平方，矛盾。</p><p>(2) 右端乘积被p整除而k!不被p整除，由Euclid引理，p整除C(p,k)。</p><p>(3) 映射a↦n−a置换所有可逆剩余类，每对和n。若a=n−a，则a=n/2，n>2时与n不互素，故无固定点。共φ(n)/2对，和为$n\varphi(n)/2$。</p>`,"lv":R`延伸`},
+{"id":R`dplus3-e3`,"src":R`2024复习手稿第2–3页（资料题）`,"stmt":R`<p>(1) $ad-bc\equiv1\pmod m$，解 $ax+by\equiv1$、$cx+dy\equiv2\pmod m$。</p><p>(2) 求7模163的逆元，并解 $2x+3y\equiv5$、$3x+8y\equiv7\pmod{163}$。</p><p>(3) 求使 $2^d\equiv1\pmod{53}$ 的最小正整数d。</p>`,"hints":[R`(1) 第一式乘d、第二式乘b相减；另作消元求y。`,R`(2) 7×70=490≡1；消元得7x≡19，7y≡−1。`,R`(3) Fermat只给d整除52；再用2^26≡−1与2^4≠1排除真因子。`],"method":R`m-square-congruence`,"sol":R`<p>(1) 消元得$x\equiv d-2b$、$y\equiv2a-c\pmod m$。代回分别为ad−bc≡1和2(ad−bc)≡2，且齐次差方程同样消元给Δx=Δy=0，故解唯一。</p><p>(2) 7逆元为70，故$x\equiv19\cdot70\equiv26$、$y\equiv-70\equiv93\pmod{163}$。反代得到331≡5、822≡7；行列式7是单位，解唯一。</p><p>(3) 2^52≡1，最小阶d必整除52（对52除以d取余即可）。直接重复平方得2^13≡30、2^26≡−1，故d不整除26；52的其他真因子仅4，且2^4≡16≠1，故d=52。仅引用Fermat而不排除真因子不能证明最小性。</p>`,"lv":R`延伸`},
+{"id":R`dplus3-e4`,"src":R`2024复习手稿第3页补充1（资料题）`,"stmt":R`证明有无穷多个正整数n，使 $n\mid2^n-8$。`,"hints":[R`取n=3p，其中p是大于3的素数。`,R`模p由Fermat有2^(3p)≡8；模3因为3p为奇数，2^(3p)≡2≡8。`,R`3和p互素，故3p整除该差。素数无穷给无穷多个n。`],"method":R`m-square-congruence`,"sol":R`<p>对每个素数p>3，取n=3p。Fermat的普遍形式给2^p≡2(modp)，立方得2^(3p)≡8(modp)。另一方面n为奇数，2^n≡−1≡2≡8(mod3)。因(3,p)=1，CRT或互素整除性推出3p|2^n−8。大于3的素数无穷，因此这样的n也无穷。不能随便取所有奇数n；证明依赖这族可控制的素因子。</p>`,"lv":R`延伸`},
+{"id":R`dplus3-e5`,"src":R`三版史灵生考前辅导 §1 集合基础（资料补齐）`,"stmt":R`<p>(1) 证明(A∩B)∩C=A∩(B∩C)；A⊆B、C⊆D时A∪C⊆B∪D。</p><p>(2) 证明A与B的对称差等于(A∩B的补集)∪(A的补集∩B)。</p><p>(3) n元集合含指定元素x的子集共有多少？</p>`,"hints":[R`(1)任取元素，交就是同时属于，并就是至少属于一个。`,R`(2)对称差要求恰好属于A、B之一。`,R`(3)x已固定选取，其余n−1个元素各选或不选。`],"method":R`m-set-element`,"sol":R`<p>(1) 任取z，它属于左边交集当且仅当z同时属于A、B、C，这与属于右边等价。若z∈A∪C，则z∈A或z∈C，由包含条件得z∈B或z∈D，因此z∈B∪D。</p><p>(2) z恰属于A、B之一，等价于“z∈A且z不属于B，或z不属于A且z∈B”，即所述两个集合的并。无需假设集合有限。</p><p>(3) 含x的子集与其余n−1元集合的任意子集双射，故为2^(n−1)个；n≥1，因为x在原集合中。</p>`,"lv":R`延伸`}
+]
+},
+"dplus4":{
+"unit":R`past`,
+"n":4,
+"title":R`图论补漏：极端结构、交叉数与奇圈染色`,
+"goal":R`用非邻点、分支、交叉边对等结构，把存在性题化成计数限制。30分钟主线做三道史灵生真题；Petersen、Kempe与Hamilton奇偶定理列选做，跨班题源不等于本学期必考。`,
+"sections":[
+{"id":R`dplus4-s1`,"h":R`1. “任三点有一边”：固定一点看非邻点`,"html":R`<p>若任意三点至少有一条边，则对任一点v，所有与v不相邻的点必须两两相邻，否则两非邻点连同v构成三点空图。这个“非邻点形成团”的结构比直接套平均度更容易控制。</p><p>另一方面，若图不连通，取一个分支大小a，则跨分支的a(n−a)条潜在边全缺。a在1到n−1之间时，a(n−a)≥n−1，故不连通简单图至多有C(n−1,2)条边。</p>`},
+{"id":R`dplus4-s2`,"h":R`2. 直线图交叉：数的是边对，不是交点位置`,"html":R`<p>n个平面点无三点共线，画全部直线边。每个凸四边形恰贡献一对相交的对角线；反过来，两条无公共端点的线段在内部相交，四端点必构成凸四边形。因此凸四边形数等于交叉<b>边对</b>数q。</p><p>从每一对交叉边中任选一条删除，合计最多删q条边，剩下的画法没有交叉，故是简单平面图。即使多条对角线在同一位置相交，也要按每一对计数，不能把它们合成一个交点。</p>$$\binom n2-q\le3n-6\quad(n\ge3),\qquad q\ge\frac{(n-3)(n-4)}2.$$`},
+{"id":R`dplus4-s3`,"h":R`3. 奇圈限制与换色：只证明需要的充分界`,"html":R`<p>若任两奇圈共享顶点，取一个最短奇圈C：它没有弦，否则弦把它分成两圈，其中一个是更短奇圈。C可3色，删C后没有奇圈，余图可用另外2色，故5色足够。</p><p>更一般的“每点至多k个奇圈”可用两色连通块换色。选做题只证 $\binom t2\gt k$ 时t色足够；参考资料声称此界总精确，不能在未给锐例时照抄为最优色数。</p>`}
+],
+"widget":R`crossingAudit`,
+"concepts":[
+{"id":R`dplus4-c1`,"sec":R`dplus4-s1`,"q":R`任三点至少有一边，固定v后，v的非邻点之间是什么图？`,"opts":[R`空图`,R`团`,R`树`,R`必为二部图`],"a":1,"ex":R`若两个非邻点之间也没边，它们与v的三点中就没有边。`},
+{"id":R`dplus4-c2`,"sec":R`dplus4-s1`,"q":R`n≥2的不连通简单图最大边数是：`,"opts":[R`$\binom n2$`,R`$\binom{n-1}2$`,R`$n-1$`,R`$n-2$`],"a":1,"ex":R`取K_(n−1)加一个孤立点达到；任一非平凡分拆至少缺n−1条跨分支边。`},
+{"id":R`dplus4-c3`,"sec":R`dplus4-s2`,"q":R`三条线段在同一个内部位置相交，且端点全不同，共有几对交叉边？`,"opts":[R`1`,R`2`,R`3`,R`6`],"a":2,"ex":R`交叉计边对，三条边两两组合有C(3,2)=3对。`},
+{"id":R`dplus4-c4`,"sec":R`dplus4-s3`,"q":R`给出一种5色染法，是否自动证明最少需要5色？`,"opts":[R`是`,R`否，还需5色必要的例子或下界`,R`只要图连通就是`,R`颜色越多越精确`],"a":1,"ex":R`构造染法只给充分上界χ≤5；最优性需要独立下界。`}
+],
+"methods":[
+{"id":R`m-graph-extreme`,"title":R`存在性：挑一点或一个分支`,"steps":[R`固定顶点看邻点/非邻点，或按连通分支分拆。`,R`把题设翻译成团、空边或缺失的跨分支边。`,R`比较边数、度数或容量，分情况给出目标对象。`]},
+{"id":R`m-crossing-delete`,"title":R`交叉数：每对删一边，再用平面界`,"steps":[R`说明交叉边对与所数几何对象的双射；数边对而非交点。`,R`为每对交叉边选一条删除，去重后删除条数不超过交叉对数。`,R`剩图可平面，代入e≤3v−6得到下界；只宣称已证的界。`]},
+{"id":R`m-oddcycle-colour`,"title":R`奇圈与换色：先分离，再翻转两色分支`,"steps":[R`用最短奇圈、二部图或已有的t色染色作为起点。`,R`取两种颜色诱导子图，在连通块内同时交换两色仍合法。`,R`用奇圈计数保证有可交换的色对，空出一种颜色给删去的顶点。`]}
+],
+"problems":[
+{"id":R`dplus4-p1`,"src":R`2019秋期末·史灵生 5（照片原卷）`,"stmt":R`一个城镇有2019人，任意三人中至少有两人相互认识。证明至少一人认识不少于1009人。`,"hints":[R`把人看作点，相识连边。`,R`任取v；若其度≥1009已完成，否则非邻点至少2018−1008=1010个。`,R`非邻点形成团，每个非邻点至少认识该团内其余1009人。`],"method":R`m-graph-extreme`,"sol":R`<p>任取v。若d(v)≥1009，直接成立。否则d(v)≤1008，v有至少1010个非邻点。任意两个这样的点必须相识，否则它们与v组成三人互不相识，违背题设。因此这些点形成至少1010点的团，其中每个点至少认识团内另外1009人。</p>`,"lv":R`真题`},
+{"id":R`dplus4-p2`,"src":R`2022秋期末·史灵生 5`,"stmt":R`证明n点简单图若边数大于 $\binom{n-1}2$，必连通，并给出表明严格号不能改为≥的例子（n≥2）。`,"hints":[R`反证，取一个分支有a点，1≤a≤n−1。`,R`边数≤C(a,2)+C(n−a,2)=C(n,2)−a(n−a)。`,R`a(n−a)≥n−1；取K_(n−1)加孤立点取等。`],"method":R`m-graph-extreme`,"sol":R`<p>若不连通，取一个分支a点，跨它与其余n−a点没有边，故$e\le\binom n2-a(n-a)$。因$a(n-a)-(n-1)=(a-1)(n-a-1)\ge0$，得$e\le\binom n2-(n-1)=\binom{n-1}2$，与题设矛盾。</p><p>K_(n−1)与一个孤立点不连通且恰有C(n−1,2)边，所以不能改成≥。n=2时就是两个孤立点。</p>`,"lv":R`真题`},
+{"id":R`dplus4-p3`,"src":R`2022秋期末·史灵生 7`,"stmt":R`平面上任取六个点，无三点共线。证明其中至少有三组四点构成凸四边形。`,"hints":[R`画出15条两两连线；凸四边形对应相交对角线。`,R`若凸四边形数q≤2，从每对交叉边中删一条，至少还剩13边且无交叉。`,R`六点简单平面图最多3×6−6=12边，矛盾。`],"method":R`m-crossing-delete`,"sol":R`<p>四点构成凸四边形当且仅当其中一对无公共端点的线段内部相交；对角线交叉的边对唯一。令这样的边对数为q。从每对交叉边中选一条删除，合计至多删q条，所得直线画法无交叉。该简单平面图有6点、至少15−q边，平面界给15−q≤12，故q≥3。</p><p>若三条对角线同点相交，仍是三对边，证明并不要求交点位置互不相同。</p>`,"lv":R`真题`}
+],
+"variants":[
+{"id":R`dplus4-v1`,"src":R`2019秋期末·史灵生 7（原题问足够颜色数）`,"stmt":R`设有限简单图中任意两条奇圈都有公共顶点。证明5色足够。`,"hints":[R`若没有奇圈，二部图2色足够。`,R`否则取最短奇圈，它没有弦，故用3色。`,R`删去此圈顶点后若有奇圈则与原圈顶点不交，矛盾；余图用另外2色。`],"method":R`m-oddcycle-colour`,"sol":R`<p>无奇圈时图为二部图，2色即可。有奇圈时取最短奇圈C。若C有弦，两条弦路长度奇偶不同，弦和其中偶长路组成更短奇圈，矛盾，故C无弦，可正常3染色。G−V(C)没有奇圈，否则与C不交，故它是二部图。用与前3色不同的另外2色染余图，即得全图5色染法。跨两部分的边端点颜色集合不交，也合法。这是充分界，不声称对每个此类图最优。</p>`,"lv":R`变种`},
+{"id":R`dplus4-v2`,"src":R`史灵生2019考前辅导 Problem 4.4 / 解析版4.3（资料题）`,"stmt":R`证明Petersen图没有Hamilton圈。可用其五角星内圈、五边形外圈及对应五条辐条的画法。`,"hints":[R`Hamilton圈跨内外两部分的辐条数必须为正偶数，因此是2或4。`,R`若用2条辐条，外五圈删一边成路径，要求两端外圈相邻；内星五圈路径端点内圈相邻，对应指标相差2，矛盾。`,R`若用4条辐条，由对称性可设仅第0条不用；外圈和内星中所取边被度2条件唯一迫出，形成两个5圈。`],"method":R`m-graph-extreme`,"sol":R`<p>编号外圈u_i（i模5相邻）、内圈v_i（i与i+2相邻），辐条u_iv_i。Hamilton圈跨割的辐条数为正偶数，故为2或4。</p><p>若用2条，内外各自都须是覆盖五点的路径。外圈路径删一边，其端点指标相差1；内星圈路径删一边，端点指标相差2。两端必须是相同两条辐条的指标，矛盾。</p><p>若用4条，由旋转设u_0v_0不用。度2强迫取外边u_0u_1、u_0u_4、u_2u_3；内边v_0v_2、v_0v_3、v_1v_4，连同其余四条辐条，恰形成两圈$u_0u_1v_1v_4u_4u_0$及$u_2u_3v_3v_0v_2u_2$，而非一个10圈。两种情况都不可能。</p>`,"lv":R`变种`},
+{"id":R`dplus4-v3`,"src":R`2024复习手稿第5页与史灵生考前辅导图论基础（资料题合并）`,"stmt":R`<p>(1) 连通简单图n≥3、每点度≤2，证明它是路径或圈。</p><p>(2) 证明G与其补图至少一个连通。</p><p>(3) G有11点，证明G与补图不可能同时可平面。</p>`,"hints":[R`(1)若全2度为圈；否则从度1点沿未用边前进，不能分叉。`,R`(2)若G不连通，跨分支的补图边全部存在。`,R`(3)两图边数和C(11,2)=55，而两个简单平面图边数和至多2(3×11−6)=54。`],"method":R`m-graph-extreme`,"sol":R`<p>(1) 若每点2度，由g1得圈。否则连通且n≥3排除0度点，存在度1点。从它开始沿未用边走，度≤2使中间没有分叉，也不可能回到已走过点（回到起点违反其度1；回到其他点会使其度至少3）。故得到路径；若有未走到点，连通性迫使它接到路径某点，违反终止或度上界。因此路径覆盖全图。</p><p>(2) 若G连通已完成；若不连通，任两点分属不同分支时在补图相邻，同分支时可经另一个分支任一点作两步路，故补图连通。</p><p>(3) 若两图都平面，则各最多27边，总共最多54；但它们将K11的55条边恰分完，矛盾。因此至少一个非平面，不能由未超过界反推另一个一定平面。</p>`,"lv":R`变种`}
+],
+"extensions":[
+{"id":R`dplus4-e1`,"src":R`史灵生2019考前辅导补充 Problem 2.9（只取可靠充分界）`,"stmt":R`若有限简单图每点至多位于k条不同简单奇圈上，证明：对任意正整数t，只要 $\binom t2\gt k$，就可用t色正常染色。不要据此断言这个界总是最优。`,"hints":[R`对顶点数归纳，删去v后t染色。缺一种邻色时直接填。`,R`否则看每对颜色a,b。如果其诱导子图有a邻点到b邻点的路径，取简单交替路径，与v组成奇圈。不同色对产生不同奇圈。`,R`色对总数>k，必有一对不存在这样的路径。把所有含a邻点的两色分支整体交换a,b，就空出a色。`],"method":R`m-oddcycle-colour`,"sol":R`<p>对点数归纳。G−v可t染色；若v的邻点未用尽颜色，直接填。否则对每对颜色a,b，若两色诱导子图中有一条连接v的a邻点与b邻点的路径，取其中简单路径P。P两端异色，长度为奇数，P加v及两条邻接边形成奇圈。不同色对产生不同圈，因为圈上除v外恰用这两色，故最多k个色对被这种圈阻挡。</p><p>由C(t,2)>k，选一对a,b未被阻挡。所有包含v的a色邻点的两色连通分支，都不含v的b色邻点，否则就有上述路径。把这些分支中a、b全交换，原染色仍合法，且v不再有a色邻点，可染a。归纳完成。</p>`,"lv":R`延伸`},
+{"id":R`dplus4-e2`,"src":R`2019秋期末·史灵生 9（4分拓展题，自证奇偶定理）`,"stmt":R`是否存在自然数d，使每个有限简单d正则Hamilton图至少有两条不同Hamilton圈？给一个d并说明理由。`,"hints":[R`可取d=3。更强事实：所有点度均为奇数的图，每条固定边所处Hamilton圈数为偶数。`,R`固定有向首边u,v，以所有从u,v开头的Hamilton路径作辅助图顶点；把终点连回路径内部再反转尾段，称为旋转。`,R`对终点w，该辅助顶点度为d(w)−1−1_{wu是边}；它为奇数恰当路径可闭成固定边所处Hamilton圈。用握手奇偶。`],"method":R`m-graph-extreme`,"sol":R`<p>取d=3。先证奇度图的固定边uv所处Hamilton圈数为偶数。把所有以u,v开头的有向Hamilton路径P=(v_1=u,v_2=v,…,v_n=w)作辅助图顶点。对w与v_i的每条边（2≤i≤n−2），做旋转$(v_1,…,v_i,w,v_{n-1},…,v_{i+1})$。它保持首边，且逆旋转唯一，故辅助图为有限无向图。</p><p>这些旋转数为d(w)减去已用前驱边，再减去可能的wu边，即d(w)−1−1_{wu∈E}。d(w)奇数，所以辅助度为奇数当且仅当wu∈E。这样的路径恰一一对应含固定边uv的无向Hamilton圈：以u→v方向打开圈即可。</p><p>握手定理说明奇度辅助顶点个数为偶数，所以固定边所处Hamilton圈数为偶数。原图有一个Hamilton圈，选其任一边uv，该边至少属于两圈。故每个3正则Hamilton图至少两圈。d=2不行：单独一个圈是2正则，却只有一条Hamilton圈。此题为跨班选做，不要求主线30分钟掌握全部旋转证明。</p>`,"lv":R`延伸`},
+{"id":R`dplus4-e3`,"src":R`2024复习手稿第8页题6(3)（资料题）`,"stmt":R`设G为n≥3的简单平面图，各边染黑或蓝。对每个面F，把相邻边异色的边界角数记c(F)，边界按行走次数计数（桥重复两次）。证明 $\sum_F c(F)\le4n-8$。`,"hints":[R`先看面边界长度ℓ：ℓ=2只可能同一桥来回，c=0；ℓ=3时异色变化数为偶数故≤2；ℓ≥4时c≤ℓ≤2ℓ−4。`,R`对所有面求和：∑c≤2∑ℓ−4f=4e−4f。`,R`非空有边图用n−e+f=1+分支数；空边图直接c总数0。`],"method":R`m-double-count`,"sol":R`<p>若无边，左边0，结论成立。否则每个面的边界总长度至少2。长度2时同一桥往返，两边颜色相同，c=0；长度3为三角形，沿闭边界的颜色变化次数为偶数，故c≤2；长度ℓ≥4时c≤ℓ≤2ℓ−4。因此统一有c(F)≤2ℓ(F)−4。</p><p>每边在所有面边界中共计两次，所以∑ℓ=2e，从而∑c≤4e−4f。设分支数为h≥1，Euler给n−e+f=1+h，故4e−4f=4n−4−4h≤4n−8。包括桥和非连通图；不能把面边界中的桥只计一次。</p>`,"lv":R`延伸`}
+]
+},
+"dplus5":{
+"unit":R`past`,
+"n":5,
+"title":R`往年补漏：黑白奇偶、Euler 拆圈与平面对偶`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus5-s1`,"h":R`1. 走每条边与走每个点是不同问题`,"html":R`<p>Euler路要求每条边一次，靠度数奇偶；Hamilton路要求每个顶点一次，不能直接套Euler判据。在二部图中，每走一步就换颜色，因此偶数个点的Hamilton路两端异色，奇数个点时两端同色且位于数量多一的颜色类；Hamilton圈两色数量必相同。</p><p>格点按坐标和的奇偶染色，二维相邻、三维共面的相邻小方块都异色。奇偶条件是必要条件，通常不是任意图的充分条件。</p>`},
+{"id":R`dplus5-s2`,"h":R`2. 闭行迹可以拆成边不交的简单圈`,"html":R`<p>若Euler闭行迹中重复某顶点，截出两次相遇间最短的闭段，它内部无重复点，因而是简单圈。删去这段，余下仍是闭行迹（可能为空）；重复进行。边每次只删一次，最终得到边不交圈分解。</p><p>这里“边不交”不要求顶点不交；两个三角形共一个顶点就是最简单的提醒。</p>`},
+{"id":R`dplus5-s3`,"h":R`3. 对偶图的顶点是面，度数是面的边界长度`,"html":R`<p>固定平面嵌入，在每个面内放一个对偶顶点，每条原边连其两侧的面；两侧同面时成为对偶自环。对偶顶点的度等于对应面的边界长度，桥在边界上按两次计，自环也贡献2度。</p><p>二部图的每段闭走法长度都为偶数，所以每个面边界长度为偶数，对偶各点全偶度。对偶图连通（用连接两面内点的避顶点曲线，依次跨边给出对偶道路），故有Euler闭路。</p>`}
+],
+"widget":null,
+"concepts":[
+{"id":R`dplus5-c1`,"sec":R`dplus5-s1`,"q":R`二部图的Hamilton圈要求两侧点数怎样？`,"opts":[R`任意`,R`相等`,R`相差1`,R`只要求总点数为偶数`],"a":1,"ex":R`每次走边换侧，闭圈轮流访问两侧，次数必须相同。`},
+{"id":R`dplus5-c2`,"sec":R`dplus5-s1`,"q":R`27顶点二部图的Hamilton路两端应在哪里？`,"opts":[R`异色`,R`同色，且属于较多的颜色类`,R`随意`,R`必须是同一点`],"a":1,"ex":R`路径含26条边，换色26次，首尾同色；该颜色出现14次。`},
+{"id":R`dplus5-c3`,"sec":R`dplus5-s2`,"q":R`边不交圈分解允许两个圈共顶点吗？`,"opts":[R`允许`,R`不允许`,R`只有二部图允许`,R`必须共所有点`],"a":0,"ex":R`限制的是边集合不交，顶点可以共用。`},
+{"id":R`dplus5-c4`,"sec":R`dplus5-s3`,"q":R`原图的一条桥在对偶图中成为：`,"opts":[R`桥`,R`自环`,R`两个孤立点`,R`消失`],"a":1,"ex":R`桥两侧属于同一个面，对偶边两端是同一个对偶顶点。`}
+],
+"methods":[
+{"id":R`m-dplus5`,"title":R`奇偶与对偶：先认对象再选不变量`,"steps":[R`走边选Euler，走点选Hamilton；格点问题先用坐标和染色。`,R`闭行迹分拆找首次/最短重复段，每次删一圈，核对边恰用一次。`,R`对偶逐面数边界长度，桥计两侧；先有连通与全偶度，才能推出Euler闭路。`]}
+],
+"problems":[
+{"id":R`dplus5-p1`,"lv":R`真题`,"src":R`2015 秋期末 5（英文转录）；2019对偶题的方法补漏`,"stmt":R`<p>(1) 证明二部平面地图的对偶图有Euler闭路，桥和自环允许出现。</p><p>(2) 常规方格网（至少有两个相邻小方格）的对偶一定二部吗？说明边界度3点的作用。</p>`,"hints":[R`(1)对偶点的度等于原面边界长度。`,R`二部图闭走法长为偶，桥两侧算两次。`,R`(2)原图度3的边界非角点对应对偶的长3面边界闭走法，不能在二部图出现。`],"sol":R`<p>(1) 每个原面边界由闭走法组成，每段在二部图中为偶长，所以对应对偶度数为偶；桥贡献两次，对偶自环贡献2度，不影响结论。对偶连通，故由Euler定理有Euler闭路。</p><p>(2) 不一定。比如6×6点方格网有度3的非角边界点。绕该点的小圈依次跨过三条原边，在对偶中形成长3闭走法；二部图没有奇长闭走法，故该对偶不二部。不要把“原图二部⇒对偶Euler”误换成“原图二部⇒对偶也二部”。</p>`,"method":R`m-dplus5`},
+{"id":R`dplus5-p2`,"lv":R`真题`,"src":R`2015 秋期末 6（27块奶酪）；6×6网格构造为补充练习`,"stmt":R`<p>(1) 3×3×3小方块从角块出发，每步共面相邻且不重访，能恰好走完27块并在中心结束吗？</p><p>(2) 6×6点方格网能否有Hamilton圈？给出实际构造路线。再判断能否从左上角出发、右下角结束走完所有点。</p>`,"hints":[R`(1)按三个坐标之和染色，所有角块同色，中心异色。`,R`走完27个点的路径首尾必须同色。`,R`(2)先走顶行，留第一列作返回通道；其余行在第2至6列蛇形，底行接第一列返回。`],"sol":R`<p>(1) 用坐标0、1、2标小方块。角块坐标和偶，中心(1,1,1)和奇。每步换色，27个点的路径有26步，首尾同色，故不可能。</p><p>(2) 可以。从(1,1)沿顶行走至(1,6)，在第2至6行的第2至6列交替左右蛇形，到(6,2)，再走(6,1)，沿第一列向上经(5,1),…,(2,1)回(1,1)。每个点恰访问一次，所连都是网格边，构成Hamilton圈。这里只给具体网格的构造，未把颜色平衡误当一般充分条件。</p><p>从左上到右下的Hamilton路不存在：36个点的Hamilton路有35条边，首尾必须异色；两个对角坐标和都为偶数，同色，矛盾。原2022题图为5×5小方格、36节点，不能误看成5×5节点。</p>`,"method":R`m-dplus5`},
+{"id":R`dplus5-p3`,"lv":R`真题`,"src":R`2017 秋期末 5（英文转录）`,"stmt":R`证明一个Euler闭行迹的边可以分拆成若干边不交的简单圈。`,"hints":[R`若没有重复内部顶点，它本身就是圈。`,R`否则选择两次相遇间长度最短的闭段。`,R`截出的闭段是简单圈，删掉后接上余下行迹，按边数归纳。`],"sol":R`<p>对行迹边数归纳。非空闭行迹中选一个长度最短的非空闭段；若它内部有重复顶点，就可再截更短闭段，矛盾，故它是简单圈C。删掉该段，原行迹在同一顶点接续，余下仍为闭行迹且边数变少。对余下归纳分拆，再加C即可。每条边恰属于删除它的那一圈，故边不交；圈可以共享顶点。</p>`,"method":R`m-dplus5`}
+],
+"variants":[
+{"id":R`dplus5-v1`,"lv":R`变种`,"src":R`2016 手写回忆 3(1)，标准重述`,"stmt":R`证明任意6人的相互认识关系中，总有两人的认识人数相同。`,"hints":[R`把认识关系画成6点简单无向图，度为0到5。`,R`度0与度5不可能同时出现。`,R`最多5种度，6个点用抽屉原理。`],"sol":R`<p>若有度0点，则无点度5，度只能为0,…,4；否则度只能为1,…,5。两种情况下至多5个抽屉放6个顶点，必有同度两点。不能直接说“6个点放6种度必相同”；要先排除0与5并存。</p>`,"method":R`m-dplus5`},
+{"id":R`dplus5-v2`,"lv":R`真题`,"src":R`2018 秋期末回忆版 6`,"stmt":R`证明每个m边简单图包含至少m/2条边的二部子图。`,"hints":[R`任选顶点二染色，保留异色端点边。`,R`每条边被保留的概率1/2；期望边数m/2。`,R`某种划分的边数不少于平均值；也可取最大割再逐点翻色。`],"sol":R`<p>各点独立等概率染红蓝，每条边两端异色的概率为1/2。保留异色边后为二部子图，边数X满足E[X]=m/2。若每一种染色都少于m/2条，平均也会少于m/2，矛盾。故有一种达到至少m/2。确定性核对：取最大割，若某点跨割度小于同侧度，翻色会增加割边；故各点跨割度至少原度一半，求和得到同样结论。</p>`,"method":R`m-dplus5`}
+],
+"extensions":[
+{"id":R`dplus5-e1`,"lv":R`延伸`,"src":R`2016 手写回忆 7的可辨题意重述；原上界符号不清`,"stmt":R`平面上n个不同点两两距离至少1。证明距离恰为1的点对不超过3n；n≥3时给更强界。`,"hints":[R`只连接距离恰1的点对，画成直线段。`,R`若两条边内部相交，对应凸四边形四边长之和严格小于两对角线长度之和的2倍，即小于4，必有一对距离<1。`,R`因此是简单平面图，n≥3时边数≤3n−6。`],"sol":R`<p>任一单位线段内部没有其他给定点，否则它距某端点小于1。若两条无共同端点的单位线段内部相交于P，四端点组成凸四边形。用严格三角不等式估其四条边，周长小于2(AP+BP+CP+DP)=4，所以某一边长小于1，矛盾。因此所有单位边构成无交叉简单平面嵌入。</p><p>n≥3时E≤3n−6<3n；n=1、2直接有E≤1≤3n。本题用几何条件保证可平面，再套边界，不能只因画在纸上就宣布平面。</p>`,"method":R`m-dplus5`}
+]
+},
+"dplus6":{
+"unit":R`past`,
+"n":6,
+"title":R`往年补漏：匹配、增广路与图上游戏`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus6-s1`,"h":R`1. 两个匹配的对称差只剩交替结构`,"html":R`<p>两个匹配M、N的对称差中，每点度至多2，因此每个非平凡分支是交错路或偶交错圈。若两者都是完美匹配，每点度只能为0或2，只剩偶交错圈。因此无圈图至多一个完美匹配。</p><p>若匹配M存在从未匹配点出发、以未匹配点结束的交错路，翻转路上选边，会多一条匹配边。这样的路叫增广路；最大匹配不能有增广路。注意最大与极大不同。</p>`},
+{"id":R`dplus6-s2`,"h":R`2. 不重访的顶点行走游戏：用最大匹配配对回应`,"html":R`<p>先手任选起点，后续轮流选未访问邻点，不能走的人输。若没有完美匹配，取一个最大匹配M及未匹配点v₀作开局。之后每逢后手选u，先手就选M中与u匹配的伙伴。</p><p>要证明这个回应永远合法，必须排除后手走到另一个未匹配点；否则当前路径正好是增广路，与最大性矛盾。还须说明匹配伙伴从未访问：此前除v₀外已访问顶点总成对出现。</p>`}
+],
+"widget":null,
+"concepts":[
+{"id":R`dplus6-c1`,"sec":R`dplus6-s1`,"q":R`树有两个不同完美匹配时，它们的对称差必含什么？`,"opts":[R`奇圈`,R`偶交错圈`,R`孤立未匹配点`,R`所有边`],"a":1,"ex":R`每个对称差非孤立点度2，分支是交错偶圈，与树无圈矛盾。`},
+{"id":R`dplus6-c2`,"sec":R`dplus6-s1`,"q":R`最大匹配必定没有：`,"opts":[R`任何未匹配点`,R`增广路`,R`任何非匹配边`,R`偶圈`],"a":1,"ex":R`增广路翻转后多一边，直接违背最大性。`},
+{"id":R`dplus6-c3`,"sec":R`dplus6-s2`,"q":R`游戏策略为什么必须取最大匹配而非只取极大匹配？`,"opts":[R`最大匹配更容易画`,R`极大匹配仍可能有较长增广路`,R`两者没区别`,R`极大匹配没有边`],"a":1,"ex":R`极大只排除直接加一条边，不能排除换边后增大。`},
+{"id":R`dplus6-c4`,"sec":R`dplus6-s2`,"q":R`先手回应伙伴未被访问的关键不变量是？`,"opts":[R`所有顶点度相同`,R`开局点以外，已访问点按匹配边成对`,R`图必须二部`,R`每一步都增加边数`],"a":1,"ex":R`后手的新点若已有伙伴访问过，按成对不变量它自己此前也已访问，矛盾。`}
+],
+"methods":[
+{"id":R`m-dplus6`,"title":R`匹配策略：选最大，查增广，维护成对访问`,"steps":[R`先取最大匹配并找未匹配点，不能只随便取极大匹配。`,R`后手若到未匹配点，就把整条行走路径写成增广路并翻转反证。`,R`后手若到匹配点，用成对访问不变量证明伙伴未访问；有限游戏终止于后手无路。`]}
+],
+"problems":[
+{"id":R`dplus6-p1`,"lv":R`真题`,"src":R`2015 秋期末 7；2019同题方法补漏`,"stmt":R`证明树至多有一个完美匹配。`,"hints":[R`假设有两个完美匹配M、N。`,R`取对称差；其中每个非孤立顶点度为2。`,R`有限2正则分支是圈，与树无圈矛盾。`],"sol":R`<p>若M≠N，对称差非空。任一顶点若两匹配选同一边，在对称差中度0；若选不同边，则度2。因此对称差的某个非空分支为圈，且两种匹配边交替，得到树中的圈，矛盾。结论是至多一个，不保证存在；三点路径就是没有完美匹配的树。</p>`,"method":R`m-dplus6`},
+{"id":R`dplus6-p2`,"lv":R`真题`,"src":R`2017 秋期末 6（英文转录）`,"stmt":R`两人轮流在有限图中选不同顶点，首点任取，其后须与上一点相邻。不能选者输。证明图无完美匹配时先手必胜。`,"hints":[R`先手以最大匹配M的一个未匹配点开局。`,R`每次后手到匹配点u，先手取其M伙伴。`,R`后手若到了未匹配点，整个不重复路径就是增广路。`],"sol":R`<p>取最大匹配M，无完美匹配保证有未匹配起点v₀。先手选v₀。归纳假设此前除v₀外的访问点都按M边成对，且路径的M与非M边交替。</p><p>后手走到新点u。若u未匹配，则从v₀到u的不重复路径以非M边开始结束，是M增广路；翻转多一边，与最大性矛盾。故u匹配。其伙伴w不曾访问：若w已访问，它所在已访问匹配对还包括u，与u是新点矛盾。于是先手合法选w，恢复不变量。由于有限图不能无限访问新点，先手始终可回应，最终只能后手无路，故先手必胜。图不要求二部。</p>`,"method":R`m-dplus6`}
+],
+"variants":[
+{"id":R`dplus6-v1`,"lv":R`变种`,"src":R`2016 手写回忆 2，路径图题意标准化`,"stmt":R`对有n个顶点的路径P_n，求完美匹配数与全部匹配数z_n（含空匹配）。`,"hints":[R`完美匹配若存在，端点边必选，删去两端点归纳。`,R`全部匹配按末点是否被末边匹配分类。`,R`z₀=1,z₁=1，z_n=z_(n−1)+z_(n−2)=F_(n+1)。`],"sol":R`<p>n为奇数时无完美匹配；n为偶数时端点强制配对，依次删去两个点，得到唯一完美匹配。空图n=0按惯例有一个空完美匹配。</p><p>全部匹配中，不选末边时末点孤立，剩P_(n−1)；选末边时删去末两点，剩P_(n−2)。故z_n=z_(n−1)+z_(n−2)，z₀=z₁=1，所以z_n=F_(n+1)。手记z(1)=1,z(2)=2与此一致。</p>`,"method":R`m-dplus6`},
+{"id":R`dplus6-v2`,"lv":R`真题`,"src":R`2018 秋期末回忆版 7`,"stmt":R`简单二部图两侧各n个顶点，每点度至少n/2。证明有完美匹配。`,"hints":[R`对左侧任意S，按|S|≤n/2和|S|>n/2分类。`,R`S非空且小时，任取一点可得|N(S)|≥n/2。`,R`S大时若有右点不在N(S)，它只能连到左侧补集，度小于n/2，矛盾。`],"sol":R`<p>空S显然满足Hall。若0<|S|≤n/2，任取u∈S，有|N(S)|≥d(u)≥n/2≥|S|。若|S|>n/2，假设右侧b∉N(S)，则b只与n−|S| 小于 n/2个补集点相连，与最小度条件矛盾；故N(S)是整个右侧，|N(S)|=n≥|S|。所有S满足Hall，因而存在完美匹配。等号边界不能任意改为严格大于。</p>`,"method":R`m-dplus6`}
+],
+"extensions":[
+
+]
+},
+"dplus7":{
+"unit":R`past`,
+"n":7,
+"title":R`往年补漏：抽屉原理与有理逼近`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus7-s1`,"h":R`1. 部分和抽屉与小数部分抽屉`,"html":R`<p>已有整除题把部分和放进余数抽屉；实数逼近题把0,r,2r,…的小数部分放进[0,1)。两个小数部分接近，就表示某个非零整数倍qr接近一个整数p。</p><p>要证明1≤q≤N、误差<1/N，可把N+1个小数部分放入N个长1/N的半开区间，找同屉两点。原题更精确要求q 小于 n而误差≤1/n，少一个候选点，适合用单位圆的n个间隙。</p>`},
+{"id":R`dplus7-s2`,"h":R`2. n个圆周间隙，总长为1`,"html":R`<p>考察n个点{x_j}={jr}，j=0,…,n−1，视[0,1)首尾相接。若两点重合，立刻得到某个q 为1至n−1的整数且qr为整数。否则按小数部分排序，n个相邻圆周间隙的和为1，至少一个≤1/n。</p><p>该间隙由两个不同指标i,j确定。普通间隙对应|(j−i)r−p|≤1/n；跨0的间隙同样对应某个整数p与有符号指标差。把指标差取正并相应改变p的符号，即q 为1至n−1的整数。这里圆周最后一个间隙不可漏掉。</p>`}
+],
+"widget":R`approximationPlay`,
+"concepts":[
+{"id":R`dplus7-c1`,"sec":R`dplus7-s1`,"q":R`从小数部分接近转回整数逼近，q是什么？`,"opts":[R`小数部分之和`,R`两个原指标之差的绝对值`,R`小数部分本身`,R`必须等于n`],"a":1,"ex":R`{ir}−{jr}与(i−j)r只差一个整数。`},
+{"id":R`dplus7-c2`,"sec":R`dplus7-s1`,"q":R`把n个点放n个线段抽屉，能直接断言同屉吗？`,"opts":[R`能`,R`不能，必须多于n个点`,R`实数时能`,R`只要r无理就能`],"a":1,"ex":R`需要使用圆周间隙，而非误用相等数量的抽屉原理。`},
+{"id":R`dplus7-c3`,"sec":R`dplus7-s2`,"q":R`n个不同圆周点的相邻间隙有多少个？`,"opts":[R`n−1`,R`n`,R`n+1`,R`2n`],"a":1,"ex":R`除排序后的n−1个普通间隙，还有末点回到首点的跨0间隙。`},
+{"id":R`dplus7-c4`,"sec":R`dplus7-s2`,"q":R`本课q 为1至n−1的整数、误差≤1/n中的≤能统一改成<吗？`,"opts":[R`能`,R`不能，例如r=1/n`,R`只要n大就能`,R`取q=0就能`],"a":1,"ex":R`当r=1/n且1≤q≤n−1时，距整数最近至少1/n，最佳可恰等。`}
+],
+"methods":[
+{"id":R`m-dplus7`,"title":R`逼近的抽屉：整数部分只负责补回p`,"steps":[R`先按指标列小数部分，保留原指标，不能只排序后丢掉来源。`,R`候选n+1个点可用n个区间；只有n点时改用圆周n个间隙。`,R`把选中点差写成qr−p，确认q为非零正整数、上界正确、严格号没有超出结论。`]}
+],
+"problems":[
+{"id":R`dplus7-p1`,"lv":R`真题`,"src":R`2015 秋期末 4（英文转录）`,"stmt":R`对任意实数r及整数n>1，证明存在整数p,q使q 为1至n−1的整数且|p−qr|≤1/n。`,"hints":[R`考虑{jr}，j=0,…,n−1，并保留指标。`,R`若重合，误差0；否则用n个圆周间隙总长1。`,R`最短间隙≤1/n。选其端点的指标差q，并调整整数部分。`],"sol":R`<p>若{ir}={jr}且i≠j，则(i−j)r为整数，取q=|i−j|即误差0。否则n个小数部分互异，在单位圆上有n个正间隙，总和1，故最短间隙d≤1/n。</p><p>其两个端点来自不同指标i,j。无论它是普通间隙还是跨0间隙，都存在整数h使|(i−j)r−h|=d。令q=|i−j|，并按i−j的符号令p=h或−h，则q 为1至n−1的整数且|qr−p|≤1/n，证毕。</p>`,"method":R`m-dplus7`},
+{"id":R`dplus7-p2`,"lv":R`基础`,"src":R`自编：原结论的构造与边界`,"stmt":R`<p>(1) r=√2、n=6时，找一组满足原题的p,q。</p><p>(2) r=1/n时，说明原结论中的误差上界为什么不能统一改小于1/n。</p>`,"hints":[R`(1)试q=1,…,5，选最接近qr的整数。`,R`q=5时5√2接近7。`,R`(2)q/n距最近整数为min(q,n−q)/n。`],"sol":R`<p>(1) 取q=5,p=7，误差5√2−7≈0.071068<1/6。还可用平方比较给出严格核对：7<5√2<43/6，因为49<50<1849/36，所以误差<1/6。</p><p>(2) 对1≤q≤n−1，q/n距整数为min(q,n−q)/n≥1/n，且q=1可取等。因此≤不能统一替换为<。</p>`,"method":R`m-dplus7`}
+],
+"variants":[
+{"id":R`dplus7-v1`,"lv":R`变种`,"src":R`自编：N+1点线段抽屉版`,"stmt":R`证明任意实数r、正整数N，都有整数p,q使1≤q≤N且|qr−p|<1/N。说明它与主线n版的区别。`,"hints":[R`使用N+1个小数部分{jr}，j=0,…,N。`,R`分成N个长度1/N的半开区间。`,R`同屉差严格小于1/N，但指标差允许等于N。`],"sol":R`<p>由抽屉原理两个小数部分在同一半开区间，差严格小于1/N，指标差q在1,…,N之间；补回整数部分得到p。本版允许q=N，因此能得到严格误差；主线要求q 小于 n，所以用n点圆周间隙，误差只能保证≤1/n。两种量词不能混拼。</p>`,"method":R`m-dplus7`}
+],
+"extensions":[
+
+]
+},
+"dplus8":{
+"unit":R`past`,
+"n":8,
+"title":R`往年补漏：区组计数之后，怎样真正构造`,
+"goal":R`史灵生班往年资料补漏，概念与证明沿现有讲义衔接；不据跨班旧卷推定本学期必考。约30分钟完成讲解、概念与主线题，变种和延伸选做。`,
+"sections":[
+{"id":R`dplus8-s1`,"h":R`1. 整除条件只证明必要，不等于安排存在`,"html":R`<p>若v人每组k人，每对恰共同出现λ次，数（固定人，另一个人，含这对的组）得r(k−1)=λ(v−1)，再数（人，组）得bk=vr。它们只给必要整数条件。</p><p>可行安排必须实际列出，或定义有限集合上的统一规则，并证明每一对恰出现规定次数。以下用模2、模3的向量规则，均只是初等有限计数，非先假设“设计一定存在”。</p>`},
+{"id":R`dplus8-s2`,"h":R`2. 三种小型构造：二进制加法与模3直线`,"html":R`<p>七人用F₂³的七个非零向量标号，每组取{x,y,x+y}，不同两人决定唯一第三人。这给7个三人组。</p><p>九人用F₃²标号，四天分别按x固定以及y−mx固定（m=0,1,2）分成三条平行线，每条3人。</p><p>八人用F₂³全部向量标号，七天分别选非零a，用a·x=0和a·x=1分成两个四人组。不同两人差d≠0，它们同组恰在a·d=0时；这样的非零a恰有3个。</p>`}
+],
+"widget":R`designWalkPlay`,
+"concepts":[
+{"id":R`dplus8-c1`,"sec":R`dplus8-s1`,"q":R`若计数参数全是整数，就能宣布存在区组安排吗？`,"opts":[R`能`,R`不能，还需实际构造或存在性证明`,R`只要v是奇数就能`,R`只要λ=1就能`],"a":1,"ex":R`双计数给必要条件，不能自动反推存在。`},
+{"id":R`dplus8-c2`,"sec":R`dplus8-s2`,"q":R`七个非零二进制三维向量的三人组为何是{x,y,x+y}？`,"opts":[R`因为任意三个都可以`,R`两个不同非零x,y的和非零且不同于二者`,R`因为可用实数直线`,R`因为有七个坐标`],"a":1,"ex":R`二进制相加即按位异或；该规则让任意一对恰好确定一个三人组。`},
+{"id":R`dplus8-c3`,"sec":R`dplus8-s2`,"q":R`模3平面中有几种直线方向？`,"opts":[R`3`,R`4`,R`6`,R`9`],"a":1,"ex":R`三个有限斜率0、1、2，加一个竖直方向。`},
+{"id":R`dplus8-c4`,"sec":R`dplus8-s2`,"q":R`F₂³中固定d≠0，满足a·d=0的非零a有几个？`,"opts":[R`2`,R`3`,R`4`,R`7`],"a":1,"ex":R`核是4元素集合，去掉a=0还剩3个。`}
+],
+"methods":[
+{"id":R`m-dplus8`,"title":R`构造区组：先算参数，再给规则，再数每对`,"steps":[R`先用r(k−1)=λ(v−1)、bk=vr排除整数障碍，不能据此宣布可行。`,R`给明确的点标签、每日/每组规则，注明同一天是否分组覆盖所有人。`,R`固定任意两人，用差向量或唯一第三人证明共同出现次数，再核总组数。`]}
+],
+"problems":[
+{"id":R`dplus8-p1`,"lv":R`真题`,"src":R`2015 秋期末 8（英文转录，open疑为once）`,"stmt":R`七人每天只选三人同行，一周七天，能使每对恰同行一次吗？给出安排并验证。`,"hints":[R`把七人标1到7，按三位二进制向量看待。`,R`每组{x,y,x XOR y}。`,R`七组可列为123、145、167、246、257、347、356。`],"sol":R`<p>可以。依次安排{1,2,3}、{1,4,5}、{1,6,7}、{2,4,6}、{2,5,7}、{3,4,7}、{3,5,6}。</p><p>按二进制向量，任意两人x≠y决定唯一第三人x+y，且该第三人非零并不同于x,y。因此每一对恰在一组三元组中。每组三对，共7·3=21=C(7,2)，无漏无重。原转录英文第8题有拼写疑误，这里明确按上下文“一周每对一次”作标准重述，不将其当无疑义原文引述。</p>`,"method":R`m-dplus8`},
+{"id":R`dplus8-p2`,"lv":R`真题`,"src":R`2017 秋期末 8（英文转录）`,"stmt":R`九人每天分三组三人，四天中每对恰同组一次，能否安排？`,"hints":[R`标为(x,y)∈{0,1,2}²。`,R`第一天x固定，其余三天y−mx固定，m=0,1,2。`,R`同x的两点只在竖直日同组；不同x时有唯一斜率。`],"sol":R`<p>可以。九人标模3坐标。第一天按x分组，后三天分别按y、y−x、y−2x的值分组；每天三组，每组三人。</p><p>任意两点若x相同，则只在第一天同组；若x不同，由模3中非零数可逆，唯一m=(y₂−y₁)/(x₂−x₁)∈{0,1,2}使它们同线。故每对恰同组一次。共12个三人组，贡献36对，等于C(9,2)。</p>`,"method":R`m-dplus8`},
+{"id":R`dplus8-p3`,"lv":R`真题`,"src":R`2016 手写回忆 8；2018 回忆版 8`,"stmt":R`八人每天分两组、每组四人。七天中能否使每对恰同组三次？`,"hints":[R`标为F₂³全部8个向量，包括0。`,R`每天选择一个非零a，按a·x的0、1值分组。`,R`两人差d≠0，同组条件a·d=0，其非零解a有3个。`],"sol":R`<p>可以。七天分别取a=001,010,011,100,101,110,111，每天按二进制内积a·x分为两组。每个非零线性函数在8点上0、1各取4次，所以每日合法分组。</p><p>固定不同x,y，令d=x+y≠0，同组当且仅当a·d=0。该齐次方程在三维二进制空间有4个解，其中一个是0，故七个非零a中恰有3个使两人同组。这比只核总对数84=3C(8,2)更强：它逐对保证恰三次。</p>`,"method":R`m-dplus8`}
+],
+"variants":[
+{"id":R`dplus8-v1`,"lv":R`变种`,"src":R`自编：晚年11人同行题的必要性判定`,"stmt":R`11人每天选3人，若每对恰同行一次，能否安排？若每天选6人，要求每对恰同行一次呢？`,"hints":[R`每人参加次数必须满足r(k−1)=10。`,R`k=3时r=5，但组数b=11·5/3非整数。`,R`k=6时r=2，但b=22/6也非整数。`],"sol":R`<p>k=3时b=11·10/(3·2)=55/3非整数；k=6时b=11·10/(6·5)=11/3非整数。因此两种均不可能。这里整数障碍足以否定，不需要寻找实际排表。</p>`,"method":R`m-dplus8`}
+],
+"extensions":[
+{"id":R`dplus8-e1`,"lv":R`延伸`,"src":R`2024小班手稿第9页第7(2)方法补漏，非官方原卷`,"stmt":R`设v>3的集合上有Steiner三元系：每对恰属于一个三人组。若要求每个三人组不为单色，证明至少需要3种颜色。`,"hints":[R`假设可用两色，红r点、蓝b点。`,R`每个非单色三元组恰含2个异色点对，且每个异色对只在一块出现。`,R`rb=2·v(v−1)/6，而rb≤v²/4，得v≤4；参数条件排除v=4。`],"sol":R`<p>三元系计数给组数B=v(v−1)/6，每点出现(v−1)/2次，故v为奇数；又v>3，所以v≥5。若存在无单色的红蓝染色，设两色数r,b，则每块恰含2个异色点对，所有异色点对恰各出现一次，因此rb=2B=v(v−1)/3。</p><p>但rb≤(r+b)²/4=v²/4，于是4v(v−1)≤3v²，即v≤4，矛盾。所以至少3色。这里只证明必要色数，不声称任意Steiner三元系都可3染。</p>`,"method":R`m-dplus8`},
+{"id":R`dplus8-e2`,"lv":R`延伸`,"src":R`2024小班手稿第9页第7(3)，经原图核对重述`,"stmt":R`在v点Steiner三元系中，证明能取出至少(v−1)/6个两两不交的三人组。`,"hints":[R`取极大的一族不交组，共k组；余下集合Z大小z=v−3k。`,R`Z中任意两点的第三点必须在已覆盖点中，否则还能加一组。`,R`固定已覆盖点，含它且另两点在Z中的组至多z/2个；数Z中点对。`],"sol":R`<p>取包含组数尽可能多（取极大也足够）的两两不交组族，共k组，余集Z大小z=v−3k。若z=0，已有k=v/3≥(v−1)/6。</p><p>若z>0，Z内每对点的唯一三元组必须以已覆盖点作第三点。固定一个已覆盖点c，所有含c的三元组中除c外的点对互不重叠（否则某对{c,x}重复），故其中位于Z的点对至多z/2个。共有3k个已覆盖点，因此C(z,2)≤3k·z/2。除以z/2得z−1≤3k，即v−3k−1≤3k，故k≥(v−1)/6。</p>`,"method":R`m-dplus8`}
+]
+}
 };
 
 LESSONS.n2.extensions.push({"id":R`n2-e2`,
@@ -2018,7 +2664,7 @@ for (const L of Object.values(LESSONS)) for (const m of L.methods) methodById[m.
 /* ================= 导航 ================= */
 function renderNav() {
   const nav = $("#nav");
-  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>进度与同步</span></a>`;
+  let h = `<span class="grp">总览</span><a href="#home" data-v="home"><span>考点与日程</span></a><a href="#exams" data-v="exams"><span>往年卷逐题核对</span></a><a href="#sheet" data-v="sheet"><span>速查表</span></a><a href="#export" data-v="export"><span>进度与同步</span></a>`;
   for (const u of UNITS) {
     h += `<span class="grp">${esc(u.title)}</span>`;
     if (u.soon) { h += `<a class="soon"><span>待生成</span></a>`; continue; }
@@ -2052,7 +2698,7 @@ function unitOf(lid) { return UNITS.find(u => u.lessons.includes(lid)); }
 /* ================= 首页 ================= */
 function viewHome() {
   const yrs = EXAM_YEARS;
-  const rows = EXAM_MAP.map(([t, ys, s, note]) => `<tr><td>${esc(t)}${note ? `<div class="small muted">${esc(note)}</div>` : ""}</td>${ys.map(y => `<td class="yr">${y ? '<span class="dot" title="考了"></span>' : '<span class="no">·</span>'}</td>`).join("")}<td><span class="stars">${"★".repeat(s)}${"☆".repeat(5 - s)}</span></td></tr>`).join("");
+  const rows = examMapRows();
   const weeks = SCHEDULE.map(([w, days]) => `<div class="week"><div class="wk">${w}</div><div class="days">${days.map(([d, t, l]) => l ? `<span class="live">${d} · <a href="#${l}">${esc(t)}</a></span>` : `<span class="later">${d} · ${esc(t)}</span>`).join("")}</div></div>`).join("");
   const tl = LIVE.map(lid => { const L = LESSONS[lid]; return `<a href="#${lid}"><span class="n">${esc(unitOf(lid).title)} · 第 ${L.n} 课</span><b>${esc(L.title)}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`; }).join("");
   return `
@@ -2063,14 +2709,14 @@ function viewHome() {
   </section>
   <section class="stack"><div class="sec-head"><h2>已上线的课</h2><span class="t">按日程顺序，每课约 30 分钟</span></div><div class="lesson-cards">${tl}</div></section>
   <section class="block">
-    <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">据 2022 秋艾颖华班期末卷整理</span></div>
-    <div class="table-wrap"><table><thead><tr><th>考点</th>${yrs.map(y => `<th style="text-align:center">${y}</th>`).join("")}<th>优先级</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="small muted">2024 秋期末第 5 题（普吕弗序列）来自本学期课件。史灵生班 2015–2022 的期末卷、2024 小班手稿还没逐题计入。期末占 70%，考察所有内容。</p>
+    <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">${esc(EXAM_AUDIT_META.frequencyLabel)}</span></div>
+    <div class="table-wrap"><table><thead><tr><th>考点</th>${yrs.map(y => `<th style="text-align:center">${esc(y)}</th>`).join("")}<th>出现 / 可判卷数</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="small muted">${esc(EXAM_AUDIT_META.frequencyNote)}</p><p><a href="#exams">展开逐题核对记录与补课去向 →</a></p>
   </section>
   <section class="block">
     <div class="sec-head"><h2>六周日程</h2><span class="t">紫色 = 已上线，灰色 = 待生成</span></div>
     <div>${weeks}</div>
-    <p class="small muted">模拟卷每套 2 小时，没法拆进 30 分钟，安排在周末做。</p>
+    <p class="small muted">模拟卷每套 2 小时，安排在周末做；新增往年卷专题按核对记录按需补练，原六周日程保留。</p>
   </section>
   <section class="block">
     <div class="sec-head"><h2>怎么用这一页</h2></div>
@@ -2266,16 +2912,17 @@ function render() {
   const view = $("#view");
   let html;
   if (LESSONS[v]) html = viewLesson(v);
+  else if (v === "exams") html = viewExamAudit();
   else if (v === "sheet") html = viewSheet();
   else if (v === "export") html = viewExport();
   else html = viewHome();
-  currentView = LESSONS[v] ? v : (["sheet", "export"].includes(v) ? v : "home");
+  currentView = LESSONS[v] ? v : (["exams", "sheet", "export"].includes(v) ? v : "home");
   view.innerHTML = html;
   markNav(currentView);
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay, anglePlay, countPlay, birthdayPlay, tailPlay, euclidPlay, alternatingPlay, examClock, transportPlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay, anglePlay, countPlay, birthdayPlay, tailPlay, euclidPlay, alternatingPlay, examClock, transportPlay, weightedStepsPlay, fibPeriodPlay, approximationPlay, designWalkPlay, quadraticResidues, crossingAudit })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -2996,6 +3643,67 @@ function transportPlay(mount) {
   $("#tr-preset",mount).addEventListener('change',load);$("#tr-reset",mount).addEventListener('click',load);
   $("#tr-step",mount).addEventListener('click',()=>{apply();draw();});
   $("#tr-all",mount).addEventListener('click',()=>{while(apply()){}draw();});load();
+}
+
+function weightedStepsPlay(mount){
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="ws-mode">种类数 <select id="ws-mode"><option value="1,2">1元1种，2元2种</option><option value="2,1">1元2种，2元1种</option></select></label><label for="ws-n">金额 n <input id="ws-n" type="range" min="0" max="10" value="5"></label></div><div class="readout" id="ws-out" aria-live="polite"></div><div class="table-wrap" id="ws-table"></div><p class="small muted">逐个枚举“下一件买哪一种”，恰用完预算才计数；顺序不同算不同。表中递推独立计算，空序列计1。</p></div>`;
+ const mode=mount.querySelector('#ws-mode'),slider=mount.querySelector('#ws-n');
+ function draw(){const[r,s]=mode.value.split(',').map(Number),n=+slider.value,a=[1,r];for(let k=2;k<=n;k++)a[k]=r*a[k-1]+s*a[k-2];let count=0;function visit(left){if(left===0){count++;return;}if(left>=1)for(let i=0;i<r;i++)visit(left-1);if(left>=2)for(let i=0;i<s;i++)visit(left-2);}visit(n);mount.querySelector('#ws-out').textContent=`n=${n}；递推值=${a[n]}；购买序列枚举=${count}；${a[n]===count?'一致 ✓':'请检查'}`;mount.querySelector('#ws-table').innerHTML='<table><thead><tr><th>n</th><th>末件1元贡献</th><th>末件2元贡献</th><th>总数</th></tr></thead><tbody>'+Array.from({length:n+1},(_,k)=>`<tr><td>${k}</td><td>${k>=1?r*a[k-1]:'空序列'}</td><td>${k>=2?s*a[k-2]:0}</td><td>${a[k]}</td></tr>`).join('')+'</tbody></table>';}
+ mode.addEventListener('change',draw);slider.addEventListener('input',draw);draw();
+}
+function fibPeriodPlay(mount){
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="fp-n">下标 n <input id="fp-n" type="range" min="0" max="120" value="13"></label></div><div id="fp-out" class="readout" aria-live="polite"></div><p id="fp-residues" class="small"></p><p class="small muted">工具只计算模10余数，不用浮点数近似巨大Fibonacci整数。逐相邻对查首次回到(0,1)，再枚举完整周期。</p></div>`;
+ const slider=mount.querySelector('#fp-n');let a=0,b=1,period=[],t=0;do{period.push(a);[a,b]=[b,(a+b)%10];t++;}while((a!==0||b!==1)&&t<101);
+ const residues=period.map((v,i)=>v===i%10?i:null).filter(v=>v!==null);
+ function draw(){const n=+slider.value;mount.querySelector('#fp-out').textContent=`n=${n}；Fₙ mod10=${period[n%t]}；n mod10=${n%10}；${period[n%t]===n%10?'末位相同 ✓':'末位不同'}`;mount.querySelector('#fp-residues').textContent=`首次状态回归周期=${t}；全部解 n mod${t} ∈ {${residues.join(', ')}}。`;}
+ slider.addEventListener('input',draw);draw();
+}
+function approximationPlay(mount){
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="da-r">实数 r <input id="da-r" type="number" min="-10" max="10" step="any" value="1.4142135623730951"></label><label for="da-n">n <input id="da-n" type="number" min="2" max="50" step="1" value="6"></label></div><div id="da-out" class="readout" aria-live="polite"></div><div class="table-wrap" id="da-table"></div><p class="small muted">枚举1≤q≤n−1，每个q选最近整数p；这是数值演示。对所有实数的保证来自单位圆间隙证明，不从有限小数实验外推。</p></div>`;
+ const ri=mount.querySelector('#da-r'),ni=mount.querySelector('#da-n');
+ function draw(){const r=Number(ri.value),n=Number(ni.value),out=mount.querySelector('#da-out'),table=mount.querySelector('#da-table');if(ri.value===''||ni.value===''||!Number.isFinite(r)||Math.abs(r)>10||!Number.isInteger(n)||n<2||n>50){out.textContent='请输入−10到10的有限实数r，以及2到50的整数n。';table.textContent='';return;}const rows=[];let best=null;for(let q=1;q<n;q++){const p=Math.round(q*r),error=Math.abs(p-q*r);rows.push({q,p,error});if(!best||error<best.error)best={q,p,error};}out.textContent=`p=${best.p}，q=${best.q}；误差=${best.error.toFixed(8)}；1/n=${(1/n).toFixed(8)}；${best.error<=1/n+1e-12?'满足界 ✓':'请检查精度'}`;table.innerHTML='<table><thead><tr><th>q</th><th>最近整数p</th><th>|p−qr|</th></tr></thead><tbody>'+rows.map(x=>`<tr><td>${x.q}</td><td>${x.p}</td><td>${x.error.toFixed(8)}</td></tr>`).join('')+'</tbody></table>';}
+ ri.addEventListener('input',draw);ni.addEventListener('input',draw);draw();
+}
+function designWalkPlay(mount){
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="bd-mode">安排 <select id="bd-mode"><option value="fano">七人七天，每天一组三人</option><option value="affine">九人四天，每天三组三人</option><option value="binary">八人七天，每天两组四人</option></select></label></div><div id="bd-out" class="readout" aria-live="polite"></div><div class="table-wrap" id="bd-table"></div><p class="small muted">按构造规则生成所有组，再对每对人员独立累计同组次数；不仅核对总数。数字是匿名编号。</p></div>`;
+ const mode=mount.querySelector('#bd-mode'),pop=x=>{let z=0;while(x){z+=x&1;x>>=1;}return z;};
+ function draw(){let days=[],v=0,target=1;if(mode.value==='fano'){v=7;const seen=new Set();for(let x=1;x<=7;x++)for(let y=x+1;y<=7;y++){const a=[x,y,x^y].sort((a,b)=>a-b),k=a.join(',');if(!seen.has(k)){seen.add(k);days.push([a]);}}}else if(mode.value==='affine'){v=9;for(let slope=-1;slope<=2;slope++){const groups=[[],[],[]];for(let x=0;x<3;x++)for(let y=0;y<3;y++){const b=slope===-1?x:((y-slope*x)%3+3)%3;groups[b].push(1+3*x+y);}days.push(groups);}}else{v=8;target=3;for(let a=1;a<8;a++){const groups=[[],[]];for(let x=0;x<8;x++)groups[pop(a&x)%2].push(x+1);days.push(groups);}}
+ const counts=Array.from({length:v},()=>Array(v).fill(0));for(const groups of days)for(const g of groups)for(let i=0;i<g.length;i++)for(let j=i+1;j<g.length;j++){const a=Math.min(g[i],g[j])-1,b=Math.max(g[i],g[j])-1;counts[a][b]++;}const vals=[];for(let i=0;i<v;i++)for(let j=i+1;j<v;j++)vals.push(counts[i][j]);const ok=vals.every(x=>x===target);mount.querySelector('#bd-out').textContent=`${v}人，${days.length}天；每对同组次数范围${Math.min(...vals)}–${Math.max(...vals)}；目标${target}；${ok?'逐对核对一致 ✓':'请检查'}`;mount.querySelector('#bd-table').innerHTML='<table><thead><tr><th>天</th><th>分组</th></tr></thead><tbody>'+days.map((g,i)=>`<tr><td>${i+1}</td><td>${g.map(x=>'{'+x.join(',')+'}').join('；')}</td></tr>`).join('')+'</tbody></table>';}
+ mode.addEventListener('change',draw);draw();
+}
+
+function quadraticResidues(mount){
+ const cases={p17:{label:'2019：x²−8x≡1 (mod17)',m:17,f:x=>x*x-8*x-1},p8:{label:'2019：x²−8x≡1 (mod8)',m:8,f:x=>x*x-8*x-1},p6:{label:'辅导：x²≡5x (mod6)',m:6,f:x=>x*x-5*x},p23:{label:'辅导：x²≡4 (mod23)',m:23,f:x=>x*x-4},zero9:{label:'反例：x²≡0 (mod9)',m:9,f:x=>x*x}};
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="qr-case">方程 <select id="qr-case">${Object.entries(cases).map(([k,c])=>`<option value="${k}">${c.label}</option>`).join('')}</select></label></div><div class="readout" id="qr-out" aria-live="polite"></div><div class="table-wrap" id="qr-table"></div><p class="small muted">逐个枚举0到m−1是完整剩余类核对，不依赖随机试根。合数模可能有多于两个根，也可能平方为0而原数不为0。</p></div>`;
+ const sel=mount.querySelector('#qr-case');function draw(){const c=cases[sel.value],rows=Array.from({length:c.m},(_,x)=>[x,((c.f(x)%c.m)+c.m)%c.m]),roots=rows.filter(r=>r[1]===0).map(r=>r[0]);mount.querySelector('#qr-out').textContent='模数m='+c.m+'；全部解：'+(roots.length?roots.join('，'):'无解')+'；解数='+roots.length;mount.querySelector('#qr-table').innerHTML='<table><thead><tr><th>x</th><th>原式左边−右边 (mod m)</th><th>是否解</th></tr></thead><tbody>'+rows.map(([x,r])=>`<tr><td>${x}</td><td>${r}</td><td>${r===0?'✓':'—'}</td></tr>`).join('')+'</tbody></table>';}
+ sel.addEventListener('change',draw);draw();
+}
+function crossingAudit(mount){
+ const presets={nested:{label:'六点：三个凸四边形',pts:[[0,0],[10,0],[0,10],[1,1],[4,1],[1,4]]},convex:{label:'六点全部凸位置',pts:[[0,2],[1,0],[4,0],[5,2],[4,4],[1,4]]},five:{label:'五点凸位置',pts:[[0,2],[2,0],[5,1],[4,4],[1,5]]}};
+ mount.innerHTML=`<div class="widget"><div class="ctrl"><label for="cross-preset">点集 <select id="cross-preset">${Object.entries(presets).map(([k,p])=>`<option value="${k}">${p.label}</option>`).join('')}</select></label><button type="button" class="btn" id="cross-next">换一组凸四边形</button></div><div id="cross-svg"></div><div class="readout" id="cross-out" aria-live="polite"></div><p class="small muted">灰线为全部直线边，紫线标出当前凸四边形的两条对角线。程序按线段交叉边对穷举；即使多条线同点交，也按边对分别计数。图示不声称一般n的下界总可取到。</p></div>`;
+ const sel=mount.querySelector('#cross-preset');let picked=0;
+ const orient=(a,b,c)=>(b[0]-a[0])*(c[1]-a[1])-(b[1]-a[1])*(c[0]-a[0]);
+ const hits=(a,b,c,d)=>orient(a,b,c)*orient(a,b,d)<0&&orient(c,d,a)*orient(c,d,b)<0;
+ function draw(){const ps=presets[sel.value].pts,n=ps.length,quads=[];for(let a=0;a<n;a++)for(let b=a+1;b<n;b++)for(let c=b+1;c<n;c++)for(let d=c+1;d<n;d++){for(const [i,j,k,l]of[[a,b,c,d],[a,c,b,d],[a,d,b,c]])if(hits(ps[i],ps[j],ps[k],ps[l]))quads.push({vertices:[a,b,c,d],edges:[[i,j],[k,l]]});}picked%=quads.length;const q=quads[picked],maxX=Math.max(...ps.map(p=>p[0])),maxY=Math.max(...ps.map(p=>p[1])),X=x=>45+x/maxX*500,Y=y=>270-y/maxY*240;let edges='';for(let a=0;a<n;a++)for(let b=a+1;b<n;b++)edges+=`<line x1="${X(ps[a][0])}" y1="${Y(ps[a][1])}" x2="${X(ps[b][0])}" y2="${Y(ps[b][1])}" stroke="var(--muted)" opacity="0.45"/>`;for(const[a,b]of q.edges)edges+=`<line x1="${X(ps[a][0])}" y1="${Y(ps[a][1])}" x2="${X(ps[b][0])}" y2="${Y(ps[b][1])}" stroke="var(--accent)" stroke-width="4"/>`;mount.querySelector('#cross-svg').innerHTML=`<svg viewBox="0 0 600 310" role="img" aria-label="点集全部连线与当前相交对角线" style="width:100%;height:auto;display:block">${edges}${ps.map((p,i)=>`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="5" fill="var(--ink)"/><text x="${X(p[0])+7}" y="${Y(p[1])-7}" fill="var(--ink)" font-size="16">${i+1}</text>`).join('')}</svg>`;const bound=(n-3)*(n-4)/2;mount.querySelector('#cross-out').textContent=`n=${n}；交叉边对=凸四边形数=${quads.length}；平面删边下界=${bound}；当前第${picked+1}组：${q.vertices.map(v=>v+1).join('、')}`;}
+ sel.addEventListener('change',()=>{picked=0;draw();});mount.querySelector('#cross-next').addEventListener('click',()=>{picked++;draw();});draw();
+}
+
+/* ================= 往年卷逐题核对 ================= */
+function examMapRows() {
+  return EXAM_MAP.map(([topic, cells, count, note]) => `<tr><th scope="row">${esc(topic)}${note ? `<div class="small muted">${esc(note)}</div>` : ""}</th>${cells.map(value => `<td class="yr">${value === null ? '<span title="该资料不完整，不能判断未出现">?</span>' : value ? '<span class="dot" title="已核到此考点"></span>' : '<span class="no" title="本份已核资料未出现">·</span>'}</td>`).join("")}<td>${count}/${cells.filter(x => x !== null).length}</td></tr>`).join("");
+}
+function viewExamAudit() {
+  const levels = { exact: "原题已覆盖", method: "方法已覆盖", added: "本轮已补齐", partial: "部分题面待核", gap: "待补", unknown: "题面待核" };
+  const counts = {};
+  let questions = 0;
+  for (const exam of EXAM_AUDIT) for (const q of exam.questions) { questions++; counts[q.level] = (counts[q.level] || 0) + 1; }
+  const stats = Object.entries(levels).filter(([k]) => counts[k]).map(([k, label]) => label + " " + counts[k]).join(" · ");
+  const papers = EXAM_AUDIT.map(exam => {
+    const links = q => (q.refs || []).map(ref => `<a href="#${esc(ref.lessonId)}">${esc(ref.problemId || ref.sectionId || ref.methodId || ref.lessonId)}</a>`).join("、");
+    const rows = exam.questions.map(q => `<tr><th scope="row">${esc(q.id)}${q.page ? `<div class="small muted">${esc(q.page)}</div>` : ""}</th><td><p>${esc(q.summary)}</p><p class="small muted">${esc(q.topics.join("、"))}</p>${q.risk ? `<p class="callout warn">题面或参考解风险：${esc(q.risk)}</p>` : ""}</td><td><b>${levels[q.level] || esc(q.level)}</b><p>${links(q) || "暂无可靠定位"}</p>${q.note ? `<p class="small muted">${esc(q.note)}</p>` : ""}</td></tr>`).join("");
+    return `<details class="block exam-audit"><summary><b>${esc(exam.label)}</b> · ${exam.questions.length} 条核对记录</summary><div class="prose"><p>${esc(exam.sourceNote)}</p><p class="small muted">${exam.inFrequency ? "计入考点地图；同卷多份文件只计一次。" : "补充核对资料，未作为一套独立年度试卷计频。"}</p><div class="table-wrap"><table><thead><tr><th>题号 / 页码</th><th>题意与考点摘要</th><th>当前页面覆盖与去向</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
+  }).join("");
+  return `<section class="stack"><span class="eyebrow">来源与覆盖审计</span><h1>往年卷逐题核对</h1><p class="lede">${esc(EXAM_AUDIT_META.scope)}</p><p>${EXAM_AUDIT.length} 组去重来源 · ${questions} 条题目 / 小问记录</p><p class="small">${esc(stats)}</p></section><section class="block prose"><p>“方法已覆盖”表示相应解题方法在课内已有讲解或训练，未必逐字收录该题。“本轮已补齐”可点击定位新增课或题。模糊题面与来源条件问题保留待核标记，不把未知记成没考。</p><p>地图中的次数只描述目前核到的资料；跨班卷型、转录与回忆来源会明确注明，不用于预测本学期出题概率。${esc(EXAM_AUDIT_META.rangeNote)}</p></section>${papers}`;
 }
 
 renderNav();
