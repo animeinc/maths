@@ -282,7 +282,7 @@ const EXAM_MAP = [
 
 const SCHEDULE = [
   ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘（期中卷订正待拿到卷后补）", null]]],
-  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", "i2"], ["Day 3", "积分计算综合复盘", "i3"], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
+  ["第 2 周", [["Day 1", "定积分：换元与分部", "i1"], ["Day 2", "Wallis 型递推", "i2"], ["Day 3", "积分计算综合复盘", "i3"], ["Day 4–5", "变上限积分：求导与极限", "i4"], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "整理速查表 + 模拟卷 1（周末整块 2 小时）", null]]],
@@ -304,7 +304,7 @@ const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
   { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
   { id: "convex", title: "凸函数与拐点", lessons: ["c1"] },
-  { id: "int", title: "定积分计算", lessons: ["i1", "i2", "i3"] },
+  { id: "int", title: "定积分计算", lessons: ["i1", "i2", "i3", "i4"] },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
 ];
@@ -1133,6 +1133,51 @@ i3: {
       <p>第二项：被积函数在 $x\to1^-$ 时有界（$\arctan$ 部分与 $\sqrt{1-x}$ 同阶），原函数 $-\frac14\arccos^2x$ 在 $[\frac12,1]$ 上连续，$x=1$ 处取值 0。所以第二项为 $0-\big(-\frac14\cdot\frac{\pi^2}9\big)=\frac{\pi^2}{36}$。</p>
       $$I=\frac{\pi^2}{72}+\frac{\pi^2}{36}=\frac{\pi^2}{24}.$$` }
   ]
+},
+/* ---------------- I4 ---------------- */
+i4: {
+  unit: "int", n: 4, title: "变上限积分：求导与极限",
+  goal: "会把积分当作函数：先检查连续性，再做上下限的链式求导；遇到极限先判断首个非零阶。30 分钟完成概念、基础与 2023 秋期末 2(1)，变种和证明选做。",
+  sections: [
+    { id: "i4-s1", h: "1. 从小区间的平均值到微积分基本定理", html: R`
+      <p>设 $f$ 在 $[a,b]$ 上 Riemann 可积，令 $F(x)=\int_a^x f(t)\,dt$。有界性给 $|F(y)-F(x)|\le M|y-x|$，所以 $F$ 连续。若 $f$ 在内点 $x$ 连续，则</p>
+      $$\frac{F(x+h)-F(x)}h-f(x)=\frac1h\int_x^{x+h}\bigl(f(t)-f(x)\bigr)\,dt\longrightarrow0,$$
+      <p>因为其绝对值不超过 $x$ 与 $x+h$ 之间 $|f(t)-f(x)|$ 的上界，对正负 $h$ 都成立。因此 $F'(x)=f(x)$。<b>可积保证 $F$ 连续；在该点连续时，可保证导数等于该点函数值（充分条件）。</b>端点只谈单侧导数。</p>
+      <p>在跳跃点不能直接套：令 $f(t)=-1$（$t\lt0$）、$f(t)=1$（$t\ge0$），则 $\int_0^x f(t)\,dt=|x|$，在 0 不可导。积分函数连续不代表可导。工具中的左右差商能直接看到这个区别。</p>` },
+    { id: "i4-s2", h: "2. 双变限：上限乘导数，减去下限乘导数", html: R`
+      <p>若 $f$ 在包含上下限取值的区间上连续，$u,v$ 可导，把积分拆成 $F(v(x))-F(u(x))$，再用链式法则：</p>
+      $$\frac d{dx}\int_{u(x)}^{v(x)}f(t)\,dt=f(v(x))v'(x)-f(u(x))u'(x).$$
+      <p>例：$\frac d{dx}\int_x^{x^2}(1+t^2)\,dt=2x(1+x^4)-(1+x^2)$。即使 $x^2\lt x$，也不用分段改公式，定积分已有方向。</p>
+      <p><b>先分清自由变量 $x$ 与积分变量 $t$</b>：若被积式还含 $x$，就不能只求上下限。比如 $H(x)=\int_0^x(x-t)e^t\,dt$，先拆成 $x\int_0^x e^t\,dt-\int_0^x te^t\,dt$，再用乘积法则和基本定理，得 $H'(x)=\int_0^x e^t\,dt=e^x-1$。</p>` },
+    { id: "i4-s3", h: "3. 极限：先看阶，再选求导或积分展开", html: R`
+      <p>若 $f$ 在 0 连续，则 $\int_0^x f(t)\,dt=f(0)x+o(x)$。若有更精细的展开 $f(t)=a_0+a_1t+\cdots+a_mt^m+o(t^m)$，则</p>
+      $$\int_0^x f(t)\,dt=a_0x+\frac{a_1}2x^2+\cdots+\frac{a_m}{m+1}x^{m+1}+o(x^{m+1}).$$
+      <p>余项可积分的理由：充分小时 $|r(t)|\le\varepsilon|t|^m$，从而 $|\int_0^x r(t)\,dt|\le\varepsilon|x|^{m+1}/(m+1)$。<b>要先减去已抵消的低阶项</b>，不能把被积函数换成首项后就忽略消去。</p>
+      <p>2023 秋期末 2(1) 的分子 $\int_0^x e^{-t^2}\,dt-x$ 首阶 $x$ 抵消，留下 $-x^3/3$；分母 $\sin x-x$ 也从三阶开始。可用一次洛必达，或先展开再积分；不需要求出 $e^{-t^2}$ 的初等原函数。</p>` }
+  ],
+  widget: "movingIntegral",
+  concepts: [
+    { id: "i4-c1", sec: "i4-s1", q: R`$f$ 在 $[a,b]$ 上可积，$F(x)=\int_a^x f(t)\,dt$。一定成立的是：`, opts: [R`$F$ 处处可导`, R`$F$ 连续，且在 $f$ 的内连续点有 $F'=f$`, R`$f$ 连续`, R`$F$ 单调递增`], a: 1, ex: R`可积函数有界，故 $F$ 满足 $|F(y)-F(x)|\le M|y-x|$；基本定理在 $f$ 连续的点给出导数。没有 $f\ge0$ 就不保证递增。` },
+    { id: "i4-c2", sec: "i4-s2", q: R`$f$ 连续时，$\frac d{dx}\int_x^{x^2}f(t)\,dt$ 等于：`, opts: [R`$f(x^2)-f(x)$`, R`$2xf(x^2)-f(x)$`, R`$f(x^2)-2xf(x)$`, R`$2xf(x^2)+f(x)$`], a: 1, ex: R`先写成 $F(x^2)-F(x)$。上限的链式导数是 $2x$，下限项要减去。` },
+    { id: "i4-c3", sec: "i4-s3", q: R`$\int_0^x e^{-t^2}\,dt-x$ 在 $x\to0$ 时的首个非零项是：`, opts: [R`$-x^2$`, R`$-x^3/3$`, R`$x^3/3$`, R`$-x^3$`], a: 1, ex: R`$e^{-t^2}=1-t^2+o(t^2)$，积分后是 $x-x^3/3+o(x^3)$，再减去 $x$。积分幂次升一阶，系数还要除以新幂次。` },
+    { id: "i4-c4", sec: "i4-s2", q: R`求 $H(x)=\int_0^x(x-t)e^t\,dt$ 的导数，哪项正确？`, opts: [R`$H'(x)=0$，因为上限代入得到 0`, R`$H'(x)=xe^x$`, R`$H'(x)=e^x-1$`, R`$H'(x)=e^x$`], a: 2, ex: R`被积式中的 $x$ 也在变化。拆成 $x\int_0^xe^t\,dt-\int_0^xte^t\,dt$ 后求导，上限项相消，剩 $\int_0^xe^t\,dt=e^x-1$。` }
+  ],
+  methods: [
+    { id: "m-int-moving", title: "变限求导：先拆成原函数的复合", steps: [R`检查被积函数在所需区间的连续性，确认 $x$ 是自由变量、$t$ 是积分变量。`, R`被积式仅含 $t$：拆成 $F(v(x))-F(u(x))$，得上限项减下限项，各乘链式导数。`, R`被积式还含 $x$：先用线性性、乘积拆分等初等操作处理，再求导；在拼接点单独核对。`] },
+    { id: "m-int-limit", title: "积分极限：消去后找首个非零阶", steps: [R`先看分子分母是否趋零，标出已经相消的项。`, R`积分函数可导且满足洛必达条件时，先求导消掉积分；或把被积函数展开到足够阶，再逐项积分。`, R`积分使幂次升一、系数除以新幂次；控制余项后比较首项，并检查正负与极限方向。`] }
+  ],
+  problems: [
+    { id: "i4-p1", lv: "基础", src: "自编：基本定理与双变限", stmt: R`设 $G(x)=\int_0^{x^2}e^{-t^2}\,dt$，$J(x)=\int_x^{x^2}(1+t^2)\,dt$。求 $G'(x),J'(x)$，并求 $G'(0)$、$J'(0)$。`, hints: [R`两者被积函数都连续，可直接用基本定理与链式法则。`, R`$G$ 的上限导数是 $2x$；$J$ 还有下限 $x$，不能漏减。`, R`$e^{-(x^2)^2}=e^{-x^4}$。`], method: "m-int-moving", sol: R`<p>$G'(x)=2xe^{-x^4}$，$J'(x)=2x(1+x^4)-(1+x^2)$。代入得 $G'(0)=0$，$J'(0)=-1$。</p><p>独立核对：$J(x)=x^2+x^6/3-x-x^3/3$，直接求导同上。$G(x)$ 是偶函数，0 处导数为 0 也符合对称性。</p>` },
+    { id: "i4-p2", lv: "真题", src: "2023 秋期末 2(1)（mathsdream 试卷）", stmt: R`计算极限 $$\lim_{x\to0^+}\frac{\displaystyle\int_0^x e^{-t^2}\,dt-x}{\sin x-x}.$$`, hints: [R`分子、分母均趋于 0；分子可由基本定理求导。`, R`对 $x\gt0$ 充分小，分母导数 $\cos x-1\ne0$，洛必达得 $(e^{-x^2}-1)/(\cos x-1)$。`, R`$e^{-x^2}-1\sim-x^2$，$\cos x-1\sim-x^2/2$。或直接积分 $1-t^2+o(t^2)$。`], method: "m-int-limit", sol: R`<p><b>一次洛必达</b>：$e^{-t^2}$ 连续，分子导数为 $e^{-x^2}-1$。在 $0\lt x\lt\pi$ 上 $\cos x-1\ne0$，且导数比极限存在：</p>$$\lim_{x\to0^+}\frac{e^{-x^2}-1}{\cos x-1}=\lim_{x\to0^+}\frac{-x^2+o(x^2)}{-x^2/2+o(x^2)}=2.$$
+      <p>故由洛必达原极限为 2。<b>积分展开复核</b>：$e^{-t^2}=1-t^2+o(t^2)$，分子为 $-x^3/3+o(x^3)$，分母为 $-x^3/6+o(x^3)$，比值仍为 2。分子分母在充分小的正 $x$ 时都为负，结果为正。</p>` }
+  ],
+  variants: [
+    { id: "i4-v1", lv: "变种", src: "自编：可去间断与导数", stmt: R`令 $Q(x)=\frac1x\int_0^x\cos(t^2)\,dt$（$x\ne0$）。怎样定义 $Q(0)$ 才连续？延拓后求 $Q'(0)$，并算 $\lim_{x\to0}(Q(x)-1)/x^4$。`, hints: [R`平均值趋于 $\cos0=1$，所以先取 $Q(0)=1$。`, R`$\cos(t^2)=1-t^4/2+o(t^4)$，积分后为 $x-x^5/10+o(x^5)$。`, R`$Q(x)=1-x^4/10+o(x^4)$；在 0 处用导数定义。`], method: "m-int-limit", sol: R`<p>连续性要求 $Q(0)=1$。由积分余项估计，对正负 $x$ 都有 $\int_0^x\cos(t^2)\,dt=x-x^5/10+o(x^5)$，故 $Q(x)=1-x^4/10+o(x^4)$。</p><p>因此 $Q'(0)=\lim_{x\to0}(Q(x)-Q(0))/x=0$，且所求极限为 $-1/10$。不能把仅对 $x\ne0$ 成立的商式求导公式直接代 $x=0$。</p>` },
+    { id: "i4-v2", lv: "变种", src: "自编：被积式含自由变量", stmt: R`设 $H(x)=\int_0^x(x-t)e^t\,dt$。不用含参积分求导定理，求 $H'(x),H''(x)$ 及 $H(x)$ 的显式表达式。`, hints: [R`先拆成 $x\int_0^x e^t\,dt-\int_0^xte^t\,dt$。`, R`对第一项用乘积法则；两项各有一个 $xe^x$，会相消。`, R`$H'=e^x-1$，$H(0)=0$。`], method: "m-int-moving", sol: R`<p>由拆分与乘积法则，$H'(x)=\int_0^xe^t\,dt+xe^x-xe^x=e^x-1$，进而 $H''(x)=e^x$。</p><p>由 $H(0)=0$，积分得 $H(x)=e^x-1-x$。也可用 $\int te^t\,dt=(t-1)e^t+C$ 代入拆分式核对。这里上下限代入的边界项虽为 0，被积式随 $x$ 变化的贡献仍不为 0。</p>` }
+  ],
+  extensions: [
+    { id: "i4-e1", lv: "延伸", src: "2023 秋期末 1(1)（选连续函数版本）", stmt: R`叙述任意一个版本的 Newton–Leibniz 公式并证明。这里选：若 $f$ 在 $[a,b]$ 连续，$P$ 在 $[a,b]$ 连续且在 $(a,b)$ 可导，$P'=f$，则 $\int_a^bf(x)\,dx=P(b)-P(a)$。`, hints: [R`构造 $F(x)=\int_a^x f(t)\,dt$，用本课基本定理。`, R`$P-F$ 在内部导数为 0，在闭区间连续，应用中值定理。`, R`$P-F$ 为常数，比较端点，且 $F(a)=0$。`], method: "m-int-moving", sol: R`<p>令 $F(x)=\int_a^x f(t)\,dt$。由有界性 $F$ 连续，由 $f$ 连续及差商估计，$F'(x)=f(x)$（$a\lt x\lt b$）。因此 $P-F$ 在 $[a,b]$ 连续、在 $(a,b)$ 可导且导数恒为 0。</p><p>由拉格朗日中值定理，$P-F$ 在 $[a,b]$ 为常数。所以 $P(b)-F(b)=P(a)-F(a)$。又 $F(a)=0$、$F(b)=\int_a^bf$，移项即得所述公式。证明没有预先拿 Newton–Leibniz 来证明 $F'=f$，避免循环论证。</p>` }
+  ]
 }
 };
 
@@ -1467,7 +1512,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot, wallisPlay, primitiveCheck })[LESSONS[v].widget](w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot, substitutionPlot, wallisPlay, primitiveCheck, movingIntegral })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -2065,6 +2110,41 @@ function primitiveCheck(mount) {
   draw();
 }
 
+
+/* ================= 交互图：变限积分与差商 ================= */
+function movingIntegral(mount) {
+  mount.innerHTML = `<div class="widget"><div class="ctrl"><label for="mov-case">例子 <select id="mov-case"><option value="square">上限 x²：f(t)=exp(−t²)</option><option value="both">下限 x、上限 x²：f(t)=1+t²</option><option value="jump">跳跃反例：积分为 |x|</option></select></label><label for="mov-x">x <input id="mov-x" type="range" min="-1.5" max="1.5" step="0.05" value="0.5"></label><button type="button" class="btn" id="mov-zero">回到 x=0</button></div><div class="ctrl"><label for="mov-h">差商步长 <select id="mov-h"><option value="0.1">0.1</option><option value="0.01" selected>0.01</option><option value="0.001">0.001</option></select></label></div><p class="small muted">被积函数 f(t)：阴影表示两端之间的区域。</p><div id="mov-graph"></div><p class="small" id="mov-bounds"></p><div class="readout" id="mov-out" aria-live="polite"></div><p class="small muted" id="mov-note"></p></div>`;
+  const mode = $("#mov-case", mount), slider = $("#mov-x", mount), hs = $("#mov-h", mount);
+  function integral(f, a, b) {
+    const steps = 240, h = (b - a) / steps;
+    let s = f(a) + f(b);
+    for (let i = 1; i < steps; i++) s += (i % 2 ? 4 : 2) * f(a + h * i);
+    return s * h / 3;
+  }
+  const cases = {
+    square: { f: t => Math.exp(-t * t), a: () => 0, b: x => x * x, F: x => integral(t => Math.exp(-t * t), 0, x * x), d: x => 2 * x * Math.exp(-(x ** 4)), note: "上限先代 x²，再乘链式导数 2x。即使 x 为负，上限仍非负；F 是偶函数，F′ 在 0 两侧变号。" },
+    both: { f: t => 1 + t * t, a: x => x, b: x => x * x, F: x => x * x + x ** 6 / 3 - x - x ** 3 / 3, d: x => 2 * x * (1 + x ** 4) - (1 + x * x), note: "上限项 2x(1+x⁴) 减下限项 (1+x²)。阴影画在两端之间，积分按下限到上限取方向；两端重合时积分为 0，导数未必为 0。" },
+    jump: { f: t => t < 0 ? -1 : 1, a: () => 0, b: x => x, F: Math.abs, d: x => x === 0 ? null : Math.sign(x), note: "f 在 0 跳跃，积分 F(x)=|x| 连续但不可导。在 x=0，右差商恒为 1、左差商恒为 −1；不能把 f(0)=1 当作 F′(0)。" }
+  };
+  function draw() {
+    const c = cases[mode.value], x = +slider.value, h = +hs.value, a = c.a(x), b = c.b(x);
+    const val = c.F(x), right = (c.F(x + h) - val) / h, left = (val - c.F(x - h)) / h, derivative = c.d(x);
+    const X = t => 48 + (t + 1.6) / 4.1 * 500, Y = y => 208 - y * 24;
+    const path = (f, lo, hi, n = 160) => Array.from({ length: n + 1 }, (_, i) => {
+      const t = lo + (hi - lo) * i / n; return (i ? "L" : "M") + X(t).toFixed(2) + "," + Y(f(t)).toFixed(2);
+    }).join(" ");
+    const lo = Math.min(a, b), hi = Math.max(a, b);
+    const curve = mode.value === "jump" ? path(c.f, -1.6, -0.00001) + " " + path(c.f, 0, 2.5) : path(c.f, -1.6, 2.5);
+    const area = hi > lo ? "M" + X(lo) + "," + Y(0) + " " + path(c.f, lo, hi).replace(/^M/, "L") + " L" + X(hi) + "," + Y(0) + " Z" : "";
+    $("#mov-graph", mount).innerHTML = `<svg viewBox="0 0 600 270" role="img" aria-label="被积函数与有向积分的区间阴影" style="width:100%;height:auto;display:block"><path d="M48,${Y(0)}H558 M${X(0)},20V245" stroke="var(--line)" fill="none"/><path d="${area}" fill="var(--accent)" opacity="0.2"/><path d="${curve}" fill="none" stroke="var(--accent)" stroke-width="2.5"/><path d="M${X(a)},${Y(0)}V${Y(c.f(a))} M${X(b)},${Y(0)}V${Y(c.f(b))}" stroke="var(--ink)" stroke-dasharray="4 3"/></svg>`;
+    $("#mov-bounds", mount).textContent = "下限 a=" + a.toFixed(3) + " → 上限 b=" + b.toFixed(3) + "；" + (b >= a ? "正向积分" : "反向积分");
+    const fmt = v => v.toFixed(6);
+    $("#mov-out", mount).textContent = "x=" + x.toFixed(2) + "，F(x)=" + fmt(val) + "；F′(x)=" + (derivative === null ? "不存在" : fmt(derivative)) + "；右差商=" + fmt(right) + "；左差商=" + fmt(left) + "（h=" + h + "）";
+    $("#mov-note", mount).textContent = c.note;
+  }
+  mode.addEventListener("change", draw); slider.addEventListener("input", draw); hs.addEventListener("change", draw);
+  $("#mov-zero", mount).addEventListener("click", () => { slider.value = "0"; draw(); }); draw();
+}
 
 renderNav();
 render();

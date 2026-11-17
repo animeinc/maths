@@ -284,7 +284,7 @@ const EXAM_MAP = [
 const SCHEDULE = [
   ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "图论复盘：双计数与无 4-圈图（2022 期末 6）", "g3"]]],
   ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", "h1"], ["Day 4–5", "平面图、Euler 公式与染色", "p1"], ["Day 6–7", "复盘", null]]],
-  ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
+  ["第 3 周", [["Day 1–3", "计数回顾：容斥、递推与抽屉", "count1"], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
   ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
   ["第 5 周", [["Day 1–5", "变种题与延伸题混合训练", null], ["Day 6–7", "速查表 + 模拟卷 1", null]]],
   ["第 6 周", [["Day 1–5", "模拟卷 2、3 + 错题回炉", null], ["Day 6–7", "考前过速查表", null]]]
@@ -322,7 +322,7 @@ const UNITS = [
   { id: "graph", title: "图论基础", lessons: ["g1", "g2", "g3"] },
   { id: "mst", title: "生成树与匹配", lessons: ["mst1", "h1"] },
   { id: "planar", title: "平面图与染色", lessons: ["p1"] },
-  { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
+  { id: "count", title: "计数与概率回顾", lessons: ["count1"] }
 ];
 
 const LESSONS = {
@@ -989,6 +989,53 @@ g3: {
       hints: [R`这是 $k=3,\lambda=1$ 的区组设计，直接套 $r=\lambda(v-1)/(k-1)$。`, R`再数（元素，子集）配对：$bk=vr$。`, R`$r,b$ 都必须是整数：$v$ 为奇数，且 $6\mid v(v-1)$。`],
       method: "m-double-count", sol: R`<p>由真题结论，$r=\frac{v-1}2$。数配对 $\{(x,i):x\in Y_i\}$：按 $x$ 得 $vr$，按 $i$ 得 $3b$，故 $b=\frac{v(v-1)}6$。</p><p>$r$ 为整数 ⇒ $v$ 为奇数；$b$ 为整数 ⇒ $3\mid v(v-1)$，即 $v\equiv0$ 或 $1\pmod3$。结合 $v$ 为奇数，得 $v\equiv1$ 或 $3\pmod6$。例如 $v=7$ 时 $r=3,b=7$（Fano 平面）。</p>` }
   ]
+},
+/* ---------------- COUNT1 ---------------- */
+count1: {
+  unit: "count", n: 1, title: "计数回顾：容斥、递推与抽屉原理",
+  goal: "沿讲义 §1.4–1.6，把“有重叠”“能分类”“必存在”分清。30 分钟先做概念与三道主线题，变种和延伸留作回炉；记住容斥的坏事件、递推的初值、抽屉的映射。",
+  sections: [
+    { id: "count1-s1", h: "1. 容斥：先定义坏事件，再逐点核对系数", html: R`
+      <p>讲义定理 1.4.1：有限集合 $A_1,\ldots,A_m$ 的并满足</p>
+      $$\left|\bigcup_{i=1}^m A_i\right|=\sum_i|A_i|-\sum_{i\lt j}|A_i\cap A_j|+\cdots+(-1)^{m-1}|A_1\cap\cdots\cap A_m|.$$
+      <p><b>讲义的证明路线</b>：交换求和，固定一个落在 $d\ge1$ 个集合中的元素，它被计入 $\binom d1-\binom d2+\cdots+(-1)^{d-1}\binom dd=1$ 次。因此没有漏计或重计。</p>
+      <p>若要求“一个坏事件也不发生”，先数全集 $\Omega$，再减去并集。例 1.4.2 的错位排序：令 $A_i=\{\pi:\pi(i)=i\}$；指定 $k$ 个位置固定后，剩下 $(n-k)!$ 种排列，故</p>
+      $$d_n=\sum_{k=0}^n(-1)^k\binom nk(n-k)!=n!\sum_{k=0}^n\frac{(-1)^k}{k!}.$$
+      <p>约定 $d_0=1$（空排列一种），$d_1=0$。不要把“恰有 $k$ 个固定点”与“指定的 $k$ 个位置固定”混为一谈：后者允许其他位置也固定。</p>` },
+    { id: "count1-s2", h: "2. 递推：分类必须不交且穷尽，初值也是答案", html: R`
+      <p>讲义 §1.5 从 Fibonacci 的 $F_1=F_2=1$、$F_{n+1}=F_n+F_{n-1}$ 出发。作业 6.2.5(1) 问：$[n]$ 中不含相邻元素的子集有多少个（含空集）？记为 $a_n$。</p>
+      <p>按是否取 $n$ 分类：不取有 $a_{n-1}$ 种；取 $n$ 就不能取 $n-1$，余下有 $a_{n-2}$ 种。两类不交且穷尽，所以</p>
+      $$a_n=a_{n-1}+a_{n-2}\quad(n\ge2),\qquad a_0=1,\quad a_1=2,\qquad a_n=F_{n+2}.$$
+      <p><b>只写递推式不够</b>：同一个递推，初值不同就有不同数列。若要通项，可按讲义解特征方程 $r^2=r+1$，但计数题先把分类和初值说明白。交互工具可将公式与实际枚举对照。</p>` },
+    { id: "count1-s3", h: "3. 抽屉：把“必有”改写成有限集之间的映射", html: R`
+      <p>讲义定理 1.6.1：多于 $mk$ 个物体放进 $m$ 个抽屉，必有一个抽屉至少装 $k+1$ 个。等价地，有限映射 $p:E\to B$（$B$ 非空）有一个原像集大小至少为 $\lceil|E|/|B|\rceil$。</p>
+      <p>最难的一步通常是<b>选抽屉</b>。整除题优先考虑余数；“某段和”优先考虑部分和。讲义例 1.6.4：$n$ 个整数 $a_1,\ldots,a_n$ 中可选出非空的一组，其和被 $n$ 整除。沿讲义先看 $S_i=a_1+\cdots+a_i$：若某个余数为 0 即得；否则 $n$ 个部分和落入 $n-1$ 个非零余数抽屉，两者之差就是所求。</p>
+      <p>也可把 $S_0=0$ 一起放进来：$n+1$ 个部分和进 $n$ 个余数抽屉。注意得到的甚至是<b>一段连续项</b>，并且两个下标必须不同，才能保证非空。</p>` }
+  ],
+  widget: "countPlay",
+  concepts: [
+    { id: "count1-c1", sec: "count1-s1", q: R`某元素同时落在三个坏事件里，在三集合并集的容斥式中，其总系数是：`, opts: [R`$3$`, R`$3-3=0$`, R`$3-3+1=1$`, R`$1-3+3=1$，所以三重交集应减去`], a: 2, ex: R`单集合项数到 3 次，两两交集减去 3 次，三重交集再加 1 次。容斥是按“指定哪些事件都发生”计数，不是直接按“恰好几个”计数。` },
+    { id: "count1-c2", sec: "count1-s2", q: R`$[n]$ 的不含相邻元素子集数 $a_n$，正确的初值是：`, opts: [R`$a_0=0,a_1=1$`, R`$a_0=1,a_1=1$`, R`$a_0=1,a_1=2$`, R`$a_0=2,a_1=2$`], a: 2, ex: R`空集的子集只有空集，一种；$\{1\}$ 的合法子集是 $\varnothing,\{1\}$，两种。` },
+    { id: "count1-c3", sec: "count1-s3", q: R`要保证某个抽屉至少装 4 个物体，5 个抽屉中最少放多少个物体？`, opts: [R`$15$`, R`$16$`, R`$19$`, R`$20$`], a: 1, ex: R`若每屉至多 3 个，总共至多 15 个；第 16 个迫使某屉达到 4 个。15 个可恰好每屉 3 个，不能保证。` },
+    { id: "count1-c4", sec: "count1-s3", q: R`对 $n$ 个整数用部分和证明整除性，加入 $S_0=0$ 后，物体数与抽屉数分别是：`, opts: [R`$n,n$`, R`$n+1,n$`, R`$n,n-1$（包括零余数）`, R`$n+1,n+1$`], a: 1, ex: R`$S_0,\ldots,S_n$ 是 $n+1$ 个物体，除以 $n$ 的余数为 $0,\ldots,n-1$，共 $n$ 屉。碰撞下标 $i\lt j$ 给 $S_j-S_i$。` }
+  ],
+  methods: [
+    { id: "m-count-ie", title: "容斥：坏事件与交集", steps: [R`确定全集 $\Omega$，定义每一个坏事件 $A_i$，写清要数并集还是补集。`, R`固定 $k$ 个事件同时发生，先求其交集大小；若只与 $k$ 有关，再乘 $\binom mk$。`, R`并集从加开始，补集从全集开始交替加减；用小规模或逐点系数核对。`] },
+    { id: "m-count-rec", title: "递推：最后一个对象去哪了", steps: [R`定义 $a_n$ 的对象与边界（是否含空集、位置是否成环）。`, R`按最后一个元素是否选取，或最后一段的形状，划分成不交且穷尽的类别。`, R`把每类与较小规模对象建立双射，写递推及适用范围，再列足够的初值。`] },
+    { id: "m-count-pigeon", title: "抽屉：先构造映射", steps: [R`把待证“必存在”中的对象明确列出来；整除问题尝试部分和。`, R`给每个对象指定唯一抽屉（如模 $n$ 的余数），比较对象数与抽屉容量。`, R`把同屉的两个对象翻译回原题；检查下标不同、所选对象非空。`] }
+  ],
+  problems: [
+    { id: "count1-p1", lv: "基础", src: "讲义例 1.4.2（特化 n=5）", stmt: R`五封不同的信放进对应的五个不同信封，每个信封一封，要求每封信都放错。求放法数，并说明容斥交集中的 $(5-k)!$ 为什么允许额外的信放对。`, hints: [R`全集是五个元素的排列，令 $A_i$ 为第 $i$ 封信放对。`, R`指定 $k$ 封信放对，剩余信与信封可任意双射，共 $(5-k)!$ 种。`, R`$d_5=120-5\cdot24+10\cdot6-10\cdot2+5-1$。`], method: "m-count-ie", sol: R`<p>由讲义例 1.4.2，$d_5=\sum_{k=0}^5(-1)^k\binom5k(5-k)!=120-120+60-20+5-1=44$。</p><p>交集 $A_{i_1}\cap\cdots\cap A_{i_k}$ 只要求指定的 $k$ 封信放对，没有要求其余放错，所以是 $(5-k)!$。额外放对造成的重复已由整个交替和抵消；若在交集里再限制“其余全错”，就改变了坏事件，不能套此容斥式。</p>` },
+    { id: "count1-p2", lv: "基础", src: "讲义作业 6.2.5(1)", stmt: R`设 $a_n$ 是 $[n]$ 的不含相邻元素的子集数，含空集。求递推式及初值，用讲义的 Fibonacci 数表示 $a_n$，并计算 $a_6$。`, hints: [R`按是否选 $n$ 分类；选了 $n$，就不能选 $n-1$。`, R`不选 $n$ 是 $a_{n-1}$ 种；选 $n$ 是 $a_{n-2}$ 种。`, R`$a_0=1,a_1=2$；讲义约定 $F_1=F_2=1$，向后平移两位。`], method: "m-count-rec", sol: R`<p>当 $n\ge2$，不取 $n$ 的子集与 $[n-1]$ 的合法子集一一对应，取 $n$ 的子集删去 $n$ 后与 $[n-2]$ 的合法子集一一对应，故 $a_n=a_{n-1}+a_{n-2}$。初值 $a_0=1,a_1=2$。</p><p>$F_2=1,F_3=2$，且满足同一递推，由归纳法有 $a_n=F_{n+2}$。依次得 $1,2,3,5,8,13,21$，所以 $a_6=21$。也可按子集大小核对：$\sum_{r=0}^3\binom{6-r+1}{r}=1+6+10+4=21$（固定大小的双射见讲义作业 6.1.2）。</p>` },
+    { id: "count1-p3", lv: "基础", src: "讲义例 1.6.4（Erdős）", stmt: R`证明：任意 $n\ge1$ 个整数中，存在非空的一组整数，其和能被 $n$ 整除。进一步说明能否保证选出的下标连续。`, hints: [R`按讲义令 $S_i=a_1+\cdots+a_i$。若某个 $S_i\equiv0\pmod n$，立即完成。`, R`否则 $n$ 个部分和只能落进 $1,\ldots,n-1$ 这 $n-1$ 个余数抽屉。`, R`同余的 $S_i,S_j$（$i\lt j$）相减；也可加入 $S_0=0$ 统一处理两种情况。`], method: "m-count-pigeon", sol: R`<p>令 $S_0=0$，$S_i=\sum_{r=1}^i a_r$。$S_0,\ldots,S_n$ 共 $n+1$ 个数，除以 $n$ 的余数只有 $n$ 种。由抽屉原理，存在 $0\le i\lt j\le n$ 使 $S_i\equiv S_j\pmod n$。于是 $n\mid S_j-S_i=a_{i+1}+\cdots+a_j$。</p><p>因 $i\lt j$，所取非空；下标还连续。此证明与讲义“先处理零余数，再找非零余数碰撞”一致，只是用 $S_0$ 合并了讨论。$n=1$ 时直接取唯一的一项，也包含在证明中。</p>` }
+  ],
+  variants: [
+    { id: "count1-v1", lv: "变种", src: "讲义例 1.4.3（特化 n=5,m=3）", stmt: R`把五个不同物体放进三个有标号的盒子，每盒至少一个。求放法数。若三个盒子无标号，答案如何变化？`, hints: [R`有标号时是从 $[5]$ 到 $[3]$ 的满射；坏事件为某个指定盒子为空。`, R`$3^5-\binom31 2^5+\binom32 1^5$。`, R`满射保证三盒非空，因此给三个无标号组编号恰有 $3!$ 种。`], method: "m-count-ie", sol: R`<p>由容斥，有标号放法 $3^5-3\cdot2^5+3\cdot1^5-0^5=243-96+3=150$。无标号的分组数为 $150/3!=25$，也就是讲义 §1.5 的第二类 Stirling 数 $S(5,3)$。</p><p>能除以 $3!$ 的原因是每组非空且互不相交，每种分组都恰有 $3!$ 个编号方案；不能在允许空盒时不加检查地照除。</p>` },
+    { id: "count1-v2", lv: "变种", src: "讲义作业 6.2.2（特化 n=100，素数 2、3、5）", stmt: R`在 $1,\ldots,100$ 中，有多少个整数与 $2,3,5$ 都互素？`, hints: [R`令 $A_p$ 是 $p$ 的倍数；求三个坏集合并集的补集。`, R`交集分别是 $6,10,15,30$ 的倍数，用向下取整。`, R`$100-(50+33+20)+(16+10+6)-3$。`], method: "m-count-ie", sol: R`<p>因 $2,3,5$ 两两互素，指定素数对应坏集合的交集就是其乘积的倍数。答案为</p>$$100-\left(\left\lfloor\frac{100}2\right\rfloor+\left\lfloor\frac{100}3\right\rfloor+\left\lfloor\frac{100}5\right\rfloor\right)+\left(\left\lfloor\frac{100}6\right\rfloor+\left\lfloor\frac{100}{10}\right\rfloor+\left\lfloor\frac{100}{15}\right\rfloor\right)-\left\lfloor\frac{100}{30}\right\rfloor=26.$$<p>核对：每 30 个数有 8 个与 30 互素，前三个整段贡献 24 个；91–100 中再有 91、97，共 26 个。</p>` }
+  ],
+  extensions: [
+    { id: "count1-e1", lv: "延伸", src: "讲义作业 6.2.5(2)(3)", stmt: R`<p>(1) 记 $b_n$ 为 $[n]$ 的不含三个连续元素的子集数，求递推与初值，并算 $b_6$。</p><p>(2) 把 $1,\ldots,n$ 放在圆周上（$n\ge3$），首尾也相邻。记不含相邻元素的子集数为 $c_n$，用主线题的 $a_n$ 表示并算 $c_6$。</p>`, hints: [R`(1) 用 0/1 串表示子集，按结尾为 0、01、011 分类（短串另列初值）。`, R`$b_n=b_{n-1}+b_{n-2}+b_{n-3}$，$b_0=1,b_1=2,b_2=4$。`, R`(2) 按是否取顶点 1；取 1 时，2 与 n 都不能取。`], method: "m-count-rec", sol: R`<p>(1) 长度 $n\ge3$ 的合法串必以 0、01 或 011 之一结尾，删去相应后缀后是任意合法短串。这三类不交且穷尽，所以 $b_n=b_{n-1}+b_{n-2}+b_{n-3}$，初值 $1,2,4$，接着为 $7,13,24,44$，故 $b_6=44$。</p><p>(2) 不取 1 时剩下路径 $2,\ldots,n$，有 $a_{n-1}$ 种；取 1 时剩下路径 $3,\ldots,n-1$，有 $a_{n-3}$ 种。因此 $c_n=a_{n-1}+a_{n-3}=F_{n+1}+F_{n-1}$，$c_6=13+5=18$。$n=3$ 时第二条路径为空，仍由 $a_0=1$ 正确处理。</p>` }
+  ]
 }
 };
 
@@ -1323,7 +1370,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay, anglePlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay, hallPlay, planarPlay, anglePlay, countPlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1876,6 +1923,63 @@ function anglePlay(mount) {
   load();
 }
 
+
+/* ================= 交互工具：计数公式与穷举 ================= */
+function countPlay(mount) {
+  mount.innerHTML = `<div class="widget"><div class="ctrl"><label for="cnt-mode">对象 <select id="cnt-mode"><option value="derange">错位排序</option><option value="subsets">不含相邻元素的子集</option><option value="onto">到三个标号盒的满射</option></select></label><label for="cnt-n">规模 n <input id="cnt-n" type="range" min="0" max="8" step="1" value="5"></label><output id="cnt-size" for="cnt-n"></output></div><div class="readout" id="cnt-out" aria-live="polite"></div><div class="table-wrap" id="cnt-table"></div><p class="small muted" id="cnt-note"></p><p class="small" id="cnt-list" style="overflow-wrap:anywhere"></p></div>`;
+  const mode = $("#cnt-mode", mount), slider = $("#cnt-n", mount);
+  const fact = n => { let a = 1; for (let i = 2; i <= n; i++) a *= i; return a; };
+  const choose = (n, k) => fact(n) / fact(k) / fact(n - k);
+  function update() {
+    const n = +slider.value, kind = mode.value;
+    $("#cnt-size", mount).textContent = n;
+    let count = 0, samples = [], rows = [], answer = 0, expression = "", note = "";
+    const record = text => { count++; if (samples.length < 12) samples.push(text); };
+    if (kind === "derange") {
+      // 穷举全部排列；固定点检验与容斥公式分别计算。
+      function visit(a, used) {
+        if (a.length === n) { if (a.every((v, i) => v !== i + 1)) record(a.length ? "(" + a.join(",") + ")" : "空排列"); return; }
+        for (let v = 1; v <= n; v++) if (!(used & (1 << (v - 1)))) visit(a.concat(v), used | (1 << (v - 1)));
+      }
+      visit([], 0);
+      for (let k = 0; k <= n; k++) {
+        const term = (k % 2 ? -1 : 1) * choose(n, k) * fact(n - k);
+        answer += term; rows.push([k, choose(n, k), fact(n - k), term]);
+      }
+      expression = "错位排序：容斥交替和";
+      rows = [["固定位置数 k", "选位置", "剩余排列", "带符号贡献"], ...rows];
+      note = "交集只固定指定位置，其余允许固定；n=0 时空排列一种。";
+    } else if (kind === "subsets") {
+      for (let bits = 0; bits < 2 ** n; bits++) if (!(bits & (bits << 1))) {
+        const a = Array.from({ length: n }, (_, i) => i + 1).filter(i => bits & (1 << (i - 1)));
+        record(a.length ? "{" + a.join(",") + "}" : "∅");
+      }
+      const a = [1, 2]; for (let i = 2; i <= n; i++) a[i] = a[i - 1] + a[i - 2];
+      answer = a[n]; expression = "不含相邻元素：递推与位掩码枚举";
+      rows = [["规模", "不取末位", "取末位", "总数"]];
+      for (let i = 0; i <= n; i++) rows.push([i, i >= 2 ? a[i - 1] : "初值", i >= 2 ? a[i - 2] : "初值", a[i]]);
+      note = "编号排成路径，首尾不相邻；空集计入，a₀=1、a₁=2。";
+    } else {
+      for (let code = 0; code < 3 ** n; code++) {
+        let c = code, seen = 0, a = [];
+        for (let i = 0; i < n; i++) { const v = c % 3; c = Math.floor(c / 3); seen |= 1 << v; a.push(v + 1); }
+        if (seen === 7) record("(" + a.join(",") + ")");
+      }
+      for (let k = 0; k <= 3; k++) {
+        const power = (3 - k) ** n, term = (k % 2 ? -1 : 1) * choose(3, k) * power;
+        answer += term; rows.push([k, choose(3, k), power, term]);
+      }
+      expression = "到三个标号盒的满射：空盒容斥";
+      rows = [["指定空盒数 k", "选盒", "交集大小", "带符号贡献"], ...rows];
+      note = "元组第 i 项是物体 i 的盒号。n=0 时从空集到空集有一个映射，故交集计数约定 0⁰=1；到三个盒的满射仍为 0。";
+    }
+    $("#cnt-out", mount).textContent = expression + "；公式值 = " + answer + "；独立枚举 = " + count + (answer === count ? " ✓ 一致" : " ✗ 不一致");
+    $("#cnt-table", mount).innerHTML = "<table><thead><tr>" + rows[0].map(x => "<th>" + x + "</th>").join("") + "</tr></thead><tbody>" + rows.slice(1).map(row => "<tr>" + row.map(x => "<td>" + x + "</td>").join("") + "</tr>").join("") + "</tbody></table>";
+    $("#cnt-note", mount).textContent = note;
+    $("#cnt-list", mount).textContent = count ? "合法对象示例（最多显示 12 个）：" + samples.join("；") + (count > 12 ? "；……" : "") : "没有合法对象。";
+  }
+  mode.addEventListener("change", update); slider.addEventListener("input", update); update();
+}
 
 renderNav();
 render();
