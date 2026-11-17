@@ -281,7 +281,7 @@ const EXAM_MAP = [
 ];
 
 const SCHEDULE = [
-  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", null], ["Day 7", "复盘 + 订正今年期中卷", null]]],
+  ["第 1 周", [["Day 1–3", "Taylor 公式（三课）", "t1"], ["Day 4", "中值定理：构造辅助函数", "m1"], ["Day 5", "中值定理：双中值与零点个数", "m2"], ["Day 6", "凸函数与拐点", "c1"], ["Day 7", "复盘 + 订正今年期中卷", null]]],
   ["第 2 周", [["Day 1–3", "定积分计算：换元、分部、Wallis 递推", null], ["Day 4–5", "变上限积分：求导与极限", null], ["Day 6", "积分不等式", null], ["Day 7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "反常积分敛散性", null], ["Day 4–6", "积分应用：面积、体积、极坐标", null], ["Day 7", "复盘", null]]],
   ["第 4 周", [["Day 1–4", "微分方程（按课程进度调整）", null], ["Day 5", "级数（若在大纲内）", null], ["Day 6–7", "前半学期回顾：ε-N、一致连续", null]]],
@@ -303,6 +303,7 @@ const MUST = [
 const UNITS = [
   { id: "taylor", title: "Taylor 公式", lessons: ["t1", "t2", "t3"] },
   { id: "mvt", title: "中值定理证明", lessons: ["m1", "m2"] },
+  { id: "convex", title: "凸函数与拐点", lessons: ["c1"] },
   { id: "int", title: "定积分计算", lessons: [], soon: true },
   { id: "improper", title: "反常积分", lessons: [], soon: true },
   { id: "ode", title: "微分方程", lessons: [], soon: true }
@@ -710,6 +711,132 @@ m2: {
       <p><b>尾部</b>：$x\le b_1-1$ 时 $f'(x)\ge\delta:=f'(b_1-1)\gt0$，故 $f(x)\le f(b_1-1)-\delta(b_1-1-x)\to-\infty$；同理 $x\to+\infty$ 时 $f\to+\infty$。</p>
       <p><b>数零点</b>（每个单调段至多一个）：若 $f(b_1)\gt0$ 且 $f(b_2)\lt0$，三段各有一个零点，共 3 个；若 $f(b_1)\lt0$，则 $f(b_2)\lt f(b_1)\lt0$，只在 $(b_2,\infty)$ 有 1 个；若 $f(b_2)\gt0$，只在 $(-\infty,b_1)$ 有 1 个；若 $f(b_1)=0$ 或 $f(b_2)=0$，该零点处 $f'=0$，不是简单零点。都不可能恰有 2 个简单零点，所以这样的 $f$ 不存在。</p>` }
   ]
+},
+/* ---------------- C1 ---------------- */
+c1: {
+  unit: "convex", n: 1, title: "凸函数与拐点",
+  goal: "会用斜率不等式和切线不等式证明下凸函数的性质，会用二阶导求凹凸区间和拐点。",
+  sections: [
+    { id: "c1-s1", h: "1. 下凸的定义与斜率不等式", html: R`
+      <p>本课程说的<b>下凸</b>（convex）是指图像上任意两点连成的弦都在图像上方：对任何 $x,y$ 和 $t\in[0,1]$，</p>
+      $$f\big(tx+(1-t)y\big)\le tf(x)+(1-t)f(y).$$
+      <p>考试里更好用的是等价的<b>斜率不等式</b>：任取 $x_1\lt x_2\lt x_3$，记 $k_{ij}=\frac{f(x_j)-f(x_i)}{x_j-x_i}$，则</p>
+      $$k_{12}\le k_{13}\le k_{23}.$$
+      <p>记法：三点从左到右，“左弦 ≤ 长弦 ≤ 右弦”。下面的图里拖动三个点，可以看到在下凸段上这个不等式总成立，跨过拐点就会被破坏。</p>
+      <p>由斜率不等式直接推出的几个结论（证明题常用）：</p>
+      <ul>
+        <li>固定一个端点，弦斜率随另一端点<b>单调递增</b>：$x\mapsto\frac{f(x)-f(a)}{x-a}$ 在 $x\gt a$、$x\lt a$ 上都递增。</li>
+        <li>可导时 $f'$ 单调递增；<b>切线在图像下方</b>：$f(x)\ge f(a)+f'(a)(x-a)$。</li>
+        <li>开区间上的下凸函数连续，且处处有单侧导数 $f'_-(x)\le f'_+(x)$（见延伸题）。</li>
+      </ul>` },
+    { id: "c1-s2", h: "2. 二阶导判别与拐点", html: R`
+      <ul>
+        <li><b>判别</b>：$f$ 在区间 $I$ 上二阶可导，则 $f$ 在 $I$ 上下凸 $\Leftrightarrow$ $f''\ge0$ 于 $I$。若 $f''\gt0$，则严格下凸（弦严格在上，切线不等式在 $x\ne a$ 时取严格号）。</li>
+        <li><b>拐点</b>：凹凸性在 $x_0$ 两侧改变的点 $(x_0,f(x_0))$。</li>
+        <li><b>必要条件</b>：$x_0$ 是拐点且 $f''(x_0)$ 存在 ⇒ $f''(x_0)=0$。但反过来不对：$x^4$ 在 $0$ 处 $f''=0$，两侧都下凸，不是拐点。</li>
+        <li><b>充分条件</b>：$f''$ 在 $x_0$ 两侧异号；或 $f''(x_0)=0$ 且 $f'''(x_0)\ne0$。</li>
+        <li>$f''$ 不存在的点也可能是拐点，例如 $x^{1/3}$ 在 $0$ 处。求拐点要把 $f''=0$ 的点和 $f''$ 不存在的点都列出来，再逐个看两侧符号。</li>
+      </ul>
+      <p><b>求凹凸区间的格式</b>：算 $f''$ → 化成因式乘积 → 列符号表 → 写“在……上下凸，在……上上凸，拐点为……”。题目问“最大区间”时端点要包含进去（闭区间）。</p>` },
+    { id: "c1-s3", h: "3. 常考的三类证明", html: R`
+      <ul>
+        <li><b>局部即全局</b>（2021 期末 4）：下凸函数的极小值点就是最小值点；可导时驻点就是最小值点。工具是斜率不等式，或切线不等式。</li>
+        <li><b>切线不等式</b>（2025 期中 5）：$f''\gt0$ ⇒ $f(x)\gt f(a)+f'(a)(x-a)$。用带 Lagrange 余项的一阶 Taylor 公式一行证完，再用它控制 $f$ 在无穷远处的行为。</li>
+        <li><b>和积分平均比较</b>（2023 期末 7）：$f''\ge0$ ⇔ 对任何 $a\lt b$，$f\big(\frac{a+b}2\big)\le\frac1{b-a}\int_a^bf$。必要性：在中点处的切线下方积分；充分性：反证，在 $f''\lt0$ 的小区间上用 Taylor 公式得到反向严格不等式。</li>
+        <li><b>Jensen 证不等式</b>：要证的不等式能写成 $f\big(\frac{x+y}2\big)\le\frac{f(x)+f(y)}2$，就找出 $f$ 并验证 $f''\ge0$。</li>
+      </ul>` }
+  ],
+  widget: "convexPlot",
+  concepts: [
+    { id: "c1-c1", sec: "c1-s1", q: R`$f$ 在 $\mathbb R$ 上下凸，$x_1\lt x_2\lt x_3$。下面哪个一定成立？`,
+      opts: [R`$k_{13}\le k_{12}\le k_{23}$`, R`$k_{12}\le k_{13}\le k_{23}$`, R`$k_{12}\le k_{23}\le k_{13}$`, R`$k_{23}\le k_{13}\le k_{12}$`], a: 1,
+      ex: R`左弦 ≤ 长弦 ≤ 右弦。画一个 $y=x^2$ 上的三点就能核对。` },
+    { id: "c1-c2", sec: "c1-s2", q: R`$x=0$ 是 $f(x)=x^4$ 的拐点吗？`,
+      opts: [R`是，因为 $f''(0)=0$`, R`是，因为 $f'(0)=0$`, R`不是，$f''=12x^2\ge0$，两侧都下凸`, R`不是，因为 $f''(0)$ 不存在`], a: 2,
+      ex: R`$f''(x_0)=0$ 只是必要条件。拐点要求两侧凹凸性改变，即 $f''$ 在两侧异号。` },
+    { id: "c1-c3", sec: "c1-s2", q: R`使 $f(x)=\ln(1+x^2)$ 下凸的最大区间是：`,
+      opts: [R`$(0,+\infty)$`, R`$[-1,1]$`, R`$(-\infty,-1]\cup[1,+\infty)$`, R`$\mathbb R$`], a: 1,
+      ex: R`$f''(x)=\frac{2(1-x^2)}{(1+x^2)^2}\ge0\Leftrightarrow|x|\le1$。这是 2022 期末 2(3)。` },
+    { id: "c1-c4", sec: "c1-s3", q: R`$f$ 在 $\mathbb R$ 上可导且下凸，$f'(a)=0$。可以推出：`,
+      opts: [R`$a$ 是 $f$ 的拐点`, R`$a$ 只是局部极小值点`, R`$a$ 是 $f$ 在 $\mathbb R$ 上的最小值点`, R`$f$ 是常数`], a: 2,
+      ex: R`切线不等式 $f(x)\ge f(a)+f'(a)(x-a)=f(a)$ 对所有 $x$ 成立。这是 2021 期末 4(2)。` }
+  ],
+  methods: [
+    { id: "m-slope", title: "斜率不等式怎么用", steps: [
+      R`先写清楚三个点的顺序 $x_1\lt x_2\lt x_3$，再写 $k_{12}\le k_{13}\le k_{23}$ 中需要的那一段。`,
+      R`要把“局部”推到“全局”：一个点取在邻域内、一个点取在远处，用斜率同号推出矛盾。`,
+      R`要得到导数：让其中一个点趋向固定点，弦斜率趋向单侧导数（不等式取极限保持 $\le$）。`,
+      R`要证“趋于无穷”或“有界则为常数”：用 $k_{12}\le k_{23}$ 把远处的函数值压在一条直线上方。`] },
+    { id: "m-tangent", title: "二阶导与切线不等式", steps: [
+      R`$f''\ge0$（或 $\gt0$）⇒ 带 Lagrange 余项的一阶 Taylor：$f(x)=f(a)+f'(a)(x-a)+\frac{f''(\xi)}2(x-a)^2\ge f(a)+f'(a)(x-a)$。`,
+      R`$f''\gt0$ ⇒ $f'$ 严格递增，常用来确定 $f'$ 的符号、数驻点。`,
+      R`切线不等式两边可以积分：在中点 $m$ 处展开，$\int_a^b(x-m)\,dx=0$。`,
+      R`充分性反证：若 $f''(x_0)\lt0$，由连续性在小区间上 $f''\lt0$，在这个区间上所有不等号反向。`] },
+    { id: "m-concave", title: "求凹凸区间与拐点", steps: [
+      R`求定义域，算 $f''$，尽量化成因式乘积。`,
+      R`列出 $f''=0$ 的点和 $f''$ 不存在的点，把定义域切成若干段。`,
+      R`列符号表：$f''\gt0$ 段下凸，$f''\lt0$ 段上凸；两侧异号的分点才是拐点，写成坐标 $(x_0,f(x_0))$。`,
+      R`问“最大区间”时写闭区间（端点处 $f$ 连续即可包含）。`] }
+  ],
+  problems: [
+    { id: "c1-p1", lv: "基础", src: "2022 秋期末 2(3)", stmt: R`令 $f(x)=\ln(x^2+1)$，求出使得 $f$ 在其上是下凸函数的最大区间 $I$，并求 $f$ 的拐点。`,
+      hints: [R`算到二阶导。`, R`$f'(x)=\frac{2x}{1+x^2}$，用商的求导法则再求一次。`, R`$f''(x)=\frac{2(1-x^2)}{(1+x^2)^2}$，看分子符号。`],
+      method: "m-concave", sol: R`<p>$f'(x)=\frac{2x}{1+x^2}$，$f''(x)=\frac{2(1+x^2)-2x\cdot2x}{(1+x^2)^2}=\frac{2(1-x^2)}{(1+x^2)^2}$。</p>
+      <p>分母恒正，$f''(x)\ge0\Leftrightarrow|x|\le1$。所以 $f$ 在 $I=[-1,1]$ 上下凸，在 $(-\infty,-1]$ 和 $[1,+\infty)$ 上上凸，最大的下凸区间是 $[-1,1]$。</p>
+      <p>$f''$ 在 $x=\pm1$ 两侧异号，拐点为 $(-1,\ln2)$ 和 $(1,\ln2)$。</p>` },
+    { id: "c1-p2", lv: "真题", src: "2021 秋期末 4", stmt: R`<p>设 $f$ 是 $\mathbb R$ 上的下凸函数。</p><p>(1) 利用斜率不等式 $k_{12}\le k_{13}\le k_{23}$ 证明：若 $x_0$ 是 $f$ 的极小值点，则 $x_0$ 是 $f$ 在 $\mathbb R$ 上的最小值点。</p><p>(2) 假设 $f$ 处处可导，且 $f'(a)=0$。证明：$a$ 是 $f$ 在 $\mathbb R$ 上的最小值点。</p><p>(3) 假设 $f$ 处处二阶可导，且存在 $m\gt0$ 使得 $f''(x)\ge m$ 对所有 $x$ 成立。证明：$f$ 在 $\mathbb R$ 上有且仅有一个最小值点。</p>`,
+      hints: [R`(1) 反证：若某个 $x_1$ 使 $f(x_1)\lt f(x_0)$，在 $x_0$ 和 $x_1$ 之间、离 $x_0$ 很近的地方取一点 $x_2$，用斜率不等式。`, R`(2) 对 $x\gt a$，取 $a\lt t\lt x$，有 $\frac{f(t)-f(a)}{t-a}\le\frac{f(x)-f(a)}{x-a}$，令 $t\to a^+$。$x\lt a$ 时类似。`, R`(3) 存在：对 $f'$ 用 Lagrange，$f'(x)\ge f'(0)+mx$（$x\gt0$），$f'(x)\le f'(0)+mx$（$x\lt0$），再用介值定理找 $f'$ 的零点。唯一：$f'$ 严格递增，加 Fermat 引理。`],
+      method: "m-slope", sol: R`<p><b>(1)</b> 设 $|x-x_0|\lt\delta$ 时 $f(x)\ge f(x_0)$。反设存在 $x_1$ 使 $f(x_1)\lt f(x_0)$。</p>
+      <p>若 $x_1\gt x_0$：取 $x_2\in(x_0,\min\{x_1,x_0+\delta\})$。对 $x_0\lt x_2\lt x_1$ 用 $k_{12}\le k_{13}$：$\frac{f(x_2)-f(x_0)}{x_2-x_0}\le\frac{f(x_1)-f(x_0)}{x_1-x_0}\lt0$，所以 $f(x_2)\lt f(x_0)$，与极小矛盾。</p>
+      <p>若 $x_1\lt x_0$：取 $x_2\in(\max\{x_1,x_0-\delta\},x_0)$。对 $x_1\lt x_2\lt x_0$ 用 $k_{13}\le k_{23}$：$\frac{f(x_0)-f(x_2)}{x_0-x_2}\ge\frac{f(x_0)-f(x_1)}{x_0-x_1}\gt0$，所以 $f(x_2)\lt f(x_0)$，矛盾。</p>
+      <p><b>(2)</b> 对 $x\gt a$ 和任意 $t\in(a,x)$，由 $k_{12}\le k_{13}$（三点 $a\lt t\lt x$）：$\frac{f(t)-f(a)}{t-a}\le\frac{f(x)-f(a)}{x-a}$。令 $t\to a^+$，左边 $\to f'(a)=0$，故 $f(x)\ge f(a)$。</p>
+      <p>对 $x\lt a$ 和 $t\in(x,a)$，由 $k_{13}\le k_{23}$（三点 $x\lt t\lt a$）：$\frac{f(a)-f(x)}{a-x}\le\frac{f(a)-f(t)}{a-t}$。令 $t\to a^-$，右边 $\to f'(a)=0$，故 $f(x)\ge f(a)$。所以 $a$ 是最小值点。</p>
+      <p><b>(3)</b> <b>存在</b>：对 $x\gt0$，在 $[0,x]$ 上对 $f'$ 用 Lagrange：$f'(x)=f'(0)+f''(\theta)x\ge f'(0)+mx$，所以 $x$ 充分大时 $f'(x)\gt0$；同理 $x\lt0$ 时 $f'(x)\le f'(0)+mx$，$x$ 充分小时 $f'(x)\lt0$。$f'$ 可导从而连续，由介值定理存在 $a$ 使 $f'(a)=0$，由 (2)，$a$ 是最小值点。</p>
+      <p><b>唯一</b>：$f''\ge m\gt0$，$f'$ 严格递增，至多一个零点。若 $b$ 也是最小值点，它是内点处的极值点，由 Fermat 引理 $f'(b)=0$，所以 $b=a$。</p>` },
+    { id: "c1-p3", lv: "真题", src: "2025 秋期中 5", stmt: R`<p>设 $f:(0,+\infty)\to\mathbb R$ 满足对任何 $x\gt0$ 都有 $f''(x)\gt0$。</p><p>(1) 证明：对不同的正数 $a,x$，有 $f(x)\gt f(a)+f'(a)(x-a)$。</p><p>(2) 假设 $\lim\limits_{x\to+\infty}f(x)=0$。证明：对任何 $x\gt0$ 都有 $f(x)\gt0$。</p>`,
+      hints: [R`(1) 带 Lagrange 余项的一阶 Taylor 公式。`, R`(2) 先证 $f'$ 处处为负：若 $f'(a)\gt0$，由 (1)，$f(x)\gt f(a)+f'(a)(x-a)\to+\infty$。若 $f'(a)=0$，$f'$ 严格递增，换一个更大的点。`, R`$f$ 严格递减，$f(x)\gt f(x+1)\ge\lim_{t\to+\infty}f(t)=0$。`],
+      method: "m-tangent", sol: R`<p><b>(1)</b> 由 Taylor 公式，存在 $\xi$ 介于 $a,x$ 之间，$f(x)=f(a)+f'(a)(x-a)+\frac{f''(\xi)}2(x-a)^2$。因 $f''(\xi)\gt0$ 且 $x\ne a$，最后一项为正。</p>
+      <p><b>(2)</b> $f''\gt0$，所以 $f'$ 严格递增。断言 $f'(a)\lt0$ 对所有 $a\gt0$ 成立。否则存在 $a$ 使 $f'(a)\ge0$，取 $b=a+1$，则 $f'(b)\gt f'(a)\ge0$。由 (1)，$x\gt b$ 时 $f(x)\gt f(b)+f'(b)(x-b)\to+\infty$，与 $\lim f=0$ 矛盾。</p>
+      <p>于是 $f$ 在 $(0,+\infty)$ 上严格递减。对任何 $x\gt0$，当 $t\gt x+1$ 时 $f(x+1)\gt f(t)$，令 $t\to+\infty$ 得 $f(x+1)\ge0$，所以 $f(x)\gt f(x+1)\ge0$。</p>` },
+    { id: "c1-p4", lv: "真题", src: "2023 秋期末 7", stmt: R`设 $f$ 在 $(-\infty,+\infty)$ 上有连续的二阶导数。证明：$f''(x)$ 处处非负的充分必要条件是，对任何 $a\lt b$ 有 $$f\Big(\frac{a+b}2\Big)\le\frac1{b-a}\int_a^bf(x)\,dx.$$`,
+      hints: [R`必要性：记 $m=\frac{a+b}2$，用切线不等式 $f(x)\ge f(m)+f'(m)(x-m)$。`, R`对切线不等式在 $[a,b]$ 上积分，注意 $\int_a^b(x-m)\,dx=0$。`, R`充分性反证：若 $f''(x_0)\lt0$，由连续性取 $h$ 使 $f''\lt0$ 于 $[x_0-h,x_0+h]$，在 $x_0$ 处 Taylor 展开得 $f(x)\lt f(x_0)+f'(x_0)(x-x_0)$（$x\ne x_0$），积分得反向的严格不等式。`],
+      method: "m-tangent", sol: R`<p><b>必要性</b>：设 $f''\ge0$，任取 $a\lt b$，记 $m=\frac{a+b}2$。由 Taylor 公式，$f(x)=f(m)+f'(m)(x-m)+\frac{f''(\xi)}2(x-m)^2\ge f(m)+f'(m)(x-m)$。在 $[a,b]$ 上积分：</p>
+      $$\int_a^bf(x)\,dx\ge(b-a)f(m)+f'(m)\int_a^b(x-m)\,dx=(b-a)f(m).$$
+      <p><b>充分性</b>：反设存在 $x_0$ 使 $f''(x_0)\lt0$。$f''$ 连续，存在 $h\gt0$ 使 $f''\lt0$ 于 $[x_0-h,x_0+h]$。对这个区间内的 $x\ne x_0$，</p>
+      $$f(x)=f(x_0)+f'(x_0)(x-x_0)+\frac{f''(\xi)}2(x-x_0)^2\lt f(x_0)+f'(x_0)(x-x_0).$$
+      <p>令 $g(x)=f(x_0)+f'(x_0)(x-x_0)-f(x)$，$g$ 连续、非负，且除 $x_0$ 外恒正，所以 $\int_{x_0-h}^{x_0+h}g\gt0$，即 $\int_{x_0-h}^{x_0+h}f\lt2h\,f(x_0)$。取 $a=x_0-h$，$b=x_0+h$，得 $f\big(\frac{a+b}2\big)\gt\frac1{b-a}\int_a^bf$，与条件矛盾。</p>` }
+  ],
+  variants: [
+    { id: "c1-v1", lv: "变种", src: "仿 2022 期末 2(3)", stmt: R`求 $f(x)=xe^{-x}$ 的凹凸区间与拐点。`,
+      hints: [R`$f'(x)=(1-x)e^{-x}$。`, R`$f''(x)=(x-2)e^{-x}$。`, R`$e^{-x}\gt0$，只看 $x-2$ 的符号。`],
+      method: "m-concave", sol: R`<p>$f'(x)=(1-x)e^{-x}$，$f''(x)=-e^{-x}-(1-x)e^{-x}=(x-2)e^{-x}$。</p>
+      <p>$x\lt2$ 时 $f''\lt0$，$x\gt2$ 时 $f''\gt0$。所以 $f$ 在 $(-\infty,2]$ 上上凸，在 $[2,+\infty)$ 上下凸，拐点为 $(2,2e^{-2})$。</p>` },
+    { id: "c1-v2", lv: "变种", src: "仿 2025 期中 5", stmt: R`设 $f$ 在 $(0,+\infty)$ 上下凸，且 $\lim\limits_{x\to0^+}f(x)=0$。证明：$\dfrac{f(x)}x$ 在 $(0,+\infty)$ 上单调递增。`,
+      hints: [R`$\frac{f(x)}x$ 像是“从原点出发的弦斜率”，但 $0$ 不在定义域里。`, R`对 $0\lt x\lt y$，取 $t\in(0,x)$，对三点 $t\lt x\lt y$ 用 $k_{12}\le k_{13}$。`, R`得到 $\frac{f(x)-f(t)}{x-t}\le\frac{f(y)-f(t)}{y-t}$，令 $t\to0^+$。`],
+      method: "m-slope", sol: R`<p>任取 $0\lt x\lt y$。对任意 $t\in(0,x)$，三点 $t\lt x\lt y$ 满足斜率不等式 $k_{12}\le k_{13}$：</p>
+      $$\frac{f(x)-f(t)}{x-t}\le\frac{f(y)-f(t)}{y-t}.$$
+      <p>令 $t\to0^+$，由 $f(t)\to0$，得 $\frac{f(x)}x\le\frac{f(y)}y$。所以 $\frac{f(x)}x$ 单调递增。</p>` },
+    { id: "c1-v3", lv: "变种", src: "Jensen 型", stmt: R`证明：对任意 $x,y\gt0$，有 $x\ln x+y\ln y\ge(x+y)\ln\dfrac{x+y}2$。`,
+      hints: [R`两边除以 2，右边是 $\frac{x+y}2\ln\frac{x+y}2$。`, R`令 $f(t)=t\ln t$，要证 $f\big(\frac{x+y}2\big)\le\frac{f(x)+f(y)}2$。`, R`$f''(t)=\frac1t\gt0$。`],
+      method: "m-tangent", sol: R`<p>令 $f(t)=t\ln t$（$t\gt0$），$f'(t)=\ln t+1$，$f''(t)=\frac1t\gt0$，$f$ 在 $(0,+\infty)$ 上下凸。由定义（取 $t=\frac12$）：</p>
+      $$\frac{x+y}2\ln\frac{x+y}2=f\Big(\frac{x+y}2\Big)\le\frac{f(x)+f(y)}2=\frac{x\ln x+y\ln y}2.$$
+      <p>两边乘 2 即得。等号当且仅当 $x=y$。</p>` }
+  ],
+  extensions: [
+    { id: "c1-e1", lv: "延伸", src: "经典结论", stmt: R`设 $f$ 是 $\mathbb R$ 上的下凸函数，且有上界。证明：$f$ 是常数。`,
+      hints: [R`反设 $f(x_1)\ne f(x_2)$，$x_1\lt x_2$，记 $k=\frac{f(x_2)-f(x_1)}{x_2-x_1}\ne0$。`, R`若 $k\gt0$：对 $x\gt x_2$，三点 $x_1\lt x_2\lt x$ 用 $k_{12}\le k_{23}$，得 $f(x)\ge f(x_2)+k(x-x_2)$。`, R`若 $k\lt0$：对 $x\lt x_1$，三点 $x\lt x_1\lt x_2$ 用 $k_{12}\le k_{23}$，得 $f(x)\ge f(x_1)+|k|(x_1-x)$。两种情况都无上界。`],
+      method: "m-slope", sol: R`<p>反设存在 $x_1\lt x_2$ 使 $f(x_1)\ne f(x_2)$，记 $k=\frac{f(x_2)-f(x_1)}{x_2-x_1}$。</p>
+      <p>若 $k\gt0$：对 $x\gt x_2$，三点 $x_1\lt x_2\lt x$ 满足 $k\le\frac{f(x)-f(x_2)}{x-x_2}$，所以 $f(x)\ge f(x_2)+k(x-x_2)\to+\infty$（$x\to+\infty$）。</p>
+      <p>若 $k\lt0$：对 $x\lt x_1$，三点 $x\lt x_1\lt x_2$ 满足 $\frac{f(x_1)-f(x)}{x_1-x}\le k$，所以 $f(x)\ge f(x_1)-k(x_1-x)\to+\infty$（$x\to-\infty$）。</p>
+      <p>两种情况都与有上界矛盾，所以 $f$ 是常数。</p>` },
+    { id: "c1-e2", lv: "延伸", src: "经典结论", stmt: R`设 $f$ 在开区间 $(a,b)$ 上下凸。证明：$f$ 在 $(a,b)$ 上连续。`,
+      hints: [R`固定 $x_0\in(a,b)$，取 $a\lt u\lt x_0\lt v\lt b$。想证明 $x$ 靠近 $x_0$ 时 $\big|\frac{f(x)-f(x_0)}{x-x_0}\big|$ 有界。`, R`$x_0\lt x\lt v$ 时，三点 $u\lt x_0\lt x$ 和 $x_0\lt x\lt v$ 给出 $k(u,x_0)\le k(x_0,x)\le k(x_0,v)$。`, R`$u\lt x\lt x_0$ 时，三点 $u\lt x\lt x_0$ 和 $x\lt x_0\lt v$ 给出 $k(u,x_0)\le k(x,x_0)\le k(x_0,v)$。于是 $|f(x)-f(x_0)|\le M|x-x_0|$。`],
+      method: "m-slope", sol: R`<p>固定 $x_0\in(a,b)$，取 $u,v$ 使 $a\lt u\lt x_0\lt v\lt b$。记 $k(p,q)=\frac{f(q)-f(p)}{q-p}$。</p>
+      <p>当 $x_0\lt x\lt v$：三点 $u\lt x_0\lt x$ 给出 $k(u,x_0)\le k(x_0,x)$（$k_{12}\le k_{23}$）；三点 $x_0\lt x\lt v$ 给出 $k(x_0,x)\le k(x_0,v)$（$k_{12}\le k_{13}$）。</p>
+      <p>当 $u\lt x\lt x_0$：三点 $u\lt x\lt x_0$ 给出 $k(u,x_0)\le k(x,x_0)$（$k_{13}\le k_{23}$）；三点 $x\lt x_0\lt v$ 给出 $k(x,x_0)\le k(x_0,v)$（$k_{12}\le k_{23}$）。</p>
+      <p>记 $M=\max\{|k(u,x_0)|,|k(x_0,v)|\}$，则对 $x\in(u,v)$ 有 $|f(x)-f(x_0)|\le M|x-x_0|$，所以 $f$ 在 $x_0$ 处连续。</p>
+      <p class="small muted">同样的夹逼说明 $k(x_0,x)$ 在 $x\to x_0^\pm$ 时单调有界，所以单侧导数存在，且 $f'_-(x_0)\le f'_+(x_0)$。闭区间端点处结论不成立：例如 $[0,1]$ 上 $f(0)=1$、其余 $f=0$ 是下凸的。</p>` }
+  ]
 }
 };
 
@@ -1044,7 +1171,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ taylorPlot, lagrangeXi, mvtPlot })[LESSONS[v].widget](w);
+    if (w) ({ taylorPlot, lagrangeXi, mvtPlot, convexPlot })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1369,6 +1496,98 @@ function mvtPlot(mount) {
   window.addEventListener("resize", draw);
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
   requestAnimationFrame(draw);
+}
+
+/* ================= 交互图：斜率不等式与拐点 ================= */
+function convexPlot(mount) {
+  const FN = {
+    ln: { label: "ln(1+x²)", f: x => Math.log(1 + x * x), d2: x => 2 * (1 - x * x) / Math.pow(1 + x * x, 2), X0: -3.5, X1: 3.5, p: [-0.8, 0, 0.7] },
+    xe: { label: "x·e^(−x)", f: x => x * Math.exp(-x), d2: x => (x - 2) * Math.exp(-x), X0: -0.6, X1: 7, p: [2.8, 4, 5.5] },
+    cu: { label: "x³ − 3x", f: x => x * x * x - 3 * x, d2: x => 6 * x, X0: -2.4, X1: 2.4, p: [0.3, 1, 1.8] }
+  };
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl">
+      <label for="cvf">函数 <select id="cvf">${Object.entries(FN).map(([k, o]) => `<option value="${k}">${o.label}</option>`).join("")}</select></label>
+      <label for="cv1">x₁ <input id="cv1" type="range" min="0" max="1000"></label>
+      <label for="cv2">x₂ <input id="cv2" type="range" min="0" max="1000"></label>
+      <label for="cv3">x₃ <input id="cv3" type="range" min="0" max="1000"></label>
+    </div>
+    <canvas id="cvc" role="img" aria-label="函数图像、三点连成的三条弦与下凸区域"></canvas>
+    <div class="legend"><span><i style="background:var(--accent-soft)"></i>f″ ≥ 0（下凸）</span><span><i style="background:var(--accent)"></i>弦</span><span><i style="background:var(--teal)"></i>拐点</span></div>
+    <div class="readout" id="cvr"></div>
+    <p class="small muted">在图上左右拖动会移动最近的那个点。三点都在涂色段里时，左弦 ≤ 长弦 ≤ 右弦总成立；让三点跨过拐点，试着把不等式弄坏。</p>
+  </div>`;
+  const cv = $("#cvc", mount), sel = $("#cvf", mount), ins = [1, 2, 3].map(i => $("#cv" + i, mount));
+  let F, ymin, ymax, infl;
+  const toX = v => F.X0 + (F.X1 - F.X0) * v / 1000, toV = x => Math.round((x - F.X0) / (F.X1 - F.X0) * 1000);
+  function setFn() {
+    F = FN[sel.value]; ymin = Infinity; ymax = -Infinity; infl = [];
+    let pv = F.d2(F.X0);
+    for (let i = 0; i <= 600; i++) {
+      const x = F.X0 + (F.X1 - F.X0) * i / 600, y = F.f(x), v = F.d2(x);
+      ymin = Math.min(ymin, y); ymax = Math.max(ymax, y);
+      if (i && pv * v < 0) { let lo = x - (F.X1 - F.X0) / 600, hi = x; for (let j = 0; j < 40; j++) { const m = (lo + hi) / 2; if (F.d2(lo) * F.d2(m) <= 0) hi = m; else lo = m; } infl.push((lo + hi) / 2); }
+      else if (v === 0 && i && i < 600 && F.d2(x - 1e-3) * F.d2(x + 1e-3) < 0) infl.push(x);
+      pv = v;
+    }
+    const pad = (ymax - ymin) * 0.12; ymin -= pad; ymax += pad;
+    F.p.forEach((x, i) => { ins[i].value = toV(x); });
+    draw();
+  }
+  function fix(moved) {
+    const gap = 25, v = ins.map(e => +e.value);
+    const i = ins.indexOf(moved);
+    if (i >= 0) {
+      for (let j = i + 1; j < 3; j++) v[j] = Math.max(v[j], v[j - 1] + gap);
+      for (let j = i - 1; j >= 0; j--) v[j] = Math.min(v[j], v[j + 1] - gap);
+      if (v[0] < 0) { v[0] = 0; v[1] = Math.max(v[1], gap); v[2] = Math.max(v[2], 2 * gap); }
+      if (v[2] > 1000) { v[2] = 1000; v[1] = Math.min(v[1], 1000 - gap); v[0] = Math.min(v[0], 1000 - 2 * gap); }
+    }
+    v.forEach((x, j) => { ins[j].value = x; });
+  }
+  function draw() {
+    const xs = ins.map(e => toX(+e.value)), ys = xs.map(F.f);
+    const dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    const g = cv.getContext("2d"); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+    const X = x => (x - F.X0) / (F.X1 - F.X0) * W, Y = y => H - (y - ymin) / (ymax - ymin) * H;
+    g.fillStyle = css("--accent-soft");
+    for (let i = 0; i < W; i++) { const x = F.X0 + (F.X1 - F.X0) * (i + 0.5) / W; if (F.d2(x) >= 0) g.fillRect(i, 0, 1, H); }
+    g.strokeStyle = css("--grid"); g.lineWidth = 1;
+    for (let i = Math.ceil(F.X0); i <= F.X1; i++) { g.beginPath(); g.moveTo(X(i), 0); g.lineTo(X(i), H); g.stroke(); }
+    g.strokeStyle = css("--muted");
+    if (ymin < 0 && ymax > 0) { g.beginPath(); g.moveTo(0, Y(0)); g.lineTo(W, Y(0)); g.stroke(); }
+    if (F.X0 < 0 && F.X1 > 0) { g.beginPath(); g.moveTo(X(0), 0); g.lineTo(X(0), H); g.stroke(); }
+    g.strokeStyle = css("--ink"); g.lineWidth = 2.2; g.beginPath();
+    for (let i = 0; i <= W; i++) { const x = F.X0 + (F.X1 - F.X0) * i / W; i ? g.lineTo(i, Y(F.f(x))) : g.moveTo(i, Y(F.f(x))); }
+    g.stroke();
+    g.strokeStyle = css("--accent"); g.lineWidth = 2;
+    for (const [i, j, dash] of [[0, 1, []], [1, 2, []], [0, 2, [6, 4]]]) { g.setLineDash(dash); g.beginPath(); g.moveTo(X(xs[i]), Y(ys[i])); g.lineTo(X(xs[j]), Y(ys[j])); g.stroke(); }
+    g.setLineDash([]);
+    g.fillStyle = css("--teal"); for (const x of infl) { g.beginPath(); g.arc(X(x), Y(F.f(x)), 5, 0, 7); g.fill(); }
+    g.fillStyle = css("--accent"); g.font = "12px " + css("--f-mono");
+    xs.forEach((x, i) => { g.beginPath(); g.arc(X(x), Y(ys[i]), 5, 0, 7); g.fill(); g.fillText("x" + "₁₂₃"[i], X(x) - 6, Y(ys[i]) - 10); });
+    const k = (i, j) => (ys[j] - ys[i]) / (xs[j] - xs[i]);
+    const k12 = k(0, 1), k13 = k(0, 2), k23 = k(1, 2), eps = 1e-9, ok = k12 <= k13 + eps && k13 <= k23 + eps;
+    const allConvex = (() => { for (let i = 0; i <= 200; i++) if (F.d2(xs[0] + (xs[2] - xs[0]) * i / 200) < -eps) return false; return true; })();
+    $("#cvr", mount).innerHTML = `<span>k₁₂ = <b>${k12.toFixed(3)}</b></span><span>k₁₃ = <b>${k13.toFixed(3)}</b></span><span>k₂₃ = <b>${k23.toFixed(3)}</b></span>`
+      + `<span>${ok ? "✓ k₁₂ ≤ k₁₃ ≤ k₂₃ 成立" : "✗ 斜率不等式不成立"}${allConvex ? "（[x₁, x₃] 全在下凸段）" : "（[x₁, x₃] 里有 f″ &lt; 0 的部分）"}</span>`
+      + `<span>拐点：${infl.length ? infl.map(x => "x = " + x.toFixed(2)).join("、") : "无"}</span>`;
+  }
+  sel.addEventListener("change", setFn);
+  ins.forEach(e => e.addEventListener("input", () => { fix(e); draw(); }));
+  let drag = null;
+  const vAt = e => { const r = cv.getBoundingClientRect(); return Math.round(1000 * Math.min(1, Math.max(0, (e.clientX - r.left) / r.width))); };
+  cv.addEventListener("pointerdown", e => {
+    const v = vAt(e); drag = ins.reduce((b, c) => Math.abs(+c.value - v) < Math.abs(+b.value - v) ? c : b);
+    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    drag.value = v; fix(drag); drag.focus({ preventScroll: true }); draw();
+  });
+  cv.addEventListener("pointermove", e => { if (!drag || !(cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId))) return; drag.value = vAt(e); fix(drag); draw(); });
+  cv.addEventListener("pointerup", () => { drag = null; });
+  window.addEventListener("resize", draw);
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+  requestAnimationFrame(setFn);
 }
 
 /* ================= 交互图：Lagrange 中值点 ================= */
