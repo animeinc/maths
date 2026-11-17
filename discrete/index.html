@@ -281,7 +281,7 @@ const EXAM_MAP = [
 ];
 
 const SCHEDULE = [
-  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", null], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
+  ["第 1 周", [["Day 1", "中国剩余定理", "n1"], ["Day 2", "图的基本结构与欧拉路", "g1"], ["Day 3", "树与普吕弗编码", "g2"], ["Day 4–5", "最便宜生成树（作业 7）", "mst1"], ["Day 6–7", "复盘 + 2022 期末卷图论部分", null]]],
   ["第 2 周", [["Day 1–3", "匹配与 Hall 定理", null], ["Day 4–5", "平面图、Euler 公式与染色", null], ["Day 6–7", "复盘", null]]],
   ["第 3 周", [["Day 1–3", "计数回顾：排列组合、容斥、递推", null], ["Day 4–5", "组合概率回顾", null], ["Day 6–7", "复盘", null]]],
   ["第 4 周", [["Day 1–3", "数论回顾：整除、同余、欧拉函数", null], ["Day 4–7", "组合几何与编码（按课程进度）", null]]],
@@ -301,13 +301,16 @@ const MUST = [
   ["普吕弗", R`$d_T(v)=1+\#\{i:y_i=v\}$；还原 $x_i=\min[n]\setminus\{x_1,\dots,x_{i-1},y_i,\dots,y_{n-1}\}$，$y_{n-1}=n$`],
   ["Cayley", R`$[n]$ 上的标号树共 $n^{n-2}$ 棵`],
   ["指定度数", R`$\dfrac{(n-2)!}{(d_1-1)!\cdots(d_n-1)!}$ 棵`],
+  ["Kruskal", R`按权升序，连接不同分支才加边；选满 $n-1$ 条；逆向算法按权降序，删后仍连通才删`],
+  ["MST 换边", R`割上唯一最轻边必选；圈上唯一最重边必不选；并列时只能保证某棵 MST 作相应选择`],
+  ["MST 唯一性", R`对每条非树边 $e=uv$，若 $w(e)\gt\max_{f\in P_T(u,v)}w(f)$，则 $T$ 为唯一 MST`],
   ["补全森林", R`$k$ 个分支、大小 $s_1,\dots,s_k$：$n^{k-2}s_1\cdots s_k$ 棵；含指定边：$2n^{n-3}$ 棵`]
 ];
 
 const UNITS = [
   { id: "nt", title: "数论：中国剩余定理", lessons: ["n1"] },
   { id: "graph", title: "图论基础", lessons: ["g1", "g2"] },
-  { id: "mst", title: "生成树与匹配", lessons: [], soon: true },
+  { id: "mst", title: "生成树与匹配", lessons: ["mst1"] },
   { id: "planar", title: "平面图与染色", lessons: [], soon: true },
   { id: "count", title: "计数与概率回顾", lessons: [], soon: true }
 ];
@@ -635,6 +638,93 @@ g2: {
       hints: [R`1 是叶 ⇔ 1 不在普吕弗序列中出现。`, R`每一项都从 $n-1$ 个标号中选。`, R`概率 $\left(\frac{n-1}n\right)^{n-2}=\left(1-\frac1n\right)^{n-2}$。`],
       method: "m-treecount", sol: R`<p>由度数公式，1 是叶 ⇔ 1 不出现在序列中。长为 $n-2$、每项取自 $[n]\setminus\{1\}$ 的序列有 $(n-1)^{n-2}$ 个，所以这样的树有 $(n-1)^{n-2}$ 棵。</p>
       <p>概率为 $\frac{(n-1)^{n-2}}{n^{n-2}}=\left(1-\frac1n\right)^{n-2}\to e^{-1}$。</p>` }
+  ]
+},
+/* ---------------- MST1 ---------------- */
+mst1: {
+  unit: "mst", n: 1, title: "最便宜生成树：贪心与交换",
+  goal: "会用 Kruskal 手算最便宜生成树；能用换边证明贪心、逆向删边和唯一性。30 分钟先做概念题、基础题和真题，变种与延伸可留到复盘。",
+  sections: [
+    { id: "mst1-s1", h: "1. 目标是总权最小，不是最短路", html: R`
+      <p>设 $G=(V,E)$ 是有限、连通、无向加权图，$|V|=n$。生成树 $T$ 包含全部顶点、连通且无圈，恰有 $n-1$ 条边。<b>最便宜生成树</b>（最小生成树，MST）使 $w(T)=\sum_{e\in T}w(e)$ 最小；它不保证任意两点间的道路最短。</p>
+      <p><b>Kruskal 算法</b>：从空边集开始，按权从小到大检查每条边；两端在不同连通分支就加入，在同一分支就跳过（加入会成圈）。选满 $n-1$ 条即结束。并列权可任选先后，可能得到不同的最优树。负权、零权也适用；原图不连通时只能得到各分支的最小生成森林。</p>
+      <p>下面使用 <b>2022 秋期末 5(2)</b> 的原图数据，可对比“从轻到重加边”和“从重到轻删边”。图示布局重绘，边和权重逐项核对原卷。本课按作业 7 提前补齐；11-17 课件尚未讲到此模块。</p>` },
+    { id: "mst1-s2", h: "2. 为什么贪心正确：割与圈都靠换一条边", html: R`
+      <p><b>割</b>：取非空真子集 $S\subset V$，跨割边的一端在 $S$、另一端在 $V\setminus S$。<b>割性质</b>：跨割的最轻边至少属于某棵 MST；若它严格轻于其他跨割边，就属于每棵 MST。</p>
+      <p>证明：取 MST $T$。若最轻边 $e$ 不在 $T$，加上它产生唯一圈；该圈上有另一条跨割边 $f$，且 $w(e)\le w(f)$。换成 $T-f+e$ 仍是树、总权不增，所以也是 MST。严格小于时，假设 $e\notin T$ 就会得到更便宜的树，矛盾。</p>
+      <p><b>Kruskal 的不变量</b>：已选森林 $F$ 始终包含于某棵 MST。准备加入 $e=uv$ 时，取 $u$ 所在的 $F$ 分支为 $S$，$e$ 是跨此割的最轻边。取包含 $F$ 的 MST 换边，删掉的跨割边 $f$ 不在 $F$，所以新树仍包含 $F+e$。由空集归纳到 $n-1$ 条边，算法输出最优树。</p>
+      <p><b>圈性质</b>：一个圈中严格最重的边不属于任何 MST；若只是并列最重，至少存在一棵 MST 不含它。理由：若树含该边，删边形成割，原圈上有另一条不更重的边跨割，可交换。注意“至少一棵”和“每一棵”的区别。</p>` },
+    { id: "mst1-s3", h: "3. 逆向删边、唯一性与变目标", html: R`
+      <p><b>逆向删边</b>：按权从大到小检查；删后仍连通就删，否则保留。注意只在<b>当前图</b>里检查连通性。最后连通且每边都是桥，因此是树；正确性用圈上的换边说明，见变种题。</p>
+      <p><b>唯一性</b>：所有边权互不相同 ⇒ MST 唯一；反过来不成立，如三角形边权 $1,1,2$ 的 MST 仍唯一。若有并列权，不能直接断言唯一或不唯一。</p>
+      <p><b>检验一棵候选树</b>：$T$ 是 MST 当且仅当每条非树边 $e=uv$ 都满足 $w(e)\ge\max_{f\in P_T(u,v)}w(f)$。若每处都严格大于，则 MST 唯一；若有相等，就能换边得到另一棵 MST。</p>
+      <p>前述判据的充分性：若所有非树边满足它，取任意其他树 $T'$，删去 $e=uv\in T'\setminus T$ 得割。原树 $T$ 的道路 $P_T(u,v)$ 上存在跨此割的边 $f\in T\setminus T'$，且 $w(f)\le w(e)$。用 $f$ 替换 $e$，逐步把 $T'$ 变成 $T$，总权不增。严格情形总权必下降。</p>
+      <p>目标改为正权乘积时，对权取 $\log$；改为最大边权时，任一 MST 都是最小瓶颈生成树，但逆命题未必成立。细节放在延伸题。</p>` }
+  ],
+  widget: "mstPlay",
+  concepts: [
+    { id: "mst1-c1", sec: "mst1-s1", q: R`Kruskal 检查一条边 $uv$ 时，应该什么时候加入它？`,
+      opts: [R`$u$ 或 $v$ 还没有出现过`, R`$u,v$ 在已选森林的不同分支`, R`它是原图唯一最轻边`, R`它让某个起点到 $v$ 的距离最短`], a: 1,
+      ex: R`判断的是“加入会不会成圈”。两端即使都出现过，只要在不同分支，也应加入。` },
+    { id: "mst1-c2", sec: "mst1-s2", q: R`一个圈中有两条边并列最重。关于其中一条 $e$，一定正确的是：`,
+      opts: [R`$e$ 不在任何 MST 中`, R`$e$ 在每棵 MST 中`, R`存在一棵 MST 不含 $e$`, R`图没有 MST`], a: 2,
+      ex: R`若某棵 MST 含 $e$，删 $e$ 后沿原圈可找一条不更重的替代边；交换得到不含 $e$ 的 MST。并列时不能说“任何 MST 都不含”。` },
+    { id: "mst1-c3", sec: "mst1-s3", q: R`下面哪个推断正确？`,
+      opts: [R`有两条同权边 ⇒ MST 不唯一`, R`边权全不同 ⇒ MST 唯一`, R`MST 唯一 ⇒ 边权全不同`, R`每个顶点挑一条最轻邻边就一定得到生成树`], a: 1,
+      ex: R`边权全不同是充分条件。三角形边权 $1,1,2$ 是“有同权边但 MST 唯一”的反例；各点独立挑边还可能无法连通。` },
+    { id: "mst1-c4", sec: "mst1-s1", q: R`连通图有 8 个顶点，Kruskal 已加入 6 条边而未成圈。此时已选边构成：`,
+      opts: [R`一棵生成树`, R`恰有两个连通分支的森林`, R`可能有三个分支`, R`一定含原图最重边`], a: 1,
+      ex: R`森林的分支数等于顶点数减边数，为 $8-6=2$；再接通两个分支才是生成树。` }
+  ],
+  methods: [
+    { id: "m-mst-run", title: "手算 Kruskal：排序、分支、总权", steps: [
+      R`列全边与权，按权升序；并列任取固定顺序。`,
+      R`每检查一边，先看两端是否已由已选边连通；不同分支才加入。记录“选 / 成圈跳过”。`,
+      R`选满 $n-1$ 条后核对覆盖所有点、连通无圈，并另算一次总权。`,
+      R`要求唯一性时，逐条非树边比较它与树上对应道路的最大边权；全严格大于才唯一。`] },
+    { id: "m-mst-swap", title: "证明贪心：加边成圈、删边成割", steps: [
+      R`先写不变量：“存在一棵最优树包含已选边”，或“当前剩余图含某棵原图的 MST”。`,
+      R`要加入 $e$：在最优树中加 $e$ 得唯一圈；要删 $e$：在树中删 $e$ 得两个分支。`,
+      R`找跨同一割的替代边 $f$，说明换后仍为生成树，并比较 $w(e),w(f)$。`,
+      R`交代不变量得以保持，以及终止时输出确实是树。并列权用不等式，唯一性证明才用严格不等式。`] }
+  ],
+  problems: [
+    { id: "mst1-p1", lv: "基础", src: "自编", stmt: R`<p>无向图顶点为 $A,B,C,D$，边与权为 $AB:1,\ BC:2,\ AC:3,\ BD:4,\ CD:5$。用 Kruskal 求 MST 并判断是否唯一。</p>`,
+      hints: [R`前两条边为 $AB,BC$，组成 $A-B-C$。`, R`$AC$ 虽然便宜，但会和 $AB,BC$ 成圈，跳过。`, R`用 $BD$ 接入 $D$；对非树边 $AC,CD$ 核对树上道路的最大权。`],
+      method: "m-mst-run", sol: R`<p>依次选 $AB(1),BC(2)$，跳过成圈的 $AC(3)$，选 $BD(4)$，已有 $4-1=3$ 条边，停止。总权 $1+2+4=7$。</p><p>非树边 $AC$ 的权 $3\gt\max(1,2)=2$；$CD$ 的权 $5\gt\max(2,4)=4$，所以唯一。也可直接用“全图边权互异”判唯一。</p>` },
+    { id: "mst1-p2", lv: "真题", src: "2022 秋期末 5(2)（原图转写为边表）", stmt: R`
+      <p>求下列无向加权图的最便宜生成树。顶点为 $A,B,C,D,E,F,G,H$，原图的全部边与权如下：</p>
+      <div class="table-wrap"><table><thead><tr><th>边</th><th>权</th><th>边</th><th>权</th><th>边</th><th>权</th></tr></thead><tbody>
+      <tr><td>$AB$</td><td>9</td><td>$AC$</td><td>5</td><td>$AD$</td><td>2</td></tr>
+      <tr><td>$BE$</td><td>2</td><td>$BH$</td><td>7</td><td>$CE$</td><td>3</td></tr>
+      <tr><td>$CD$</td><td>8</td><td>$CF$</td><td>6</td><td>$DF$</td><td>4</td></tr>
+      <tr><td>$EG$</td><td>2</td><td>$EH$</td><td>6</td><td>$FG$</td><td>1</td></tr>
+      </tbody></table></div><p>先独立计算，再用上面的逐步工具核对。加问（自编）：此图的 MST 是否唯一？</p>`,
+      hints: [R`升序开始：$FG(1)$；权为 2 的 $AD,BE,EG$ 均可加入。`, R`接着选 $CE(3),DF(4)$。$AC(5)$ 已在同一分支内，跳过。`, R`$CF(6)$ 成圈，跳过；$EH(6)$ 接入最后的顶点 $H$。共 7 条边。`],
+      method: "m-mst-run", sol: R`
+      <p>按权升序选入 $FG(1),AD(2),BE(2),EG(2),CE(3),DF(4)$。此时除 $H$ 外的七点已连通；$AC(5),CF(6)$ 都成圈，跳过。再选 $EH(6)$ 接入 $H$，得到</p>
+      $$T=\{FG,AD,BE,EG,CE,DF,EH\},\qquad w(T)=1+2+2+2+3+4+6=20.$$
+      <p><b>自检</b>：8 点、7 边，全连通。加问：非树边 $AC,CF,BH,CD,AB$ 的权与对应树上道路最大边权分别为 $5\gt4,6\gt4,7\gt6,8\gt4,9\gt4$，所以虽然有同权边，MST 仍唯一。</p>` }
+  ],
+  variants: [
+    { id: "mst1-v1", lv: "变种", src: "2022 秋作业 7 · 作业1（教材练习 9.1.1）", stmt: R`<p>连通无向加权图中，把边按权从大到小逐条检查。若从当前图删掉该边后仍连通就删，否则保留。证明最后保留的边构成最便宜生成树。</p>`,
+      hints: [R`不变量：当前图始终连通，并包含某棵原图的 MST。`, R`若当前边 $e$ 可删，则当前图中有一条不含 $e$ 的两端间道路。若 MST 含 $e$，删它得割，从该道路上选跨割边 $f$。`, R`$f$ 不可能是以前“删了就断开”的保留边（桥不会在后续删边时重新成圈）；所以尚未检查，$w(f)\le w(e)$。交换即可。`],
+      method: "m-mst-swap", sol: R`
+      <p>记当前图为 $H$。不变量为：$H$ 连通，且含某棵原图的 MST $T$。初始显然成立。当前检查 $e$：</p>
+      <p>若删 $e$ 会断开，则保留，$H$ 不变。若可删且 $e\notin T$，直接删，不变量仍成立。若可删且 $e\in T$，在 $T-e$ 的两个分支间，从 $H-e$ 的一条连接道路中选跨割边 $f$，则 $T-e+f$ 是生成树。</p>
+      <p>边 $e$ 位于 $H$ 的圈上，该圈上的 $f$ 不可能是以前被判定必须保留的边：那种边当时是桥，后来只删边，仍是桥。也不可能已被删除。因此 $f$ 尚未检查，降序检查给出 $w(f)\le w(e)$。于是 $T-e+f$ 总权不增，仍是 MST，且包含于删 $e$ 后的图，不变量保持。</p>
+      <p>终止时图连通。每条保留边在被检查时都是桥，此后仍是桥，所以终图无圈，是生成树。它含一棵原图的 MST，故它自身就是该 MST。</p>` },
+    { id: "mst1-v2", lv: "变种", src: "2022 秋作业 7 · 作业2（教材练习 9.2.3）", stmt: R`设 $G$ 连通且所有边权互不相同。证明其最便宜生成树唯一。`,
+      hints: [R`反设有不同的 MST $T_1,T_2$。在对称差中取权最小的边 $e$。`, R`不妨 $e\in T_1\setminus T_2$。从 $T_1$ 删 $e$，得到一个割；$T_2$ 中连接 $e$ 两端的道路必经过该割。`, R`取道路上的跨割边 $f$。$f\notin T_1$，故在对称差中，$w(f)\gt w(e)$；在 $T_2$ 中换成更轻的 $e$。`],
+      method: "m-mst-swap", sol: R`<p>若 $T_1\ne T_2$ 都为 MST，取 $T_1\triangle T_2$ 中最轻边 $e$，不妨 $e\in T_1\setminus T_2$。$T_1-e$ 给出割 $(S,V\setminus S)$；$T_2$ 中 $e$ 两端间的唯一路必有跨割边 $f$。</p><p>$T_1$ 中唯一跨此割的边是 $e$，所以 $f\in T_2\setminus T_1$。边权互异且 $e$ 是对称差最轻边，故 $w(e)\lt w(f)$。$T_2-f+e$ 仍是生成树而总权严格更小，与 $T_2$ 最优矛盾。因此唯一。</p>` }
+  ],
+  extensions: [
+    { id: "mst1-e1", lv: "延伸", src: "2022 秋作业 7 · 作业3(a)（教材练习 9.2.4）", stmt: R`设连通图每条边的权 $c(e)\gt0$。如何求使 $\prod_{e\in T}c(e)$ 最小的生成树？说明理由。`,
+      hints: [R`取严格递增的对数，把乘积变成和。`, R`令 $w(e)=\log c(e)$，则 $\log\prod c(e)=\sum w(e)$。`, R`对数保持边权的大小顺序，所以直接按原权运行 Kruskal 即可；$c(e)\lt1$ 也没问题。`],
+      method: "m-mst-run", sol: R`<p>令 $w(e)=\log c(e)$。因为对数严格递增，最小化正数乘积等价于最小化 $\sum_{e\in T}w(e)$。在新权上运行 Kruskal 即可。对数不改变边的排序，所以直接按原权 $c(e)$ 运行 Kruskal，输出同时是一个最小乘积生成树。</p><p>$0\lt c(e)\lt1$ 时新权为负，Kruskal 仍适用。这里依靠生成树的贪心性质，不能对任意优化问题都说“严格递增变换保持最小总和”。</p>` },
+    { id: "mst1-e2", lv: "延伸", src: "2022 秋作业 7 · 作业3(b)（教材练习 9.2.4）；反例为自编", stmt: R`<p>如何求使 $\max_{e\in T}c(e)$ 最小的生成树（最小瓶颈生成树）？证明任一 MST 都满足要求。最小瓶颈生成树一定是 MST 吗？</p>`,
+      hints: [R`取 MST $T$ 的一条最重边 $e_*$，删它得到割。`, R`若某棵生成树所有边都严格轻于 $e_*$，它跨此割的边就可以替换 $e_*$，让总权更小。`, R`反例：三角形边权 $1,2,2$。三棵生成树的最大边权都是 2，但总权分别是 3、3、4。`],
+      method: "m-mst-swap", sol: R`<p>先求一棵 MST $T$，设其最大边权为 $b=c(e_*)$。删去 $e_*$ 得割 $(S,V\setminus S)$。每条跨此割的边 $f$ 都满足 $c(f)\ge b$，否则 $T-e_*+f$ 的总权更小，与 MST 矛盾。任一生成树必跨此割，因此其最大边权至少为 $b$。$T$ 达到这个下界，故是最小瓶颈生成树。</p><p>逆命题不成立。三角形边权 $1,2,2$：任一生成树的瓶颈都是 2，但选择两条权为 2 的边，总权 4，大于最优总权 3。</p>` }
   ]
 }
 };
@@ -970,7 +1060,7 @@ function render() {
   refreshNavProgress();
   if (LESSONS[v] && LESSONS[v].widget) {
     const w = $("#widget");
-    if (w) ({ crtCalc, pruferPlay })[LESSONS[v].widget](w);
+    if (w) ({ crtCalc, pruferPlay, mstPlay })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
   typeset(view);
@@ -1268,6 +1358,79 @@ function pruferPlay(mount) {
   $("#prand", mount).addEventListener("click", () => { const n = 6 + Math.floor(Math.random() * 5); seqIn.value = Array.from({ length: n - 2 }, () => 1 + Math.floor(Math.random() * n)).join(","); nIn.value = n; stepIn.value = 0; build(); });
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
   build();
+}
+
+
+/* ================= 交互工具：最便宜生成树 ================= */
+function mstPlay(mount) {
+  const nodes = { A: [55, 155], B: [175, 45], C: [230, 155], D: [175, 265], E: [415, 155], F: [345, 265], G: [545, 265], H: [545, 45] };
+  const edges = [["A", "B", 9], ["A", "C", 5], ["A", "D", 2], ["B", "E", 2], ["B", "H", 7], ["C", "E", 3], ["C", "D", 8], ["C", "F", 6], ["D", "F", 4], ["E", "G", 2], ["E", "H", 6], ["F", "G", 1]];
+  const key = e => e[0] + e[1];
+  mount.innerHTML = `<div class="widget">
+    <div class="ctrl"><label for="mst-mode">算法 <select id="mst-mode"><option value="add">Kruskal：从轻到重加边</option><option value="delete">逆向：从重到轻删边</option></select></label></div>
+    <div class="ctrl"><button class="btn" id="mst-prev" type="button">上一步</button><button class="btn" id="mst-next" type="button">下一步</button><button class="btn" id="mst-reset" type="button">重置</button></div>
+    <div class="ctrl"><label for="mst-step">检查边数 <input id="mst-step" type="range" min="0" max="12" value="0"></label><b class="mono" id="mst-step-label"></b></div>
+    <div id="mst-graph"></div>
+    <div class="legend"><span><i style="background:var(--teal)"></i>已选 / 必须保留</span><span><i style="background:var(--accent)"></i>本步检查</span><span><i style="background:var(--line)"></i>虚线：跳过 / 已删除</span></div>
+    <div class="readout" id="mst-out" aria-live="polite"></div>
+    <div class="table-wrap" id="mst-table"></div>
+    <p class="small muted">权相同按边名字母序检查。加边模式选满 7 条即可停；工具继续显示剩余边的成圈检查，方便核对。切换算法从第 0 步开始。</p>
+  </div>`;
+  const mode = $("#mst-mode", mount), slider = $("#mst-step", mount);
+  let steps = [], ordered = [];
+  function components(keys) {
+    const parent = Object.fromEntries(Object.keys(nodes).map(v => [v, v]));
+    function root(v) { while (parent[v] !== v) v = parent[v]; return v; }
+    for (const e of edges) if (keys.has(key(e))) parent[root(e[0])] = root(e[1]);
+    return { root, count: new Set(Object.keys(nodes).map(root)).size };
+  }
+  function rebuild() {
+    const deleting = mode.value === "delete";
+    ordered = edges.slice().sort((a, b) => (deleting ? b[2] - a[2] : a[2] - b[2]) || key(a).localeCompare(key(b)));
+    const present = new Set(deleting ? edges.map(key) : []), kept = new Set(), removed = new Set();
+    steps = [{ present: new Set(present), kept: new Set(), removed: new Set(), message: deleting ? "从完整图开始，检查删边后是否仍连通。" : "从空森林开始，检查边的两端是否属于不同分支。" }];
+    for (const e of ordered) {
+      const id = key(e);
+      let message;
+      if (deleting) {
+        present.delete(id);
+        if (components(present).count === 1) { removed.add(id); message = `删除 ${id}（权 ${e[2]}）：删后仍连通。`; }
+        else { present.add(id); kept.add(id); message = `保留 ${id}（权 ${e[2]}）：它是当前图的桥，删后不连通。`; }
+      } else {
+        const c = components(present);
+        if (c.root(e[0]) !== c.root(e[1])) { present.add(id); kept.add(id); message = `选入 ${id}（权 ${e[2]}）：连接两个不同分支。`; }
+        else { removed.add(id); message = `跳过 ${id}（权 ${e[2]}）：两端已连通，加入会成圈。`; }
+      }
+      steps.push({ present: new Set(present), kept: new Set(kept), removed: new Set(removed), message });
+    }
+    slider.value = 0;
+    draw();
+  }
+  function draw() {
+    const k = +slider.value, s = steps[k], current = k ? key(ordered[k - 1]) : "", deleting = mode.value === "delete";
+    $("#mst-step-label", mount).textContent = `${k} / ${ordered.length}`;
+    $("#mst-prev", mount).disabled = k === 0;
+    $("#mst-next", mount).disabled = k === ordered.length;
+    const lines = edges.map(e => {
+      const id = key(e), [x1, y1] = nodes[e[0]], [x2, y2] = nodes[e[1]], gone = s.removed.has(id);
+      const color = id === current ? "--accent" : gone ? "--line" : s.kept.has(id) ? "--teal" : "--muted";
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2 - 9;
+      return `<g><line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" style="stroke:var(${color});stroke-width:${id === current ? 4 : 2.5}${gone ? ";stroke-dasharray:6 5" : ""}"/><circle cx="${mx}" cy="${my}" r="11" style="fill:var(--bg)"/><text x="${mx}" y="${my + 4}" text-anchor="middle" style="fill:var(--ink);font:600 14px var(--f-mono)">${e[2]}</text></g>`;
+    }).join("");
+    const circles = Object.entries(nodes).map(([v, [x, y]]) => `<g><circle cx="${x}" cy="${y}" r="17" style="fill:var(--surface);stroke:var(--ink);stroke-width:1.5"/><text x="${x}" y="${y + 5}" text-anchor="middle" style="fill:var(--ink);font:600 15px var(--f-mono)">${v}</text></g>`).join("");
+    $("#mst-graph", mount).innerHTML = `<svg viewBox="0 0 600 310" style="width:100%;display:block;background:var(--bg);border-radius:6px" role="img" aria-label="2022 秋期末最便宜生成树原图，当前第 ${k} 步；边与判断详见下表">${lines}${circles}</svg>`;
+    const total = edges.filter(e => s.present.has(key(e))).reduce((sum, e) => sum + e[2], 0);
+    const done = s.present.size === 7 && components(s.present).count === 1;
+    $("#mst-out", mount).innerHTML = `<span>${s.message}</span><span>${deleting ? "当前剩余" : "已选"} ${s.present.size} 条边，${components(s.present).count} 个分支，总权 ${total}${done ? "；已得到 MST，总权 20。" : "。"}</span>`;
+    const rows = ordered.map((e, i) => `<tr${i === k - 1 ? ' style="font-weight:700;color:var(--accent)"' : ""}><td>${key(e)}</td><td>${e[2]}</td><td>${i >= k ? "待检查" : s.removed.has(key(e)) ? (deleting ? "删除：仍连通" : "跳过：成圈") : (deleting ? "保留：桥" : "选入：连接分支")}</td></tr>`).join("");
+    $("#mst-table", mount).innerHTML = `<table><thead><tr><th>边</th><th>权</th><th>判断</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  slider.addEventListener("input", draw);
+  mode.addEventListener("change", rebuild);
+  $("#mst-prev", mount).addEventListener("click", () => { slider.value = Math.max(0, +slider.value - 1); draw(); });
+  $("#mst-next", mount).addEventListener("click", () => { slider.value = Math.min(ordered.length, +slider.value + 1); draw(); });
+  $("#mst-reset", mount).addEventListener("click", () => { slider.value = 0; draw(); });
+  rebuild();
 }
 
 
