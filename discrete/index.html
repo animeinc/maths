@@ -2597,6 +2597,17 @@ UNITS.splice(UNITS.findIndex(u => u.id === "count"),0,{id:"count-fund",title:"�
 UNITS.splice(UNITS.findIndex(u => u.id === "practice"),0,{id:"geometry-count",title:"组合几何与编码预习",lessons:["dg1","code1"]});
 SCHEDULE.push(["本学期笔记补练",[["计数","映射与计数","dc1"],["递推","Stirling、Catalan 与生成函数","dc2"],["数论","因子函数与乘法阶","n3"],["几何","分格与单调子序列","dg1"],["预习","简单编码","code1"]]]);
 
+LESSONS.count2.variants.push(
+  {"id": "count2-ordered-collision", "lv": "变种", "src": "自编练习 · 有序试验与最小阈值", "stmt": "<p>每台终端独立、等概率地从 $24$ 个标签中选一个。求让“至少两台选了相同标签”的概率严格大于 $1/2$ 所需的最少台数。先用组合数写无碰撞的有利结果数，再验算阈值两侧。</p>", "hints": ["把终端编号。一次结果是按终端排列的标签序列。", "先选出 $k$ 个不同标签，再把这 $k$ 个标签一一分派给终端。", "无碰撞概率逐台乘 $(24-j)/24$。对 $k=6,7$ 比较它与 $1/2$，并说明单调性。"], "method": "m-prob-space", "sol": "<p>对 $1\\le k\\le24$，无碰撞的序列共 $\\binom{24}{k}k!$ 个，除以样本总数 $24^k$。只写 $\\binom{24}{k}$ 会漏掉同一组标签在终端间的 $k!$ 种分派。$k&gt;24$ 时无碰撞概率为零。</p><p>记 $Q_k$ 为无碰撞概率，$Q_{k+1}=Q_k(24-k)/24$，故碰撞概率随台数增加而不减。$Q_6=168245/331776&gt;1/2$，$Q_7=(18/24)Q_6=168245/442368&lt;1/2$，所以最少 $7$ 台。</p>"},
+  {"id": "count2-weighted-outcomes", "lv": "变种", "src": "自编练习 · 非等概率样本", "stmt": "<p>一次巡检只会产生 $a,b,c,d$ 四种结果，概率分别为 $1/2,1/4,1/8,1/8$。系统甲在 $\\{a,c\\}$ 报警，乙在 $\\{a,b\\}$ 报警，丙在 $\\{b,c,d\\}$ 报警。求至少两套报警的概率和报警套数的期望。两者能否只用满足条件的结果个数计算？</p>", "hints": ["先逐个结果写下报警套数。", "$a,b,c$ 各触发两套，$d$ 只触发一套。", "事件概率加对应的概率权重；期望用报警套数乘结果权重再求和。"], "method": "m-prob-space", "sol": "<p>四种结果的报警套数依次为 $2,2,2,1$。因此 $\\Pr(X\\ge2)=1/2+1/4+1/8=7/8$，且 $\\mathbb E X=2(7/8)+1(1/8)=15/8$。用三个符合结果除以四会得到 $3/4$，相当于换成了等概率样本。</p><p>也可把各系统的报警指示变量相加。三套报警概率分别为 $5/8,3/4,1/2$，期望之和仍是 $15/8$，无需报警事件互相独立。</p>"}
+);
+LESSONS.g3.variants.push(
+  {"id": "g3-triangle-types", "lv": "变种", "src": "自编练习 · 实边与虚边的双计数", "stmt": "<p>从 $K_{3,3}$ 出发，在同一侧任选两个顶点加一条边，把未出现的边标为虚边。把每组 3 个顶点按其中的实边数分为 $0,1,2,3$ 四类。不逐组枚举，求各类个数，并用同侧新加的边核对实三角形数。</p>", "hints": ["度数是 $4,4,3,3,3,3$。先从顶点数“两实角”和“一实一虚角”。", "一个三实边三元组有三个两实角；两实边三元组有一个两实角。恰有一条或两条实边时，各贡献两个混合角。", "设三实、两实、一实个数为 $x,y,z$，用 $3x+y=24$、$2y+2z=32$。先从新边确定 $x$。"], "method": "m-double-count", "sol": "<p>加边的两个端点度为 $4$，其他点度为 $3$。两实角数为 $2\\binom42+4\\binom32=24$；一实一虚角数为 $2(4\\cdot1)+4(3\\cdot2)=32$。每个实三角形必须使用新边，第三点可取对侧三个顶点中的任意一个，所以 $x=3$。</p><p>按三元组数两类角得到 $3x+y=24$、$2y+2z=32$，因此两实边 $y=15$，一实边 $z=1$，零实边有 $\\binom63-3-15-1=1$ 组。四类按 $0,1,2,3$ 排列为 $1,1,15,3$。</p>"}
+);
+LESSONS.g1.variants.push(
+  {"id": "g1-deletion-cycle", "lv": "变种", "src": "自编练习 · 删点与最长路", "stmt": "<p>某简单图有 $9$ 个顶点和 $19$ 条边。证明它含一个最小度至少为 $3$ 的非空诱导子图，再证明原图含长度至少为 $4$ 的简单圈。</p>", "hints": ["只要当前图有度不超过 $2$ 的点，就删掉该点与相接的边。", "如果删光了，每条原边恰在其第一个端点被删时计一次。全部九步最多会删掉多少条边？", "在剩下的诱导子图取一条最长简单路。端点的所有邻点都在路上，再取离端点最远的那个。"], "method": "m-extremal", "sol": "<p>重复在当前图删去度至多 $2$ 的顶点。每条边只在首次删去一个端点时被删。若九点全部删光，最多删 $18$ 条边，与原来有 $19$ 条矛盾。故停在非空诱导子图，最小度至少为 $3$。</p><p>在子图取最长简单路 $v_0,\\ldots,v_k$。$v_0$ 的邻点都在路上，否则可延长。至少有三个不同邻点，最大的下标 $j$ 至少为 $3$。$v_0,v_1,\\ldots,v_j,v_0$ 给出长度 $j+1\\ge4$ 的简单圈。</p>"}
+);
+
 /* ================= 状态与存储 ================= */
 const IN_CLAUDE = !!(window.claude && window.claude.use);
 const LS_KEY = "ls1-progress-v1";
@@ -2762,6 +2773,7 @@ function viewHome() {
     <p class="lede">这一页先跟上课程进度（新讲的模块当天上线），再按往年期末卷的考点补齐前面的内容。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
   </section>
   <section class="block"><div class="sec-head"><h2>课堂与手写笔记</h2></div><p>11 月 17 日课堂先跟中国剩余定理、图与树。早期手写笔记的专题可单独回补。</p><div class="days"><span class="live"><a href="#n1">中国剩余定理</a></span><span class="live"><a href="#g1">图与欧拉路</a></span><span class="live"><a href="#g2">树与普吕弗编码</a></span><span class="live"><a href="#g4">运输表消圈</a></span><span class="live"><a href="#dc1">映射、分组与双计数</a></span><span class="live"><a href="#dc2">递推与生成函数</a></span><span class="live"><a href="#n3">因子函数与阶</a></span><span class="live"><a href="#dg1">组合几何与单调子序列</a></span><span class="live"><a href="#code1">编码理论预习</a></span></div></section>
+  <section class="block"><div class="sec-head"><h2>图论与概率补练</h2></div><div class="days"><span class="live"><a href="#count2/p-count2-ordered-collision">有序计数与碰撞阈值</a></span><span class="live"><a href="#count2/p-count2-weighted-outcomes">非等概率样本</a></span><span class="live"><a href="#g3/p-g3-triangle-types">按实边数分类</a></span><span class="live"><a href="#g1/p-g1-deletion-cycle">删点与最长路</a></span></div></section>
   <section class="stack"><div class="sec-head"><h2>已上线的课</h2><span class="t">按日程顺序，每课约 30 分钟</span></div><div class="lesson-cards">${tl}</div></section>
   <section class="block">
     <div class="sec-head"><h2>往年期末考点地图</h2><span class="t">${esc(EXAM_AUDIT_META.frequencyLabel)}</span></div>

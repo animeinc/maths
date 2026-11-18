@@ -3571,6 +3571,16 @@ SCHEDULE[0][1].splice(3,0,["按需预习","线性空间同构","sp4"]);
 SCHEDULE[1][1].splice(3,0,["作业补练","矩阵习题与样题结构","ma2"]);
 SCHEDULE[2][1].splice(2,0,["回补第4讲","Cramer 法则及自编练习","sy3"]);
 
+LESSONS.sp1.variants.push(
+  {"id": "sp1-odd-operations", "lv": "变种", "src": "自编练习 · 运算检验", "stmt": "<p>在 $\\mathbb R$ 上令 $u\\oplus v=\\sqrt[3]{u^3+v^3}$，$\\lambda\\odot u=\\sqrt[3]{\\lambda}\\,u$。用 $T(u)=u^3$ 证明这是一维实线性空间，并写出零向量及 $2$ 在有序基 $(1)$ 中的坐标。若保留 $\\oplus$ 却改用普通数乘，给一个失败的公理和反例。</p>", "hints": ["$T$ 是双射。分别把 $\\oplus$ 和 $\\odot$ 送入 $T$ 看会变成什么。", "用 $\\lambda\\odot1=2$ 求坐标。零向量应映到普通的 $0$。", "改用普通数乘后，比较 $(1+1)\\cdot1$ 与 $1\\oplus1$。"], "method": "m-topic-space", "sol": "<p>$T$ 是双射，且 $T(u\\oplus v)=T(u)+T(v)$、$T(\\lambda\\odot u)=\\lambda T(u)$。因此通常实数空间的线性空间公理经双射成立，维数为 $1$。零向量是 $0$；$\\lambda\\odot1=2$ 当且仅当 $\\lambda=8$，所以坐标是 $(8)$。</p><p>若改用普通数乘，$(1+1)\\cdot1=2$，而 $1\\cdot1\\oplus1\\cdot1=\\sqrt[3]2$。标量加法的分配律失败。</p>"}
+);
+LESSONS.sp2.variants.push(
+  {"id": "sp2-two-bases", "lv": "变种", "src": "自编练习 · 两个非标准有序基", "stmt": "<p>令 $\\mathcal B=((1,2)^T,(0,1)^T)$、$\\mathcal C=((2,1)^T,(1,1)^T)$。求 $P$ 使 $\\mathcal C=\\mathcal B P$。同一向量满足 $[v]_{\\mathcal B}=(3,-4)^T$，求 $[v]_{\\mathcal C}$，并在普通坐标中代回。</p>", "hints": ["先让 $\\mathcal B$ 的矩阵作用到未知列上，分别等于两支 $\\mathcal C$ 基向量。", "两列依次为 $(2,-3)^T,(1,-1)^T$。用方程 $P[v]_{\\mathcal C}=[v]_{\\mathcal B}$。", "设新坐标为 $(s,t)^T$，解 $2s+t=3,-3s-t=-4$，再核对两套线性组合。"], "method": "m-topic-coordinate", "sol": "<p>在旧基中，$(x,y)^T=x(1,2)^T+(y-2x)(0,1)^T$。依次代入新基向量得到 $$P=\\begin{pmatrix}2&1\\\\-3&-1\\end{pmatrix}.$$由 $P[v]_{\\mathcal C}=(3,-4)^T$ 解得 $[v]_{\\mathcal C}=(1,1)^T$。</p><p>旧基还原为 $3(1,2)^T-4(0,1)^T=(3,2)^T$；新基还原为 $(2,1)^T+(1,1)^T=(3,2)^T$。$P$ 把新坐标列换成旧坐标列。</p>"}
+);
+LESSONS.sp3.variants.push(
+  {"id": "sp3-polynomial-intersection", "lv": "变种", "src": "自编练习 · 子空间的和与交（预习）", "stmt": "<p>在 $\\mathcal P_2(\\mathbb R)$ 中，设 $U=\\{p:p(0)=0\\}$、$W=\\{p:p(2)=0\\}$。求 $U\\cap W$ 与 $U+W$ 的基，并给出两个不同的分解 $p=u+w$ 来表示常数多项式 $1$。</p>", "hints": ["交中的多项式同时在 $0$、$2$ 处为零。", "$t$ 与 $t^2$ 属于 $U$，$t-2$ 属于 $W$。用前两者和后者凑出常数项。", "先取 $1=\\tfrac12t+(1-\\tfrac12t)$。再在第一项加一个非零交集元素、在第二项减去它。"], "method": "m-sp3", "sol": "<p>两条消失条件等价于 $p$ 被 $t(t-2)$ 整除，故交的基为 $\\{t(t-2)\\}$。$U+W$ 包含 $t,t^2$，并包含 $t-(t-2)=2$，故其基可取 $\\{1,t,t^2\\}$。</p><p>记 $r=t(t-2)$。两种分解分别是 $1=\\tfrac12t+(1-\\tfrac12t)$ 与 $1=(\\tfrac12t+r)+(1-\\tfrac12t-r)$。每式前项在 $0$ 处为零，后项在 $2$ 处为零。$r\\ne0$，因此分解不唯一。</p>"}
+);
+
 /* ================= 状态与存储 ================= */
 const IN_CLAUDE = false;
 const LS_KEY = "la1-progress-v1";
@@ -3713,6 +3723,7 @@ function viewHome() {
  const cards=LIVE.map(lid=>{const L=LESSONS[lid];return `<a href="#${lid}"><span class="n">${esc(unitOf(lid).title)} · 第${L.n}课</span><b>${L.title}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`;}).join('');
  return `<section class="stack"><span class="eyebrow">2026秋 · 线性代数10421324-3 · 鲁自群</span><h1>从新课开始，六周连成一条线</h1><p class="lede">先跟当前“线性空间”，再回补消元、秩与矩阵基础，把几何、特征值和二次型连起来。21节教学课与3套自编模拟已备好；普通课每天约30分钟，延伸选做，模拟每套120分钟，可分4次30分钟暂停练习。</p><p>教材主线：《线性代数与几何（上）》第2版。后续预习依据本课已提供的章总结与教学日历，不能据此认定课堂已讲完或期末一定考。<b>QR为常规内容；投影、最小二乘为带星号补充。</b></p><div class="row"><a class="btn primary" href="#sp1">先做新课：线性空间 →</a><a class="btn" href="#sy1">从消元基础回补 →</a><a class="btn" href="#exams">查本课题与往年选题</a></div><p class="small muted"><a href="../">高微复习</a> · <a href="../discrete/">离散复习</a> · 本页作答单独保存，可导出进度与同步码。</p></section>
  <section class="block"><div class="sec-head"><h2>跟课堂：线性空间与基</h2></div><p>先练矩阵空间、基与坐标，再回补 Cramer 法则。线性空间同构列为预习。</p><div class="days"><span class="live"><a href="#sp1/p-sp1-ops">矩阵空间与自定义运算</a></span><span class="live"><a href="#sp2">基与坐标</a></span><span class="live"><a href="#sp2/p-sp2-basis">自然基与过渡矩阵</a></span><span class="live"><a href="#sp2/p-sp2-shift">平移多项式基</a></span><span class="live"><a href="#sp2/p-sp2-matrix">矩阵基坐标</a></span><span class="live"><a href="#sy3">Cramer 法则</a></span><span class="live"><a href="#sp4">第19讲同构预习</a></span></div></section>
+  <section class="block"><div class="sec-head"><h2>线性空间补练</h2></div><div class="days"><span class="live"><a href="#sp1/p-sp1-odd-operations">自定义运算与坐标</a></span><span class="live"><a href="#sp2/p-sp2-two-bases">两个非标准基之间换基</a></span><span class="live"><a href="#sp3/p-sp3-polynomial-intersection">子空间的和与交（预习）</a></span></div></section>
   <section class="stack"><div class="sec-head"><h2>全部课程</h2><span class="t">优先新课，薄弱处可直接跳转</span></div><div class="lesson-cards">${cards}</div></section>
  <section class="block prose"><h2>资料口径</h2><p>课程文件共34份：电子教案17份按你的要求不下载；已归档7份章总结、6份习题课、4份官方期中样题，另有教学日历。页面讲解以这些可用材料为主，公开站点只放页面，不上传原讲义、试卷或私人文件。</p><p>往年卷是相关班型的参考选题，不冒称鲁自群本班原卷。已保留跨班与样题性质；2025年12月样题在云盘“2024期末”目录有相同副本，已按字节去重，未误计成正式2024卷。本轮不计算年度考点频率，也未扩入日历未列的SVD或Jordan。</p><p><a href="#exams">查看每个已选题的出处与课程ID →</a></p></section>
  <section class="block"><div class="sec-head"><h2>六周日程</h2><span class="t">新课堂资料到达时优先调整</span></div>${weeks}</section>
