@@ -3551,18 +3551,56 @@ const LESSONS = {
 /* ================= 状态与存储 ================= */
 const IN_CLAUDE = false;
 const LS_KEY = "la1-progress-v1";
-let state = {};
-try { state = JSON.parse(localStorage.getItem(LS_KEY) || "{}") || {}; } catch (e) { state = {}; }
+const RECORD_PREFIX = LS_KEY + ":";
 let db = null;
-const chains = {};
+const chains = Object.create(null);
+const state = Object.create(null);
+function readProgress(key) {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+  } catch (e) { return null; }
+}
+function progressTime(record) {
+  const time = Number(record?.updatedAt);
+  return Number.isFinite(time) ? time : 0;
+}
+function adoptProgress(id, record, preferStored = false) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return;
+  const old = state[id];
+  const time = progressTime(record);
+  if (!old || time > progressTime(old) || (preferStored && time === progressTime(old))) state[id] = record;
+}
+function readLocalRecord(id) {
+  if (!IN_CLAUDE) adoptProgress(id, readProgress(RECORD_PREFIX + id), true);
+}
+function readLocalProgress() {
+  for (const [id, record] of Object.entries(readProgress(LS_KEY) || {})) adoptProgress(id, record);
+  if (IN_CLAUDE) return;
+  // 原进度键作为兼容来源。每次只写自己的题，旧标签页不会盖掉其他题。
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith(RECORD_PREFIX)) readLocalRecord(key.slice(RECORD_PREFIX.length));
+    }
+  } catch (e) {}
+}
+readLocalProgress();
 function cacheLocal() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+function putRecord(id, record) {
+  state[id] = record;
+  if (!IN_CLAUDE) {
+    try { localStorage.setItem(RECORD_PREFIX + id, JSON.stringify(record)); } catch (e) {}
+  }
+  if (db) {
+    chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(record)).catch(() => {});
+  }
+}
 function save(id, patch) {
-  state[id] = Object.assign({}, state[id] || {}, patch, { updatedAt: Date.now() });
-  cacheLocal();
-  refreshNavProgress();
-  if (!db) return;
-  const body = JSON.parse(JSON.stringify(state[id]));
-  chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {});
+  readLocalRecord(id);
+  const old = state[id];
+  putRecord(id, { ...old, ...patch, updatedAt: Math.max(Date.now(), progressTime(old) + 1) });
+  if (IN_CLAUDE) cacheLocal();
+  if (!Object.hasOwn(patch, "answer")) refreshNavProgress();
 }
 function setSync(on, text) {
   const el = document.getElementById("sync");
@@ -3586,11 +3624,16 @@ function fixWide(root) {
 document.addEventListener("toggle", e => { if (e.target.open) fixWide(e.target); }, true);
 let wideTimer;
 window.addEventListener("resize", () => { clearTimeout(wideTimer); wideTimer = setTimeout(() => fixWide(document.getElementById("view")), 200); });
-function typeset(el) {
+function typeset(el, after) {
+  if (!el.isConnected) return;
   if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise([el]).then(() => fixWide(el)).catch(() => {});
+    MathJax.typesetPromise([el]).then(() => {
+      if (!el.isConnected) return;
+      fixWide(el);
+      if (after) after();
+    }).catch(() => {});
   } else {
-    setTimeout(() => typeset(el), 300);
+    setTimeout(() => typeset(el, after), 300);
   }
 }
 function textOf(html) { const d = document.createElement("div"); d.innerHTML = html; return d.textContent.replace(/\s+\n/g, "\n").trim(); }
@@ -3638,6 +3681,7 @@ function markNav(v) {
   if (cur && nav.scrollWidth > nav.clientWidth + 4) nav.scrollTo({ left: cur.offsetLeft - nav.clientWidth / 2 + cur.offsetWidth / 2, behavior: "smooth" });
 }
 const LIVE = UNITS.filter(u => !u.soon).flatMap(u => u.lessons);
+const STUDY_ORDER = [...new Set(SCHEDULE.flatMap(([, days]) => days.map(([, , id]) => id)).filter(id => Object.hasOwn(LESSONS, id)))];
 function unitOf(lid) { return UNITS.find(u => u.lessons.includes(lid)); }
 
 /* ================= 首页 ================= */
@@ -3666,7 +3710,7 @@ function viewSheet() {
   <section class="stack">${cards.join("")}</section>`;
 }
 function methodCard(m, L) {
-  return `<div class="method"><h4>${m.title}${L ? `<span class="small muted" style="font-family:var(--f-body);font-weight:400"> · 第 ${L.n} 课</span>` : ""}</h4><ol>${m.steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`;
+  return `<div class="method" id="${m.id}"><h4>${m.title}${L ? `<span class="small muted" style="font-family:var(--f-body);font-weight:400"> · 第 ${L.n} 课</span>` : ""}</h4><ol>${m.steps.map(s => `<li>${s}</li>`).join("")}</ol></div>`;
 }
 
 /* ================= 导出 ================= */
@@ -3689,22 +3733,24 @@ function buildMarkdown() {
 const META_KEY = "la1-meta-v1";
 function getMeta() { try { return JSON.parse(localStorage.getItem(META_KEY) || "{}") || {}; } catch (e) { return {}; } }
 function setMeta(p) { try { localStorage.setItem(META_KEY, JSON.stringify(Object.assign(getMeta(), p))); } catch (e) {} }
-function snapshot() { return { app: "la1", v: 1, exportedAt: Date.now(), state }; }
-function putRecord(id, rec) {
-  state[id] = JSON.parse(JSON.stringify(rec));
-  if (db) { const body = state[id]; chains[id] = (chains[id] || Promise.resolve()).then(() => db.doc("progress/" + id).set(body)).catch(() => {}); }
+function snapshot() {
+  if (!IN_CLAUDE) readLocalProgress();
+  return { app: "la1", v: 1, exportedAt: Date.now(), state };
 }
 function mergeIn(obj) {
-  if (!obj || obj.app !== "la1" || typeof obj.state !== "object") throw new Error("不是这个页面导出的进度");
+  if (!obj || obj.app !== "la1" || !obj.state || typeof obj.state !== "object" || Array.isArray(obj.state)) throw new Error("不是这个页面导出的进度");
+  if (!IN_CLAUDE) readLocalProgress();
   let added = 0, updated = 0, kept = 0;
   for (const [id, inc] of Object.entries(obj.state)) {
-    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !inc || typeof inc !== "object") continue;
+    if (!/^[A-Za-z0-9_-]{1,80}$/.test(id) || !inc || typeof inc !== "object" || Array.isArray(inc)) continue;
+    readLocalRecord(id);
     const cur = state[id];
     if (!cur) { putRecord(id, inc); added++; }
-    else if ((inc.updatedAt || 0) > (cur.updatedAt || 0)) { putRecord(id, inc); updated++; }
+    else if (progressTime(inc) > progressTime(cur)) { putRecord(id, inc); updated++; }
     else kept++;
   }
-  cacheLocal(); refreshNavProgress();
+  if (IN_CLAUDE) cacheLocal();
+  refreshNavProgress();
   return { added, updated, kept };
 }
 function b64FromBytes(u8) { let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
@@ -3817,7 +3863,7 @@ function viewLesson(lid) {
   const vars = L.variants.length ? `<details class="opt-zone" open><summary>变种题（${L.variants.length}）：换个外形，同一个套路</summary><div class="stack">${L.variants.map(probHTML).join("")}</div></details>` : "";
   const exts = L.extensions.length ? `<details class="opt-zone"><summary>延伸题（${L.extensions.length}，选做）：防超纲</summary><div class="stack">${L.extensions.map(probHTML).join("")}</div></details>` : "";
   const fin = (state["lesson-" + lid] || {}).done;
-  const next = LIVE[LIVE.indexOf(lid) + 1];
+  const next = STUDY_ORDER[STUDY_ORDER.indexOf(lid) + 1];
   return `
   <section class="stack"><span class="eyebrow">${esc(unitOf(lid).title)} · 第 ${L.n} 课 · 约 ${L.duration || 30} 分钟</span><h1>${L.title}</h1><p class="lede">${L.goal}</p></section>
   <section class="block"><div class="sec-head"><h2>${L.kind === "mock" ? "考前说明" : "讲解"}</h2><span class="t">${L.kind === "mock" ? "阅读规则后开始" : "约 8 分钟"}</span></div>${secs}</section>
@@ -3830,25 +3876,44 @@ function viewLesson(lid) {
 /* ================= 交互 ================= */
 let currentView = null;
 function render() {
-  const v = (location.hash || "#home").slice(1);
+  const [v, anchor] = (location.hash || "#home").slice(1).split("/", 2);
+  const isLesson = Object.hasOwn(LESSONS, v);
+  if (!IN_CLAUDE) readLocalProgress();
   const view = $("#view");
   let html;
-  if (LESSONS[v]) html = viewLesson(v);
+  if (isLesson) html = viewLesson(v);
   else if (v === "exams") html = viewExamAudit();
   else if (v === "sheet") html = viewSheet();
   else if (v === "export") html = viewExport();
   else html = viewHome();
-  currentView = LESSONS[v] ? v : (["exams", "sheet", "export"].includes(v) ? v : "home");
+  currentView = isLesson ? v : (["exams", "sheet", "export"].includes(v) ? v : "home");
   view.innerHTML = html;
   markNav(currentView);
   refreshNavProgress();
-  if (LESSONS[v] && LESSONS[v].widget) {
+  if (isLesson && LESSONS[v].widget) {
     const w = $("#widget");
     if (w) ({ vectorSpanLab, eliminationLab, determinantLab, projectionLab, spectralLab, quadraticLab, examClock })[LESSONS[v].widget](w);
   }
   view.querySelectorAll("[data-pv]").forEach(pv => updatePreview(pv.dataset.pv, true));
-  typeset(view);
-  window.scrollTo(0, 0);
+  const target = anchor && isLesson ? document.getElementById(anchor) : null;
+  if (!target || !view.contains(target)) {
+    typeset(view);
+    window.scrollTo(0, 0);
+    return;
+  }
+  for (let parent = target.parentElement; parent !== view; parent = parent.parentElement) {
+    if (parent.tagName === "DETAILS") parent.open = true;
+  }
+  function scrollToTarget() {
+    if (!target.isConnected) return;
+    const rail = $(".rail");
+    const header = window.matchMedia("(max-width: 860px)").matches ? rail.getBoundingClientRect().bottom : 0;
+    window.scrollTo(0, window.scrollY + target.getBoundingClientRect().top - Math.max(0, header) - 12);
+  }
+  target.tabIndex = -1;
+  target.focus({ preventScroll: true });
+  scrollToTarget();
+  typeset(view, scrollToTarget);
 }
 window.addEventListener("hashchange", render);
 
@@ -3862,6 +3927,15 @@ function syncVisible() {
     if (st && document.activeElement !== st) st.value = r.status || "";
   }
 }
+
+if (!IN_CLAUDE) window.addEventListener("storage", e => {
+  if (e.storageArea !== localStorage) return;
+  if (e.key === LS_KEY) readLocalProgress();
+  else if (e.key?.startsWith(RECORD_PREFIX)) readLocalRecord(e.key.slice(RECORD_PREFIX.length));
+  else return;
+  refreshNavProgress();
+  syncVisible();
+});
 
 const pvTimers = {};
 function updatePreview(id, now) {
@@ -3879,12 +3953,19 @@ document.addEventListener("input", e => {
   const id = e.target.dataset && e.target.dataset.ans;
   if (!id) return;
   updatePreview(id);
+  if (!IN_CLAUDE) { save(id, { answer: e.target.value }); return; }
   clearTimeout(saveTimers[id]);
   saveTimers[id] = setTimeout(() => save(id, { answer: e.target.value }), 1200);
 });
 document.addEventListener("focusout", e => {
   const id = e.target.dataset && e.target.dataset.ans;
   if (!id) return;
+  if (!IN_CLAUDE) {
+    readLocalRecord(id);
+    const latest = (state[id] || {}).answer || "";
+    if (e.target.value !== latest) { e.target.value = latest; updatePreview(id); }
+    return;
+  }
   clearTimeout(saveTimers[id]);
   if ((state[id] || {}).answer !== e.target.value) save(id, { answer: e.target.value });
 });
@@ -3914,14 +3995,14 @@ document.addEventListener("click", async e => {
   if (d.goto) { e.preventDefault(); const s = document.getElementById(d.goto); if (s) s.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
   if (d.c != null && d.i != null) {
     const c = findConcept(d.c);
-    if ((state[c.id] || {}).picked != null) return;
-    save(c.id, { picked: Number(d.i), correct: Number(d.i) === c.a });
+    readLocalRecord(c.id);
+    if ((state[c.id] || {}).picked == null) save(c.id, { picked: Number(d.i), correct: Number(d.i) === c.a });
     const box = document.getElementById("q-" + c.id);
     box.outerHTML = conceptHTML(c);
     typeset(document.getElementById("q-" + c.id));
     return;
   }
-  if (d.hint) { const p = findProb(d.hint); const n = Math.min(p.hints.length, ((state[p.id] || {}).hints || 0) + 1); save(p.id, { hints: n }); rerenderProb(p.id); return; }
+  if (d.hint) { const p = findProb(d.hint); readLocalRecord(p.id); const n = Math.min(p.hints.length, ((state[p.id] || {}).hints || 0) + 1); save(p.id, { hints: n }); rerenderProb(p.id); return; }
   if (d.meth) { save(d.meth, { sawMethod: true }); rerenderProb(d.meth); return; }
   if (d.sol) {
     if (!solArm[d.sol]) { solArm[d.sol] = true; t.textContent = "确定先看解答？再点一次"; setTimeout(() => { solArm[d.sol] = false; if (document.body.contains(t)) t.textContent = "看解答"; }, 4000); return; }
@@ -3930,6 +4011,7 @@ document.addEventListener("click", async e => {
   if (d.grade) return;
   if (t.id === "finish") {
     const lid = currentView;
+    readLocalRecord("lesson-" + lid);
     const fin = !(state["lesson-" + lid] || {}).done;
     save("lesson-" + lid, { done: fin });
     t.textContent = fin ? "已完成本课 ✓（点击取消）" : "完成本课";
@@ -4034,10 +4116,11 @@ function quadraticLab(mount){
 function examClock(mount){
  const id='clock-'+currentView,total=7200;
  mount.innerHTML=`<div class="widget"><p class="small muted">本地计时，不会自动交卷；离开页面后仍按实际经过时间计算，暂停可停止累计。</p><div class="readout" id="exam-time" aria-live="off"></div><div class="row"><button class="btn primary" id="exam-toggle" type="button">开始计时</button><button class="btn" id="exam-reset" type="button">重置为120分钟</button></div></div>`;
- let clock={elapsed:0,startedAt:0,running:false,...(state[id]||{})};
+ const storedClock=()=>({elapsed:0,startedAt:0,running:false,...state[id]});
+ let clock=storedClock();
  const used=()=>Math.min(total,Math.max(0,clock.elapsed+(clock.running?(Date.now()-clock.startedAt)/1000:0)));
- function draw(){if(!mount.isConnected)return;const remain=Math.max(0,Math.ceil(total-used())),m=Math.floor(remain/60),s=remain%60;mount.querySelector('#exam-time').textContent=remain?`剩余 ${m}:${String(s).padStart(2,'0')} / 120:00`:'时间到。请先停止作答，再打开解答评分。';mount.querySelector('#exam-toggle').textContent=clock.running?'暂停计时':used()?'继续计时':'开始计时';}
- mount.querySelector('#exam-toggle').addEventListener('click',()=>{if(clock.running)clock={...clock,elapsed:used(),running:false,startedAt:0};else clock={...clock,running:true,startedAt:Date.now()};save(id,clock);draw();});
+ function draw(){if(!mount.isConnected)return;clock=storedClock();const remain=Math.max(0,Math.ceil(total-used())),m=Math.floor(remain/60),s=remain%60;mount.querySelector('#exam-time').textContent=remain?`剩余 ${m}:${String(s).padStart(2,'0')} / 120:00`:'时间到。请先停止作答，再打开解答评分。';mount.querySelector('#exam-toggle').textContent=clock.running?'暂停计时':used()?'继续计时':'开始计时';}
+ mount.querySelector('#exam-toggle').addEventListener('click',()=>{readLocalRecord(id);clock=storedClock();if(clock.running)clock={...clock,elapsed:used(),running:false,startedAt:0};else clock={...clock,running:true,startedAt:Date.now()};save(id,clock);draw();});
  mount.querySelector('#exam-reset').addEventListener('click',()=>{clock={elapsed:0,startedAt:0,running:false};save(id,clock);draw();});
  function tick(){if(!mount.isConnected)return;draw();setTimeout(tick,1000);}draw();setTimeout(tick,1000);
 }
@@ -4053,7 +4136,11 @@ function viewExamAudit() {
   for (const exam of EXAM_AUDIT) for (const q of exam.questions) { questions++; counts[q.level] = (counts[q.level] || 0) + 1; }
   const stats = Object.entries(levels).filter(([k]) => counts[k]).map(([k, label]) => label + " " + counts[k]).join(" · ");
   const papers = EXAM_AUDIT.map(exam => {
-    const links = q => (q.refs || []).map(ref => `<a href="#${esc(ref.lessonId)}">${esc(ref.problemId || ref.sectionId || ref.methodId || ref.lessonId)}</a>`).join("、");
+    const links = q => (q.refs || []).map(ref => {
+      const target = ref.problemId ? "p-" + ref.problemId : ref.sectionId || ref.methodId;
+      const route = ref.lessonId + (target ? "/" + target : "");
+      return `<a href="#${esc(route)}">${esc(ref.problemId || ref.sectionId || ref.methodId || ref.lessonId)}</a>`;
+    }).join("、");
     const rows = exam.questions.map(q => `<tr><th scope="row">${esc(q.id)}${q.page ? `<div class="small muted">${esc(q.page)}</div>` : ""}</th><td><p>${esc(q.summary)}</p><p class="small muted">${esc(q.topics.join("、"))}</p>${q.risk ? `<p class="callout warn">题面或参考解风险：${esc(q.risk)}</p>` : ""}</td><td><b>${levels[q.level] || esc(q.level)}</b><p>${links(q) || "暂无可靠定位"}</p>${q.note ? `<p class="small muted">${esc(q.note)}</p>` : ""}</td></tr>`).join("");
     return `<details class="block exam-audit"><summary><b>${esc(exam.label)}</b> · ${exam.questions.length} 条核对记录</summary><div class="prose"><p>${esc(exam.sourceNote)}</p><p class="small muted">${exam.inFrequency ? "计入考点地图；同卷多份文件只计一次。" : "仅核本轮所选训练题；未计算年度频率。"}</p><div class="table-wrap"><table><thead><tr><th>题号 / 页码</th><th>题意与考点摘要</th><th>当前页面覆盖与去向</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
   }).join("");
