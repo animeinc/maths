@@ -1713,14 +1713,14 @@ const LESSONS = {
         "id": "lamock1-p6",
         "lv": "自编模拟",
         "src": "自编模拟1·非官方预测",
-        "stmt": "<p>A、B均n阶且AB=0。证明r(A)+r(B)≤n；再证明A²=0时n为奇数不可能r(A)=n/2。</p>",
+        "stmt": "<p>设 $A,B$ 均为 $n$ 阶矩阵且 $AB=0$。(1) 证明 $r(A)+r(B)\\le n$；(2) 若 $A^2=0$ 且 $n$ 为奇数，证明 $r(A)\\le\\frac{n-1}2$，并对 $n=2k+1$ 举例说明这个上界可以取到。</p>",
         "hints": [
           "把 $AB=0$ 翻译成：$B$ 的每一列（像中的向量）被 $A$ 变成 0，即 $\\operatorname{Im}B\\subseteq\\ker A$。",
           "取维数：$r(B)\\le\\dim\\ker A=n-r(A)$。",
-          "第二问令 $B=A$：$2r(A)\\le n$。$r(A)$ 是整数，$n$ 为奇数时 $\\frac n2$ 不是整数。"
+          "第二问令 $B=A$：$2r(A)\\le n$，即 $r(A)\\le\\frac n2$。$r(A)$ 是整数，$n$ 为奇数时比 $\\frac n2$ 小的最大整数是 $\\frac{n-1}2$。取等例子：让 $A$ 把后 $k$ 个坐标“搬”到前 $k$ 个位置，搬两次就没了。"
         ],
         "method": "m-lamock1",
-        "sol": "<p><b>(1)</b></p><ol><li>任取 $v\\in\\operatorname{Im}B$，$v=Bx$，则 $Av=ABx=0$，所以 $\\operatorname{Im}B\\subseteq\\ker A$。</li><li>取维数：$r(B)=\\dim\\operatorname{Im}B\\le\\dim\\ker A=n-r(A)$（秩–零度公式）。</li><li>所以 $r(A)+r(B)\\le n$。</li></ol><p><b>(2)</b> $A^2=0$ 即 $A\\cdot A=0$，在 (1) 中取 $B=A$，得 $2r(A)\\le n$。$n$ 为奇数时，$\\frac n2$ 不是整数，而秩一定是整数，所以 $r(A)\\ne\\frac n2$；更精确地 $r(A)\\le\\frac{n-1}2$。</p><p><b>例：</b>$n=3$，$A=E_{13}$（只有 $(1,3)$ 元为 1），$A^2=0$，$r(A)=1=\\frac{3-1}2$。</p><p><b>评分（15 分）：</b>逐向量说明 $\\operatorname{Im}B\\subseteq\\ker A$ 5 分；维数依据 6 分；奇数情形 4 分。</p>",
+        "sol": "<p><b>(1)</b></p><ol><li>任取 $v\\in\\operatorname{Im}B$，$v=Bx$，则 $Av=ABx=0$，所以 $\\operatorname{Im}B\\subseteq\\ker A$。</li><li>取维数：$r(B)=\\dim\\operatorname{Im}B\\le\\dim\\ker A=n-r(A)$（秩–零度公式）。</li><li>所以 $r(A)+r(B)\\le n$。</li></ol><p><b>(2) 上界：</b>$A^2=0$ 即 $A\\cdot A=0$，在 (1) 中取 $B=A$，得 $r(A)+r(A)\\le n$，即 $r(A)\\le\\frac n2$。秩是整数，$n$ 为奇数时 $\\frac n2$ 不是整数，不超过它的最大整数是 $\\frac{n-1}2$，所以 <b>$r(A)\\le\\frac{n-1}2$</b>。</p><p><b>(2) 取到上界的例子：</b>设 $n=2k+1$，令 $$A=E_{1,k+1}+E_{2,k+2}+\\cdots+E_{k,2k},$$ 其中 $E_{ij}$ 表示只有 $(i,j)$ 元为 1、其余为 0 的矩阵。</p><ol><li>秩：$A$ 的第 $k+1,\\ldots,2k$ 列分别是 $e_1,\\ldots,e_k$，其余列为 0，所以 $r(A)=k=\\frac{n-1}2$。</li><li>$A^2=0$：$E_{i,k+i}E_{j,k+j}$ 只有当 $k+i=j$ 时才非零；但 $j\\le k\\lt k+i$，所以每一项乘积都是 0，$A^2=0$。</li><li>直观：$A$ 把第 $k+1,\\ldots,2k$ 个坐标搬到第 $1,\\ldots,k$ 个位置；再作用一次，前 $k$ 个位置的东西没有地方可搬，变成 0。</li></ol><p><b>小例子：</b>$n=3$（$k=1$），$A=E_{12}=\\begin{pmatrix}0&1&0\\\\0&0&0\\\\0&0&0\\end{pmatrix}$，$A^2=0$，$r(A)=1=\\frac{3-1}2$。</p><p><b>评分（15 分）：</b>逐向量说明 $\\operatorname{Im}B\\subseteq\\ker A$ 4 分；维数依据得 (1) 5 分；(2) 上界 3 分；取等例子并验证 $A^2=0$、秩为 $k$ 3 分。</p>",
         "points": 15
       }
     ],
