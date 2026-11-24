@@ -4564,6 +4564,181 @@ LESSONS.c1.variants.push(...[
   }
 ]);
 
+LESSONS.ip2.sections.push(...[
+  {
+    "id": "ip2-s5",
+    "h": "同次分式与奇次幂：先把可化简的部分分出来",
+    "html": "<p>遇到同次有理式，先用最高次项比出商，再把“分子减去商乘分母”作为余式。例：$(x^4+6x^2+7)/(x^4+5x^2+6)$ 的商是 $1$，余式是 $x^2+1$。分母为 $(x^2+2)(x^2+3)$。余式和分母都是偶函数，拆成两个常数分子即可：\n$$\\frac{x^2+1}{(x^2+2)(x^2+3)}=\\frac{-1}{x^2+2}+\\frac2{x^2+3}.$$\n用 $y=x^2$ 可以帮助分解分母；进入积分时仍是 $dx$。若真把 $x$ 换成 $y$，还要变换微分。</p>\n<p>遇到奇次幂 $x^{2k+1}dx$ 和一个只含 $x^2$ 的根式，先拆成 $(x^2)^k(x\\,dx)$。例如 $u=9-x^2$ 时，$x^3dx=(9-u)(-du/2)$。根号、幂和微分都改写完，才对 $u$ 积分。</p>\n<p>遇到 $g'(x)/g(x)$，原函数是 $\\ln|g(x)|$。先找 $g\\ne0$ 的区间，每个区间可有自己的积分常数。例如 $\\int dx/(x-3)=\\ln|x-3|+C$，在 $x\\lt3$ 时也成立。</p>"
+  },
+  {
+    "id": "ip2-s6",
+    "h": "二次根式：配方、拆分子与求导验算",
+    "html": "<p>设 $t=x-b$，把根式化成 $R=\\sqrt{t^2+a^2}$（$a\\gt0$）。若分子是 $At+B$，拆成 $A(t/R)+B(1/R)$。第一项用 $R'=t/R$ 直接积。若同一个根号还在别处出现，并且能凑出 $t\\,dt$，也可直接设 $u=R$，用 $t\\,dt=u\\,du$。</p>\n<p>第二项的原函数可用 $\\ln|t+R|$。验算时先写出内层导数，分子通分后会出现与分母相同的因子：\n$$\\frac{d}{dt}\\ln|t+R|=\\frac{1+t/R}{t+R}=\\frac{(R+t)/R}{t+R}=\\frac1R.$$\n这里 $R\\gt|t|$，所以对数内 $t+R$ 始终为正。例：$\\int(t+2)/R\\,dt=R+2\\ln(t+R)+C$。</p>"
+  }
+]);
+
+LESSONS.ip2.methods.push(...[
+  {
+    "id": "m-ip2-complete-substitution",
+    "title": "计算到底：选好变量后逐项替换",
+    "steps": [
+      "先看式子能否整理为 $(x^2)^k(x\\,dx)$。用新变量同时写出根式、剩余的 $x^2$ 和微分。",
+      "二次根式有一次项时先配方。分子按根式导数所需的部分和剩下的常数拆开。",
+      "有 $x\\,dx$ 且根号反复出现时，可试设整个根号为 $u$，用 $u\\,du=x\\,dx$。",
+      "积分完成后代回原变量并求导。用到对数时先检查对数内的符号和原式定义区间。"
+    ]
+  }
+]);
+
+LESSONS.ip2.concepts.push(...[
+  {
+    "id": "ip2-c-long-division",
+    "sec": "ip2-s5",
+    "q": "计算 $\\int (x^4+7x^2+5)/(x^4+5x^2+4)\\,dx$，哪一步最合适？",
+    "opts": [
+      "先除，商为 $1$，余式为 $2x^2+1$",
+      "先除，商为 $0$",
+      "直接令 $u=x^2$ 并取 $du=dx$",
+      "只积分两个最高次项"
+    ],
+    "a": 0,
+    "ex": "同次时最高次系数之比是 $1$。原分子减去 $1$ 倍分母得到 $2x^2+1$，再拆真分式。容易误选 $u=x^2$，这里 $du=2x\\,dx$，不能替代 $dx$。"
+  }
+]);
+
+LESSONS.ip2.variants.push(...[
+  {
+    "id": "ip2-long-division",
+    "lv": "变种",
+    "src": "自编练习 · 先长除再拆两个二次因子",
+    "stmt": "<p>在 $\\mathbb R$ 上求 $\\int\\frac{x^4+8x^2+10}{x^4+5x^2+4}\\,dx$。写出商、余式和部分分式，并求导验算。</p>",
+    "hints": [
+      "分子和分母同次，先用分子减去一次分母。",
+      "余式是 $3x^2+6$；分母为 $(x^2+1)(x^2+4)$。两个常数分子通分后比较系数。",
+      "设分子为 $A,B$，解 $A+B=3,4A+B=6$。注意 $\\arctan(x/2)$ 的导数。"
+    ],
+    "method": "m-ip2-shapes",
+    "sol": "<p><b>先长除。</b>商是 $1$，余式是 $3x^2+6$。两个二次因子均无实根。对这道偶函数题，设余下的真分式为 $A/(x^2+1)+B/(x^2+4)$，用通分检验能否配出分子。</p>\n$$A(x^2+4)+B(x^2+1)=3x^2+6.$$\n<p>比较系数得 $A+B=3$、$4A+B=6$，解出 $A=1$、$B=2$。所以原函数为</p>\n$$F(x)=x+\\arctan x+\\arctan(x/2)+C.$$\n<p><b>求导验算。</b>$F'=1+1/(1+x^2)+2/(4+x^2)$。通分得到题给的分式，两个分母始终为正。</p>"
+  },
+  {
+    "id": "ip2-odd-power-root",
+    "lv": "变种",
+    "src": "自编练习 · 拆奇次幂并消去旧变量",
+    "stmt": "<p>在 $-2\\lt x\\lt2$ 上求 $\\int\\frac{x^5}{\\sqrt{4-x^2}}\\,dx$，用一个新变量写完积分再求导验算。</p>",
+    "hints": [
+      "把 $x^5dx$ 拆成 $(x^2)^2(x\\,dx)$。",
+      "用 $u=4-x^2$，于是 $x^2=4-u$，$x\\,dx=-du/2$。",
+      "把 $(4-u)^2u^{-1/2}$ 展开成 $16u^{-1/2}-8u^{1/2}+u^{3/2}$ 后逐项积。"
+    ],
+    "method": "m-ip2-complete-substitution",
+    "sol": "<p>令 $u=4-x^2$，题设保证 $u\\gt0$。把剩余的 $x^2$ 也换成 $4-u$，得</p>\n$$-\\tfrac12\\int(4-u)^2u^{-1/2}\\,du.$$\n<p>展开并按幂函数公式积分，得 $-16\\sqrt u+\\tfrac83u^{3/2}-\\tfrac15u^{5/2}+C$，其中 $u=4-x^2$。</p>\n<p><b>求导验算。</b>先对 $u$ 求导得 $-\\tfrac12(4-u)^2u^{-1/2}$，再乘 $u'=-2x$，得到 $x(x^2)^2/\\sqrt{4-x^2}$。</p>"
+  },
+  {
+    "id": "ip2-square-and-split",
+    "lv": "变种",
+    "src": "自编练习 · 配方并拆出根式导数",
+    "stmt": "<p>在 $\\mathbb R$ 上求 $\\int\\frac{2x+1}{\\sqrt{x^2+4x+8}}\\,dx$，并写出对数项的求导过程。</p>",
+    "hints": [
+      "设 $t=x+2$，把根式写成 $R=\\sqrt{t^2+4}$。",
+      "分子为 $2t-3$。先积 $2t/R$，剩下 $-3/R$。",
+      "用 $R'=t/R$，并把 $(1+R')/(t+R)$ 的分子通分。"
+    ],
+    "method": "m-ip2-complete-substitution",
+    "sol": "<p>设 $t=x+2$、$R=\\sqrt{t^2+4}$，有 $dt=dx$、$2x+1=2t-3$。把积分拆成 $2\\int(t/R)\\,dt-3\\int dt/R$。</p>\n<p>$R'=t/R$，第一项为 $2R$。又 $R\\gt|t|$，所以 $t+R\\gt0$，且</p>\n$$\\frac{d}{dt}\\ln(t+R)=\\frac{1+t/R}{t+R}=\\frac1R.$$\n<p>故答案为 $2R-3\\ln(x+2+R)+C$，其中 $R=\\sqrt{x^2+4x+8}$。求导得 $(2t-3)/R=(2x+1)/R$。</p>"
+  },
+  {
+    "id": "ip2-whole-radical",
+    "lv": "变种",
+    "src": "自编练习 · 把整个根号设为新变量",
+    "stmt": "<p>求 $\\int\\frac{x}{1+\\sqrt{x^2+4}}\\,dx$。直接把整个根号设为新变量并求导验算。</p>",
+    "hints": [
+      "令 $u=\\sqrt{x^2+4}$，对 $u^2=x^2+4$ 求微分。",
+      "$x\\,dx=u\\,du$，新积分为 $\\int u/(1+u)\\,du$。",
+      "写成 $u/(1+u)=1-1/(1+u)$，积分后代回。"
+    ],
+    "method": "m-ip2-complete-substitution",
+    "sol": "<p>令 $u=\\sqrt{x^2+4}$。由 $2u\\,du=2x\\,dx$，积分等于 $\\int u/(1+u)\\,du$。拆成 $1-1/(1+u)$ 后，得 $u-\\ln(1+u)+C$，这里 $u\\ge2$。</p>\n<p><b>求导验算。</b>把 $u=\\sqrt{x^2+4}$ 代回，使用链式法则得到</p>\n$$(1-1/(1+u))\\cdot x/u=x/(1+u).$$\n<p>这个验算在 $x=0$ 也成立，故结果适用整个实轴。</p>"
+  },
+  {
+    "id": "ip2-repeat-integral",
+    "lv": "变种",
+    "src": "自编练习 · 把重现的原积分移回左边",
+    "stmt": "<p>令 $R=\\sqrt{x^2+9}$。用分部积分求 $I=\\int R\\,dx$，并求导验算。</p>",
+    "hints": [
+      "取 $u=R$，$dv=dx$，所以 $du=x\\,dx/R$。",
+      "分部以后出现 $\\int x^2/R\\,dx$。代入 $x^2=R^2-9$。",
+      "得到 $I=xR-I+9\\int dx/R$。把 $-I$ 移到左边，再除以 $2$。"
+    ],
+    "method": "m-ip1",
+    "sol": "<p>取 $u=R$，$dv=dx$，则 $v=x$、$du=(x/R)dx$。分部并用 $x^2=R^2-9$，得到</p>\n$$I=xR-\\int \\frac{x^2}{R}\\,dx=xR-I+9\\int\\frac{dx}R.$$\n<p>等式按原函数相差常数理解。左边加上 $I$ 后变成 $2I$，所以</p>\n$$I=\\tfrac12xR+\\tfrac92\\ln(x+R)+C.$$\n<p><b>求导验算。</b>这里 $x+R\\gt0$，对数的导数是 $1/R$。两项的导数之和为 $\\tfrac12 R+\\tfrac{x^2+9}{2R}=R$。</p>"
+  }
+]);
+
+LESSONS.ip1.sections.push(...[
+  {
+    "id": "ip1-s4",
+    "h": "分段原函数：先接连续，再比较左右差商",
+    "html": "<p>原函数 $F$ 在接缝 $a$ 处必须可导，所以先配常数，使左右式在 $a$ 趋向同一个 $F(a)$。然后分别算 $[F(a+h)-F(a)]/h$ 的左右极限。两侧必须趋于同一个数，且这个数要等于题给的 $f(a)$。<b>拼连续只完成第一步。</b></p>\n<p>例：$f(x)=|x-1|$。以 $F(1)=0$ 为条件，左段 $F(x)=-(x-1)^2/2$，右段 $F(x)=(x-1)^2/2$。接缝处左右差商分别是 $-h/2$ 与 $h/2$，都趋于 $0=f(1)$，所以这两段确实拼成一个原函数。</p>\n<p>若左右差商极限不同，配好常数后仍无法可导。也可用导数的介值性排除跳跃，见 m1 的延伸题「导数介值定理」。</p>"
+  }
+]);
+
+LESSONS.ip1.methods.push(...[
+  {
+    "id": "m-ip1-join",
+    "title": "分段原函数：逐段积分，逐点接缝",
+    "steps": [
+      "先列分界点。绝对值去掉前，在每一段重新判断内部表达式的符号。",
+      "每段先积，常数先分开记。用题给初值和接缝连续逐个求常数。",
+      "每个接缝的左右差商都要收敛到题给的函数值。两侧不同就不存在跨过该点的原函数。"
+    ]
+  }
+]);
+
+LESSONS.ip1.concepts.push(...[
+  {
+    "id": "ip1-c-join",
+    "sec": "ip1-s4",
+    "q": "$F$ 的左右两段已拼连续，但接缝处左右差商分别趋于 $1$ 和 $3$。能否把 $F$ 作为整个区间的原函数？",
+    "opts": [
+      "能，只要连续",
+      "能，把接缝处导数写为 2",
+      "不能，接缝处不可导",
+      "能，再独立调左段常数"
+    ],
+    "a": 2,
+    "ex": "接缝处的导数由左右差商的共同极限给出，两侧不同则不存在。再单独改变左段常数还会破坏已经配好的连续性。"
+  }
+]);
+
+LESSONS.ip1.variants.push(...[
+  {
+    "id": "ip1-absolute-joins",
+    "lv": "变种",
+    "src": "自编练习 · 绝对值的两处接缝",
+    "stmt": "<p>求 $f(x)=|x^2-1|$ 在 $\\mathbb R$ 上满足 $F(0)=0$ 的原函数。写出分段式并验算 $x=\\pm1$ 处的导数。</p>",
+    "hints": [
+      "$x^2-1$ 在 $-1,1$ 处变号。试代 $-2,0,2$。",
+      "中段是 $F(x)=x-x^3/3$。它在 $-1,1$ 的值分别为 $-2/3,2/3$。",
+      "外段积成 $x^3/3-x+C_\\pm$。配好常数后求两侧差商；也可在每一侧用中值定理，把差商写成段内的 $f(\\xi)$。"
+    ],
+    "method": "m-ip1-join",
+    "sol": "<p>在 $-1\\lt x\\lt1$，$f=1-x^2$，由 $F(0)=0$ 得 $F=x-x^3/3$。在两侧外段，$f=x^2-1$，故 $F=x^3/3-x+C_\\pm$。</p>\n<p>中段在 $-1,1$ 的值分别为 $-2/3,2/3$。左段代入 $-1$ 得 $2/3+C_-$，右段代入 $1$ 得 $-2/3+C_+$。连续性要求 $C_-=-4/3$，$C_+=4/3$。于是</p>\n$$F(x)=\\begin{cases}\nx^3/3-x-4/3 & x\\lt-1,\\\\\nx-x^3/3 & -1\\le x\\le1,\\\\\nx^3/3-x+4/3 & x\\gt1.\n\\end{cases}$$\n<p><b>验算。</b>三段内部求导得到 $f$。在每个接缝 $a=\\pm1$，对 $a$ 与 $a+h$ 之间的那一段用中值定理，差商等于内点 $\\xi$ 处的 $f(\\xi)$。随 $h\\to0$，$\\xi\\to a$，左右都趋于 $0=f(a)$，故接缝也可导。</p>"
+  },
+  {
+    "id": "ip1-jump-no-primitive",
+    "lv": "变种",
+    "src": "自编练习 · 拼连续后仍不可导",
+    "stmt": "<p>令 $f(x)=1$（$x\\lt0$）、$f(0)=2$、$f(x)=3$（$x\\gt0$）。判断 $f$ 在 $(-1,1)$ 上是否有原函数，并用左右差商说明。</p>",
+    "hints": [
+      "若有原函数，先写出左右段的一般形式。",
+      "左右段分别为 $x+C_-$ 与 $3x+C_+$。由可导推出连续，两常数都应等于 $F(0)$。",
+      "把 $h\\lt0$ 和 $h\\gt0$ 分别代入 $[F(h)-F(0)]/h$，比两侧极限。"
+    ],
+    "method": "m-ip1-join",
+    "sol": "<p>假设有原函数 $F$。根据左右段的导数，分别有 $F(x)=x+C_-$ 与 $F(x)=3x+C_+$。由 $0$ 处可导得到连续，所以 $C_-=C_+=F(0)$。</p>\n<p>对 $h\\lt0$，差商是 $h/h=1$；对 $h\\gt0$，差商是 $3h/h=3$。两侧极限不同，$F'(0)$ 不存在，矛盾。因此 $f$ 在 $(-1,1)$ 上没有原函数。</p>"
+  }
+]);
+
 /* ================= 状态与存储 ================= */
 const IN_CLAUDE = !!(window.claude && window.claude.use);
 const LS_KEY = "gw1-progress-v1";
@@ -4728,6 +4903,7 @@ function viewHome() {
     <h1>六周，每天 30 分钟</h1>
     <p class="lede">这一页按往年期末题型安排复习顺序，不按讲义章节。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
   </section>
+  <section class="block"><div class="sec-head"><h2>Week 11｜不定积分补练</h2></div><div class="days"><span class="live"><a href="#ip2/p-ip2-long-division">同次分式先长除</a></span><span class="live"><a href="#ip2/p-ip2-odd-power-root">奇次幂换元</a></span><span class="live"><a href="#ip2/p-ip2-square-and-split">配方拆分子</a></span><span class="live"><a href="#ip2/p-ip2-whole-radical">直接设整个根号</a></span><span class="live"><a href="#ip2/p-ip2-repeat-integral">循环分部与移项</a></span><span class="live"><a href="#ip1/ip1-s4">分段原函数</a></span><span class="live"><a href="#m1/p-m1-e1">导数介值定理</a></span></div></section>
   <section class="block"><div class="sec-head"><h2>课堂 Week 11</h2></div><div class="days"><span class="live"><a href="#ip2">积分计算与 Taylor 积分余项</a></span><span class="live"><a href="#i4/i4-s4">习题课：变限积分</a></span><span class="live"><a href="#i6/i6-s4">带权积分中值</a></span><span class="live"><a href="#ir1/p-ir1-week11-error">黎曼和误差</a></span><span class="live"><a href="#c1/p-c1-week11-bounds">用凸性估积分</a></span><span class="live"><a href="#i1">定积分换元与分部复练</a></span><span class="live"><a href="#i2">分部积分递推复练</a></span></div></section>
   <section class="block"><div class="sec-head"><h2>课堂 Week 9–10</h2></div><p>按讲义顺序学。先学可积性、变上限与不定积分，再回炉作业。</p><div class="days"><span class="live"><a href="#ir1">黎曼积分与 Darboux 判据</a></span><span class="live"><a href="#i4">变上限积分</a></span><span class="live"><a href="#ip1">不定积分的换元与分部</a></span><span class="live"><a href="#ir2">积分作业同类练习</a></span></div></section>
   <section class="block"><div class="sec-head"><h2>变上限积分与 Taylor 补练</h2></div><div class="days"><span class="live"><a href="#i4/p-i4-integrate-order">积分升阶</a></span><span class="live"><a href="#i4/p-i4-moving-parts">双变限与自由变量</a></span><span class="live"><a href="#i4/p-i4-nl-proof">牛顿–莱布尼兹证明</a></span><span class="live"><a href="#t1/p-t1-oscillation">Peano 展开与二阶导</a></span><span class="live"><a href="#t2/p-t2-quotient-drill">商的延拓与二阶导</a></span></div></section>
