@@ -281,11 +281,11 @@ mjx-container[display="true"] { display: block; overflow-x: auto; overflow-y: hi
 const R=String.raw;
 const EXAM_YEARS = [];
 const EXAM_MAP = [];
-const EXAM_AUDIT_META = {"scope":"本课章总结、习题课与相关往年卷的选题核对；不是已逐题覆盖全部外部卷。本页不据有限选题统计年度频次，也不把异班旧卷当本班考纲。","frequencyLabel":"本课资料优先，相关旧卷辅助","frequencyNote":"目前是选题来源清单，不计算年度频率。官方样题为期中参考，不冒称期末范围；回忆、样题、跨班资料分别标明。","rangeNote":"课件标题目前到第17讲线性空间；其后内容按已提供章总结和教学日历预习。电子教案17份按用户要求未下载，章总结/习题课/样题及日历已归档。SVD、Jordan不扩入主线。"};
+const EXAM_AUDIT_META = {"scope":"本课章总结、习题课与相关往年卷的选题核对；不是已逐题覆盖全部外部卷。本页不据有限选题统计年度频次，也不把异班旧卷当本班考纲。","frequencyLabel":"本课资料优先，相关旧卷辅助","frequencyNote":"目前是选题来源清单，不计算年度频率。官方样题为期中参考，不冒称期末范围；回忆、样题、跨班资料分别标明。","rangeNote":"雨课堂已核对至第20讲正交矩阵、QR分解、正交补与正交投影；其后内容按已提供章总结和教学日历预习。电子教案17份按用户要求未下载，章总结/习题课/样题及日历已归档。SVD、Jordan不扩入主线。"};
 const EXAM_AUDIT = [{"id":"la-course","label":"本课章总结与习题课（课程题）","year":2026,"kind":"本课程资料","inFrequency":false,"complete":false,"sourceNote":"7份章总结、6份习题课、4份官方期中样题与教学日历已归档。此处仅列页面直接使用的课程原题或重述；同章知识依据下的自编题不冒充原题。文件名编号与PDF页眉编号有不一致，题卡同时写清。官方期中样题不是本学期期中卷订正。","sourceFiles":["线性代数/01_章总结/","线性代数/02_习题课/"],"questions":[{"id":"sy1-p2","page":"本课《5. 秩与综合题目版》PDF第1页4.4（页眉为第四次习题课，文件名编号为5）","summary":"消元、相容性与通解｜课程选题 sy1-p2（完整题面见课程）","topics":["sy1"],"topicGroups":["sy1"],"level":"exact","refs":[{"lessonId":"sy1","problemId":"sy1-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"sy2-p1","page":"本课《5. 秩与综合题目版》PDF第4页4.17（页眉第四次习题课）","summary":"秩不等式、参数与同解｜课程选题 sy2-p1（完整题面见课程）","topics":["sy2"],"topicGroups":["sy2"],"level":"exact","refs":[{"lessonId":"sy2","problemId":"sy2-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"sy2-p2","page":"本课《5. 秩与综合题目版》PDF第2页4.9（原图核实）","summary":"秩不等式、参数与同解｜课程选题 sy2-p2（完整题面见课程）","topics":["sy2"],"topicGroups":["sy2"],"level":"exact","refs":[{"lessonId":"sy2","problemId":"sy2-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"sy2-v1","page":"本课《5. 秩与综合题目版》PDF第2页4.10（原图核实）","summary":"秩不等式、参数与同解｜课程选题 sy2-v1（完整题面见课程）","topics":["sy2"],"topicGroups":["sy2"],"level":"exact","refs":[{"lessonId":"sy2","problemId":"sy2-v1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"sy2-e1","page":"本课《5. 秩与综合题目版》PDF第4页4.18；取等例为自编","summary":"秩不等式、参数与同解｜课程选题 sy2-e1（完整题面见课程）","topics":["sy2"],"topicGroups":["sy2"],"level":"exact","refs":[{"lessonId":"sy2","problemId":"sy2-e1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ma1-p1","page":"本课《第2章总结》PDF第1页“求逆矩阵”例（原题）","summary":"矩阵运算、逆与分块｜课程选题 ma1-p1（完整题面见课程）","topics":["ma1"],"topicGroups":["ma1"],"level":"exact","refs":[{"lessonId":"ma1","problemId":"ma1-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ma1-v1","page":"本课《第4章总结》PDF第3页矩阵秩例1（按三种情况完整重述）","summary":"矩阵运算、逆与分块｜课程选题 ma1-v1（完整题面见课程）","topics":["ma1"],"topicGroups":["ma1"],"level":"exact","refs":[{"lessonId":"ma1","problemId":"ma1-v1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ma1-e1","page":"本课《5. 秩与综合题目版》PDF第4页4.19；公式亦见第4章总结第3页","summary":"矩阵运算、逆与分块｜课程选题 ma1-e1（完整题面见课程）","topics":["ma1"],"topicGroups":["ma1"],"level":"exact","refs":[{"lessonId":"ma1","problemId":"ma1-e1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"de1-p1","page":"本课《1. 行列式题目.pdf》第1页2.1","summary":"行列式：符号、变换与余子式｜课程选题 de1-p1（完整题面见课程）","topics":["de1"],"topicGroups":["de1"],"level":"exact","refs":[{"lessonId":"de1","problemId":"de1-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"de1-p2","page":"本课《1. 行列式题目.pdf》第1页2.3","summary":"行列式：符号、变换与余子式｜课程选题 de1-p2（完整题面见课程）","topics":["de1"],"topicGroups":["de1"],"level":"exact","refs":[{"lessonId":"de1","problemId":"de1-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"de2-p1","page":"本课《1. 行列式题目.pdf》第2页2.10","summary":"结构行列式：参数、低秩与Vandermonde｜课程选题 de2-p1（完整题面见课程）","topics":["de2"],"topicGroups":["de2"],"level":"exact","refs":[{"lessonId":"de2","problemId":"de2-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"de2-p2","page":"本课《1. 行列式题目.pdf》第1页2.5；秩为自编加问","summary":"结构行列式：参数、低秩与Vandermonde｜课程选题 de2-p2（完整题面见课程）","topics":["de2"],"topicGroups":["de2"],"level":"exact","refs":[{"lessonId":"de2","problemId":"de2-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"de2-e1","page":"本课《1. 行列式题目.pdf》第1–2页2.6","summary":"结构行列式：参数、低秩与Vandermonde｜课程选题 de2-e1（完整题面见课程）","topics":["de2"],"topicGroups":["de2"],"level":"exact","refs":[{"lessonId":"de2","problemId":"de2-e1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ge1-p1","page":"本课《6. 三维空间中的线面关系题目版.pdf》第1页4.5","summary":"几何向量：点积、叉积与混合积｜课程选题 ge1-p1（完整题面见课程）","topics":["ge1"],"topicGroups":["ge1"],"level":"exact","refs":[{"lessonId":"ge1","problemId":"ge1-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ge2-p1","page":"本课《6. 三维空间中的线面关系题目版.pdf》第1页4.6","summary":"空间线面：位置、距离与公垂线｜课程选题 ge2-p1（完整题面见课程）","topics":["ge2"],"topicGroups":["ge2"],"level":"exact","refs":[{"lessonId":"ge2","problemId":"ge2-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ge2-p2","page":"本课《6. 三维空间中的线面关系题目版.pdf》第1页4.7","summary":"空间线面：位置、距离与公垂线｜课程选题 ge2-p2（完整题面见课程）","topics":["ge2"],"topicGroups":["ge2"],"level":"exact","refs":[{"lessonId":"ge2","problemId":"ge2-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"ge2-e1","page":"本课《6. 三维空间中的线面关系题目版.pdf》第1页4.9","summary":"空间线面：位置、距离与公垂线｜课程选题 ge2-e1（完整题面见课程）","topics":["ge2"],"topicGroups":["ge2"],"level":"exact","refs":[{"lessonId":"ge2","problemId":"ge2-e1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"eig2-p1","page":"《第六章总结》PDF第5页练习3的第一矩阵；题目原式，解答自编","summary":"后续预习｜矩阵多项式与矩阵幂｜课程选题 eig2-p1（完整题面见课程）","topics":["eig2"],"topicGroups":["eig2"],"level":"exact","refs":[{"lessonId":"eig2","problemId":"eig2-p1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"eig2-v1","page":"《第六章总结》PDF第5页练习3的第二矩阵；题目原式，解答自编","summary":"后续预习｜矩阵多项式与矩阵幂｜课程选题 eig2-v1（完整题面见课程）","topics":["eig2"],"topicGroups":["eig2"],"level":"exact","refs":[{"lessonId":"eig2","problemId":"eig2-v1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"eig3-e1","page":"《第六章总结》PDF第5页练习6；解答自编","summary":"后续预习｜实对称矩阵正交对角化｜课程选题 eig3-e1（完整题面见课程）","topics":["eig3"],"topicGroups":["eig3"],"level":"exact","refs":[{"lessonId":"eig3","problemId":"eig3-e1"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""},{"id":"qu2-p2","page":"《第七章总结》PDF第3页练习1；原题问规范形为两正一负的参数范围，分类解答自编","summary":"后续预习｜正定性、参数分类与二次曲面｜课程选题 qu2-p2（完整题面见课程）","topics":["qu2"],"topicGroups":["qu2"],"level":"exact","refs":[{"lessonId":"qu2","problemId":"qu2-p2"}],"note":"原题与自编加问/解答的区别见题卡来源。","risk":""}]},{"id":"la23","label":"2023秋线性代数（书院）期末A卷","year":2023,"kind":"往年卷扫描","inFrequency":false,"complete":false,"sourceNote":"卷面日期2024-01-10；相关几何版旧卷，不证明属于本班。本轮仅核对下列已选训练题，其余题目留在本地来源清单；未据选题表计算频率。第15题原稿遗漏“非零解”，零解可反驳字面；本轮未选该题，不默改成原题。","sourceFiles":["线性代数/线性代数（线代几何版）/往年考题（含老版考题）/2023-线代-期末（书院版）.pdf"],"questions":[{"id":"1","page":"PDF第1页","summary":"点到平面投影","topics":["ge2"],"topicGroups":["ge2"],"level":"exact","refs":[{"lessonId":"ge2","problemId":"ge2-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"7","page":"PDF第1页","summary":"二次型正定","topics":["qu2"],"topicGroups":["qu2"],"level":"exact","refs":[{"lessonId":"qu2","problemId":"qu2-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"8","page":"PDF第1页","summary":"特征向量与换基","topics":["eig1"],"topicGroups":["eig1"],"level":"exact","refs":[{"lessonId":"eig1","problemId":"eig1-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"11","page":"PDF第2页","summary":"矩阵递推","topics":["eig2"],"topicGroups":["eig2"],"level":"exact","refs":[{"lessonId":"eig2","problemId":"eig2-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"12","page":"PDF第2页","summary":"Schmidt与QR","topics":["eu2"],"topicGroups":["eu2"],"level":"exact","refs":[{"lessonId":"eu2","problemId":"eu2-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"13","page":"PDF第2页","summary":"核、实对称矩阵与曲面","topics":["qu2"],"topicGroups":["qu2"],"level":"exact","refs":[{"lessonId":"qu2","problemId":"qu2-past2"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"14","page":"PDF第2页","summary":"子空间交和","topics":["sp3"],"topicGroups":["sp3"],"level":"exact","refs":[{"lessonId":"sp3","problemId":"sp3-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"16","page":"PDF第2页","summary":"正定与惯性","topics":["qu1"],"topicGroups":["qu1"],"level":"exact","refs":[{"lessonId":"qu1","problemId":"qu1-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""}]},{"id":"la24","label":"2024秋线性代数期末卷（GitHub几何版分类）","year":2024,"kind":"往年卷及随卷参考解答","inFrequency":false,"complete":false,"sourceNote":"卷面日期2025-01-04；相关几何版旧卷，不证明属于本班。本轮仅核对下列已选训练题，其余题目留在本地来源清单；未据选题表计算频率。含SVD题，因本班日历未列而不据此扩课。","sourceFiles":["线性代数/线性代数（线代几何版）/往年考题（含老版考题）/2024-线代-期末（书院版）.pdf","线性代数/线性代数（线代几何版）/往年考题（含老版考题）/2024-线代-期末（含答案）（书院版）.pdf"],"questions":[{"id":"1","page":"PDF第1页","summary":"异面直线；距离为自编加问","topics":["ge2"],"topicGroups":["ge2"],"level":"exact","refs":[{"lessonId":"ge2","problemId":"ge2-v1"}],"note":"原页与训练题核对；加问不冒充原题。","risk":""},{"id":"3","page":"PDF第1页","summary":"秩与齐次解空间","topics":["sy2"],"topicGroups":["sy2"],"level":"exact","refs":[{"lessonId":"sy2","problemId":"sy2-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"4","page":"PDF第1页","summary":"向量积与混合积","topics":["ge1"],"topicGroups":["ge1"],"level":"exact","refs":[{"lessonId":"ge1","problemId":"ge1-p2"}],"note":"原页与训练题核对；加问不冒充原题。","risk":""},{"id":"5","page":"PDF第1页","summary":"参数行列式与平方结构","topics":["de2"],"topicGroups":["de2"],"level":"exact","refs":[{"lessonId":"de2","problemId":"de2-v1"}],"note":"原页与训练题核对；加问不冒充原题。","risk":""},{"id":"7","page":"PDF第1页","summary":"平方和正定","topics":["qu2"],"topicGroups":["qu2"],"level":"exact","refs":[{"lessonId":"qu2","problemId":"qu2-past3"}],"note":"原页核实后收录；解答独立验算。","risk":""},{"id":"12","page":"PDF第2页","summary":"正交化二次型的方向","topics":["eig3"],"topicGroups":["eig3"],"level":"exact","refs":[{"lessonId":"eig3","problemId":"eig3-past1"}],"note":"原页核实后收录；解答独立验算。","risk":""}]}];
-const SCHEDULE = [["第1周",[["Day 1","跟新课：空间与子空间","sp1"],["Day 2–3","基、维数与坐标","sp2"],["Day 4–5","第18讲：子空间运算（已讲）","sp3"],["第19讲下半","欧几里得空间与施密特正交化","eu1"]]],["第2周",[["Day 1–2","消元与通解回补","sy1"],["Day 3–4","秩证明与参数分类","sy2"],["Day 5–6","逆矩阵与分块","ma1"],["Day 7","QR预习；最小二乘补充选做","eu2"]]],["第3周",[["Day 1–2","行列式性质","de1"],["Day 3–4","结构行列式","de2"],["Day 5","空间向量","ge1"],["Day 6–7","线面与距离","ge2"]]],["第4周",[["Day 1–2","映射、核像与矩阵","tr1"],["Day 3–4","特征值与可对角化","eig1"],["Day 5–6","多项式与矩阵幂","eig2"],["Day 7","实对称正交对角化","eig3"]]],["第5周",[["Day 1–3","合同、配方与惯性","qu1"],["Day 4–5","正定与二次曲面","qu2"],["周末","模拟1：120分钟或分4次30分钟","lamock1"]]],["第6周",[["前半周","模拟2：120分钟或分4次30分钟","lamock2"],["后半周","模拟3：120分钟或分4次30分钟","lamock3"],["错题回炉","查方法卡并重做未掌握题","sheet"]]]];
+const SCHEDULE = [["第1周",[["Day 1","跟新课：空间与子空间","sp1"],["Day 2–3","基、维数与坐标","sp2"],["Day 4–5","第18讲：子空间运算（已讲）","sp3"],["第19讲下半","欧几里得空间与施密特正交化","eu1"]]],["第2周",[["Day 1–2","消元与通解回补","sy1"],["Day 3–4","秩证明与参数分类","sy2"],["Day 5–6","逆矩阵与分块","ma1"],["Day 7","第20讲：正交矩阵、QR、正交补与投影","eu2"]]],["第3周",[["Day 1–2","行列式性质","de1"],["Day 3–4","结构行列式","de2"],["Day 5","空间向量","ge1"],["Day 6–7","线面与距离","ge2"]]],["第4周",[["Day 1–2","映射、核像与矩阵","tr1"],["Day 3–4","特征值与可对角化","eig1"],["Day 5–6","多项式与矩阵幂","eig2"],["Day 7","实对称正交对角化","eig3"]]],["第5周",[["Day 1–3","合同、配方与惯性","qu1"],["Day 4–5","正定与二次曲面","qu2"],["周末","模拟1：120分钟或分4次30分钟","lamock1"]]],["第6周",[["前半周","模拟2：120分钟或分4次30分钟","lamock2"],["后半周","模拟3：120分钟或分4次30分钟","lamock3"],["错题回炉","查方法卡并重做未掌握题","sheet"]]]];
 const UNITS = [{"id":"spaces","title":"新课优先：线性空间","lessons":["sp1","sp2","sp3"]},{"id":"euclid","title":"Euclid空间与QR","lessons":["eu1","eu2"]},{"id":"systems","title":"消元、秩与方程组","lessons":["sy1","sy2"]},{"id":"matrix","title":"矩阵运算与分块","lessons":["ma1"]},{"id":"determinant","title":"行列式与参数","lessons":["de1","de2"]},{"id":"geometry","title":"空间向量与线面","lessons":["ge1","ge2"]},{"id":"transform","title":"线性变换（后续预习）","lessons":["tr1"]},{"id":"spectral","title":"特征值与对角化（后续预习）","lessons":["eig1","eig2","eig3"]},{"id":"quadratic","title":"二次型与曲面（后续预习）","lessons":["qu1","qu2"]},{"id":"mock","title":"综合模拟：自编非预测","lessons":["lamock1","lamock2","lamock3"]}];
-const MUST = [["相容与自由度","$Ax=b$有解当且仅当$r(A)=r([A\\mid b])$；相容时自由参数$n-r(A)$。"],["秩零化度","$\\dim V=\\dim\\ker T+\\dim\\operatorname{im}T$，定义域需有限维。"],["子空间和交","$\\dim(U+W)=\\dim U+\\dim W-\\dim(U\\cap W)$；直和要求交为零。"],["换基方向","若$S_B,S_C$的列为两组基，$[v]_C=S_C^{-1}S_B[v]_B$。"],["矩阵求逆","同阶可逆方阵有$(AB)^{-1}=B^{-1}A^{-1}$；矩形一侧逆勿混用。"],["相似与合同","相似$P^{-1}AP$保特征值；实对称合同$P^TAP$保惯性。"],["可对角化","存在由特征向量组成的基；在所用数域上特征多项式须分裂且几何重数总和为n。"],["实对称谱定理","实对称A存在正交Q使$Q^TAQ$为对角阵。若题写$u=Qx$，应检验$QAQ^T$。"],["正定判据","实对称矩阵正定当且仅当全部特征值正，也等价于全部顺序主子式正；半正定不能照搬“顺序主子式非负”。"],["Gram矩阵","$C\\in M_{m\\times n}(\\mathbb R)$时$C^TC$非负，正定当且仅当$r(C)=n$（满列秩）。"],["几何距离","点P到平面$n\\cdot x+d=0$的距离为$|n\\cdot P+d|/\\|n\\|$，要求$n\\ne0$。"],["补充内容","QR属于教学日历常规第20讲；投影/最小二乘是第21讲带星号的补充选做。"]];
+const MUST = [["相容与自由度","$Ax=b$有解当且仅当$r(A)=r([A\\mid b])$；相容时自由参数$n-r(A)$。"],["秩零化度","$\\dim V=\\dim\\ker T+\\dim\\operatorname{im}T$，定义域需有限维。"],["子空间和交","$\\dim(U+W)=\\dim U+\\dim W-\\dim(U\\cap W)$；直和要求交为零。"],["换基方向","若$S_B,S_C$的列为两组基，$[v]_C=S_C^{-1}S_B[v]_B$。"],["矩阵求逆","同阶可逆方阵有$(AB)^{-1}=B^{-1}A^{-1}$；矩形一侧逆勿混用。"],["相似与合同","相似$P^{-1}AP$保特征值；实对称合同$P^TAP$保惯性。"],["可对角化","存在由特征向量组成的基；在所用数域上特征多项式须分裂且几何重数总和为n。"],["实对称谱定理","实对称A存在正交Q使$Q^TAQ$为对角阵。若题写$u=Qx$，应检验$QAQ^T$。"],["正定判据","实对称矩阵正定当且仅当全部特征值正，也等价于全部顺序主子式正；半正定不能照搬“顺序主子式非负”。"],["Gram矩阵","$C\\in M_{m\\times n}(\\mathbb R)$时$C^TC$非负，正定当且仅当$r(C)=n$（满列秩）。"],["几何距离","点P到平面$n\\cdot x+d=0$的距离为$|n\\cdot P+d|/\\|n\\|$，要求$n\\ne0$。"],["补充内容","第20讲讲到正交矩阵、QR、正交补与正交投影；最小二乘为后续补充选做。"]];
 const EXTRA_MUST = [];
 const LESSONS = {
   "sp1": {
@@ -974,23 +974,33 @@ const LESSONS = {
   "eu2": {
     "unit": "euclid",
     "n": 2,
-    "title": "QR分解与正交分解；投影、最小二乘补充选做",
-    "goal": "日历第20讲的 QR 分解是常规后续内容，先学；第21讲带 * 号的“投影、最小二乘”是补充选做，有时间再做（不代表必考，也不代表课堂已讲完）。",
+    "title": "第20讲｜正交矩阵、QR 分解、正交补与投影",
+    "goal": "11 月 25 日课堂。先用行与列的点积判正交、逐列做 QR，再用正交补条件求投影。主线可分两个 15 分钟，最小二乘留作后续补充。",
     "sections": [
       {
+        "id": "eu2-s0",
+        "h": "1. 正交矩阵：行和列的点积",
+        "html": "<p>把方阵 $Q$ 的列记为 $q_j$、行为 $w_i$。$(Q^TQ)_{ij}=q_i^Tq_j$，而 $(QQ^T)_{ij}=w_iw_j^T$。两式分别检验列、行是否两两垂直且各自长度为 1。</p>\n<p>实方阵满足 $Q^TQ=I$ 时称为<b>正交矩阵</b>。因为方阵的一侧逆也是逆，$Q^{-1}=Q^T$，因此 $QQ^T=I$ 也成立。由 $(\\det Q)^2=1$ 得 $\\det Q=\\pm1$。正交矩阵的逆和乘积也正交，例如 $(Q_1Q_2)^T(Q_1Q_2)=Q_2^TQ_2=I$。</p>\n<p><b>换基。</b>在一组标准正交基下，另一组标准正交基的坐标向量排成 $Q$ 的列，它们的点积矩阵是 $I$，所以过渡矩阵正交。若两基矩阵满足 $Y=XQ$，则 $[v]_X=Q[v]_Y$。例：把平面标准基的两向量交换，过渡矩阵的两列就是 $(0,1)^T$ 与 $(1,0)^T$。</p>"
+      },
+      {
         "id": "eu2-s1",
-        "h": "常规后续预习：薄QR分解",
-        "html": "<p><b>教学范围：</b>日历第20讲“正交矩阵，QR分解，正交补”没有星号，属于常规内容；第21讲“*投影，最小二乘解（补充）”是补充选做。</p><p><b>这节解决什么：</b>把施密特正交化的结果写成矩阵等式 $A=QR$，以后解方程、做投影都更方便。</p><p><b>QR 分解：</b>$A=(a_1,\\ldots,a_n)$ 是 $m\\times n$ 实矩阵，$m\\ge n$，各列线性无关（列满秩）。对各列做施密特正交化得到 $q_1,\\ldots,q_n$，则 $$A=QR,\\quad Q=(q_1,\\ldots,q_n),\\quad Q^TQ=I_n,$$$R$ 是 $n\\times n$ 上三角矩阵，对角元为正，$r_{ij}=q_i^Ta_j$（$i\\le j$）。</p><p><b>为什么 $R$ 是上三角：</b>施密特过程中 $a_j$ 只用到 $q_1,\\ldots,q_j$ 来表示：$a_j=r_{1j}q_1+\\cdots+r_{jj}q_j$，后面的系数都是 0。</p><p><b>小例子：</b>$A=\\begin{pmatrix}3\\\\4\\end{pmatrix}$（一列）：$q_1=\\frac15(3,4)^T$，$R=(5)$，$A=5q_1$。</p><p><b>注意：</b>$m\\gt n$ 时 $Q$ 不是方阵（叫“薄 QR”），只有 $Q^TQ=I_n$，一般 $QQ^T\\ne I_m$。$Q$ 保持长度：$\\|Qz\\|^2=z^TQ^TQz=\\|z\\|^2$。</p>"
+        "h": "2. QR 分解：逐列找方向，再用点积填 R",
+        "html": "<p>对可逆实方阵 $A=[a_1,\\ldots,a_n]$ 逐列施密特。第 $j$ 步先减去前面每个 $q_i$ 方向的投影，得到还没被前 $j-1$ 列解释的部分 $u_j$，再归一化：</p>\n$$u_j=a_j-\\sum_{i\\lt j}(q_i^Ta_j)q_i,\\qquad q_j=\\frac{u_j}{\\|u_j\\|}.$$\n<p>令 $Q=[q_1,\\ldots,q_n]$，则 $R=Q^TA$。$r_{ij}=q_i^Ta_j$，也就是用 $q_i$ 作为方向读出 $a_j$ 的系数。$a_j$ 只用到前 $j$ 个方向，所以 $i\\gt j$ 时 $r_{ij}=0$，且 $r_{jj}=\\|u_j\\|\\gt0$。例如 $a_1=(2,0)^T,a_2=(1,-3)^T$ 时，$q_1=(1,0)^T,q_2=(0,-1)^T$，所以 $r_{11}=2,r_{12}=1,r_{22}=3$。</p>\n<p><b>为什么约定正对角。</b>翻转 $Q$ 的一列并同时翻转 $R$ 的对应行，乘积保持不变。规定 $R$ 对角元全正后，若 $QR=\\widetilde Q\\widetilde R$，则 $Q^T\\widetilde Q=R\\widetilde R^{-1}$ 同时正交、上三角、对角为正。它的第一列只能是 $e_1$；其余列第一项为零，递推每列只能是对应的 $e_j$，故等式两侧都等于 $I$，分解唯一。</p>\n<p><b>矩形推广。</b>对列满秩的 $m\\times n$ 矩阵也可用同一流程。薄 $Q$ 只有 $n$ 列，$Q^TQ=I_n$；当 $m\\gt n$ 时，$QQ^T$ 是到列空间的投影矩阵。</p>"
+      },
+      {
+        "id": "eu2-s4",
+        "h": "3. 正交补：对生成列列出齐次方程",
+        "html": "<p>$W^\\perp$ 是和 $W$ 中每个向量都正交的向量组成的子空间。若 $W=\\operatorname{Col}(A)$，则</p>\n$$W^\\perp=\\ker A^T,\\qquad \\dim W^\\perp=m-\\operatorname{rank}A.$$\n<p>这里 $A$ 为 $m\\times n$，$W$ 和 $W^\\perp$ 都在 $\\mathbb R^m$。因为任意 $w\\in W$ 可写成 $Ax$，有 $w^Tz=x^TA^Tz$。它对所有 $x$ 为零，当且仅当 $A^Tz=0$。即使列有重复或相关，也可以直接用这个齐次系统求基础解系。例：若 $W=\\operatorname{span}\\{(1,2,0)^T\\}$，只需解 $z_1+2z_2=0$，可取 $(-2,1,0)^T,(0,0,1)^T$ 为基。</p>\n<p>把 $W$ 的标准正交基补成全空间的标准正交基，新增向量便张成 $W^\\perp$。一个向量同时属于两边时与自己正交，故只能为零。这给出 $V=W\\oplus W^\\perp$，因此分解唯一。且 $W\\subseteq(W^\\perp)^\\perp$，两边维数相等，故 $(W^\\perp)^\\perp=W$。</p>"
       },
       {
         "id": "eu2-s2",
-        "h": "补充选做：投影是唯一正交分解",
-        "html": "<p><b>本节属于日历第21讲带 * 补充内容。</b></p><p><b>这节解决什么：</b>在子空间 $W$ 里找离 $b$ 最近的向量。</p><p><b>做法：</b>把 $W$ 的标准正交基排成 $Q$ 的列，令 $$p=QQ^Tb\\ (\\text{投影}),\\qquad r=b-p\\ (\\text{残差}).$$</p><ol><li>$p$ 是 $Q$ 的列的组合，在 $W$ 中。</li><li>$Q^Tr=Q^Tb-Q^TQQ^Tb=Q^Tb-Q^Tb=0$，所以 $r$ 与 $W$ 的每个基向量正交，$r\\in W^\\perp$。</li><li>由 $V=W\\oplus W^\\perp$，这样的分解 $b=p+r$ 唯一。</li></ol><p><b>为什么 $p$ 最近：</b>任取 $w\\in W$，$b-w=r+(p-w)$，其中 $p-w\\in W$ 与 $r$ 正交，所以（勾股定理）$$\\|b-w\\|^2=\\|r\\|^2+\\|p-w\\|^2\\ge\\|r\\|^2,$$等号当且仅当 $w=p$。</p><p><b>小例子：</b>$W$ 为 $x$ 轴，$b=(3,4)^T$：$p=(3,0)^T$，$r=(0,4)^T$，最短距离 4。</p><p>投影矩阵 $P=QQ^T$ 满足 $P^T=P$、$P^2=P$，但一般 $P\\ne I$。</p>"
+        "h": "4. 正交投影：分解残差，再用勾股证明最近",
+        "html": "<p>把 $b$ 唯一写成 $b=p+r$，其中 $p\\in W$、$r\\in W^\\perp$。$p$ 就是正交投影。任取 $w\\in W$，$b-w=r+(p-w)$，所以</p>\n$$\\|b-w\\|^2=\\|r\\|^2+\\|p-w\\|^2.$$\n<p>第二项在 $w=p$ 时取到最小值 0，故最近点唯一，距离是 $\\|r\\|$。</p>\n<p><b>若手头是标准正交基</b>，把它们排成 $Q$，直接用 $p=QQ^Tb$，即每个方向的坐标乘回基向量。</p>\n<p><b>若手头是普通基</b>，将基排成 $A$，写 $p=Ax$，由 $A^T(b-Ax)=0$ 求 $x$。列线性无关时 $A^TA$ 可逆，此时 $P=A(A^TA)^{-1}A^T$。手算可解方程，省去求逆。若给的是相关的生成列，先挑出一组独立列再用这条公式；生成空间保持相同。</p>\n<p>例如在 $W=\\operatorname{span}\\{(2,1)^T\\}$ 上投影 $b=(1,3)^T$，系数是 $(2+3)/(4+1)=1$，所以 $p=(2,1)^T$、$r=(-1,2)^T$，残差点积为零。投影把 $W$ 中每个向量留在原位、把 $W^\\perp$ 送到零，因此投影矩阵满足 $P^2=P$，并且 $P^T=P$。</p>"
       },
       {
         "id": "eu2-s3",
-        "h": "补充选做：正规方程与解的唯一性",
-        "html": "<p><b>本节属于日历第21讲带 * 补充内容。</b></p><p><b>这节解决什么：</b>方程 $Ax=b$ 无解时（如数据点多于未知参数），找让误差 $\\|Ax-b\\|$ 最小的 $x$，叫<b>最小二乘解</b>。</p><p><b>正规方程：</b>$Ax$ 跑遍 $A$ 的列空间，最近的那个就是 $b$ 在列空间上的投影。投影的残差与每一列正交：$$A^T(Ax-b)=0\\iff A^TAx=A^Tb.$$满足这个方程的 $x$ 都是最小二乘解。</p><p><b>小例子：</b>$A=(1,1)^T$，$b=(1,3)^T$（“$x=1$ 且 $x=3$”）：$A^TA=2$，$A^Tb=4$，$x=2$，取两个值的平均。</p><p><b>解是否唯一：</b></p><ul><li>$A$ 列满秩：$A^TA$ 可逆，解唯一，$x=(A^TA)^{-1}A^Tb$；也可用 QR 解上三角方程 $Rx=Q^Tb$。</li><li>$A$ 的列相关：最佳拟合向量 $Ax$ 仍唯一，但 $x$ 可能有无穷多个，不能写 $(A^TA)^{-1}$。</li></ul><p>本课常规主线先做 QR 和概念题；准备补充内容时再做投影、最小二乘题。本课题目均为自编练习。</p>"
+        "h": "后续补充：最小二乘的正规方程",
+        "html": "<p><b>最小二乘按教学日历列为后续补充选做。</b></p><p><b>这节解决什么：</b>方程 $Ax=b$ 无解时（如数据点多于未知参数），找让误差 $\\|Ax-b\\|$ 最小的 $x$，叫<b>最小二乘解</b>。</p><p><b>正规方程：</b>$Ax$ 跑遍 $A$ 的列空间，最近的那个就是 $b$ 在列空间上的投影。投影的残差与每一列正交：$$A^T(Ax-b)=0\\iff A^TAx=A^Tb.$$满足这个方程的 $x$ 都是最小二乘解。</p><p><b>小例子：</b>$A=(1,1)^T$，$b=(1,3)^T$（“$x=1$ 且 $x=3$”）：$A^TA=2$，$A^Tb=4$，$x=2$，取两个值的平均。</p><p><b>解是否唯一：</b></p><ul><li>$A$ 列满秩：$A^TA$ 可逆，解唯一，$x=(A^TA)^{-1}A^Tb$；也可用 QR 解上三角方程 $Rx=Q^Tb$。</li><li>$A$ 的列相关：最佳拟合向量 $Ax$ 仍唯一，但 $x$ 可能有无穷多个，不能写 $(A^TA)^{-1}$。</li></ul><p>这一节把投影写成求系数的问题：第20讲所求的是投影向量，最小二乘再讨论系数本身能否唯一。</p>"
       }
     ],
     "widget": null,
@@ -1011,7 +1021,7 @@ const LESSONS = {
       {
         "id": "eu2-c2",
         "sec": "eu2-s2",
-        "q": "【补充】投影取得最短距离的证明，需要补什么？",
+        "q": "如何证明投影给出唯一最近点？",
         "opts": [
           "只证明一个下界",
           "证明残差正交，并证明在投影点取到下界",
@@ -1051,20 +1061,107 @@ const LESSONS = {
     "methods": [
       {
         "id": "m-eu2",
-        "title": "QR分解与正交分解；投影、最小二乘补充选做：作答步骤",
+        "title": "逐列做 QR 并核对符号",
         "steps": [
-          "QR：先确认各列线性无关；逐列施密特得 q₁,…,qₙ；R 的元素 rᵢⱼ = qᵢᵀaⱼ（i≤j），下三角部分为 0；最后核对 QR=A、对角元为正。",
-          "（补充）投影：拟合向量在列空间中，残差与每一列都正交。",
-          "（补充）最小二乘：解 AᵀAx=Aᵀb；列满秩时也可用 Rx=Qᵀb 回代。",
-          "写出残差和最小平方误差；用勾股说明最小值能取到。唯一性要另外检查列满秩。"
+          "对每个原列减去此前各单位向量方向的投影，再除以剩余向量的长度。",
+          "用原列填 R：第 j 列的第 i 项是 qᵢᵀaⱼ；下三角为零，对角元就是每步剩余长度。",
+          "核对 QᵀQ=I 和 QR=A；某列符号调整时，R 的对应行需要同时调整。"
+        ]
+      },
+      {
+        "id": "m-eu2-orth",
+        "title": "按点积判断正交矩阵",
+        "steps": [
+          "用 QQᵀ 检验各行，或用 QᵀQ 检验各列。对角项是长度平方，非对角项是不同向量的点积。",
+          "遇到 vvᵀ 先用结合律将平方写成 v(vᵀv)vᵀ；单位化后的投影矩阵平方等于它自身。",
+          "计算完成后用行列点积，或用矩阵在相互正交的两个子空间上的作用验算。"
+        ]
+      },
+      {
+        "id": "m-eu2-comp",
+        "title": "把正交补转成基础解系",
+        "steps": [
+          "把生成列写成矩阵 A；未知向量的分量数是 A 的行数。",
+          "对 Aᵀz=0 消元，分别取每个自由变量为 1 而其余为 0，得到一组基。",
+          "检查基向量与生成列的点积为零，并核对答案的维数为行数减秩。"
+        ]
+      },
+      {
+        "id": "m-eu2-proj",
+        "title": "投影要验归属与正交残差",
+        "steps": [
+          "筛出一组独立生成列，或将它们正交归一化。",
+          "普通基解 AᵀAx=Aᵀb 后写 p=Ax；标准正交基直接用 p=QQᵀb。",
+          "写 r=b−p，核对 p 在目标子空间、Aᵀr=0。最近距离为残差长度。"
+        ]
+      },
+      {
+        "id": "m-eu2-least",
+        "title": "最小二乘补充：分清系数和拟合向量",
+        "steps": [
+          "解 AᵀAx=Aᵀb 或先求 b 在列空间上的投影，再解 Ax=p。",
+          "检查秩与自由变量。列相关时系数可不同，所对应的最佳拟合向量相同。",
+          "计算残差并核对它与原矩阵的每列正交。"
         ]
       }
     ],
     "problems": [
       {
+        "id": "eu2-scaled-permutation",
+        "lv": "训练",
+        "src": "自编 · 由行点积判正交",
+        "stmt": "<p>四阶实矩阵 $B$ 的每个元素为 0 或 2，且 $BB^T=4I_4$。这样的 $B$ 有多少个？说明 $B/2$ 为什么一定正交。</p>",
+        "hints": [
+          "看 $(BB^T)_{ii}$，这是第 $i$ 行的长度平方。",
+          "每行恰有一个 2。不同两行若把 2 写在同一列，它们的点积是多少？",
+          "四行的非零位置必须各占一列，选择顺序有 $4\\cdot3\\cdot2\\cdot1$ 种。"
+        ],
+        "method": "m-eu2-orth",
+        "sol": "<p>第 $i$ 行平方和为 4，每个非零元贡献 4，所以恰有一个 2。非对角项为 0，故两行的 2 不能处在同列。四行占四个不同的列位置，因此有 $4!=24$ 种。反过来每种放法都让各行点积为 0、平方和为 4，因此满足条件。令 $Q=B/2$，则 $QQ^T=BB^T/4=I_4$，所以 $Q$ 正交。</p>"
+      },
+      {
+        "id": "eu2-qr-square",
+        "lv": "训练",
+        "src": "自编 · 三列 QR 与 R 的符号",
+        "stmt": "<p>对 $A$ 的三列 $a_1=(2,1,2)^T,a_2=(-6,3,0)^T,a_3=(-1,1,5)^T$ 做 QR 分解。规定 $R$ 的对角元为正，写出第三列剩余向量和 $R$ 的第三列，再核对结果。</p>",
+        "hints": [
+          "第一列长度为 3。算 $q_1^Ta_2$ 和 $q_1^Ta_3$，注意符号。",
+          "$q_1^Ta_2=-3$，因此 $u_2=a_2+3q_1=(-4,4,2)^T$，长度是 6。",
+          "$q_2^Ta_3=3$，故 $u_3=a_3-3q_1-3q_2=(-1,-2,2)^T$。"
+        ],
+        "method": "m-eu2",
+        "sol": "<p>从第一列得 $q_1=(2,1,2)^T/3$。由于 $q_1^Ta_2=-3$，$u_2=a_2+3q_1=(-4,4,2)^T$，除以 6 得 $q_2=(-2,2,1)^T/3$。</p>\n<p>第三列有 $q_1^Ta_3=q_2^Ta_3=3$。所以 $u_3=a_3-3q_1-3q_2=(-1,-2,2)^T$，长度为 3，$q_3=u_3/3$。因此</p>\n$$Q=\\frac13\\begin{pmatrix}2&-2&-1\\\\1&2&-2\\\\2&1&2\\end{pmatrix},\\qquad\nR=\\begin{pmatrix}3&-3&3\\\\0&6&3\\\\0&0&3\\end{pmatrix}.$$\n<p>验算：三列两两点积为零、长度都为 1。$QR$ 的三列是 $3q_1$、$-3q_1+6q_2$、$3q_1+3q_2+3q_3$，依次得到 $a_1,a_2,a_3$。</p>"
+      },
+      {
+        "id": "eu2-col-complement",
+        "lv": "训练",
+        "src": "自编 · 矩形矩阵的列空间正交补",
+        "stmt": "<p>设 $A$ 的三列分别为 $a_1=(1,1,0,0)^T,a_2=(0,1,1,1)^T,a_3=(2,3,1,1)^T$。求 $\\operatorname{Col}(A)^\\perp$ 的一组基，并核对维数。</p>",
+        "hints": [
+          "先观察 $a_3$ 是否是前两列的组合。",
+          "只需解 $z_1+z_2=0$、$z_2+z_3+z_4=0$。",
+          "以 $z_3=s,z_4=t$ 为自由变量，把 $z$ 分成 $s$ 与 $t$ 的系数向量。"
+        ],
+        "method": "m-eu2-comp",
+        "sol": "<p>$a_3=2a_1+a_2$，而 $a_1,a_2$ 线性无关，所以秩为 2。令 $z$ 与前两列正交，得 $z_1+z_2=0$、$z_2+z_3+z_4=0$。第三列自动与 $z$ 正交。</p>\n<p>令 $z_3=s,z_4=t$，则 $z_2=-s-t,z_1=s+t$，所以一组基为 $(1,-1,1,0)^T$ 与 $(1,-1,0,1)^T$。它们的最后两个分量保证线性无关，逐个代入两个方程都成立。维数为 $4-2=2$。</p>"
+      },
+      {
+        "id": "eu2-nonbasis-projection",
+        "lv": "训练",
+        "src": "自编 · 相关生成列下先选基再投影",
+        "stmt": "<p>令 $W$ 由 $(1,1,0,0)^T,(0,1,1,1)^T,(2,3,1,1)^T$ 生成。求 $b=(2,1,0,2)^T$ 到 $W$ 的投影、残差和最短距离。</p>",
+        "hints": [
+          "第三个生成列可由前两列表示，用前两列组成 $C$。",
+          "设 $p=Cx$。由 $C^T(b-p)=0$ 得 $2x_1+x_2=3$、$x_1+3x_2=3$。",
+          "解得 $x_1=6/5,x_2=3/5$。乘回 $C$ 后，检查残差与这两列的点积。"
+        ],
+        "method": "m-eu2-proj",
+        "sol": "<p>取前两列组成 $C$，它们是 $W$ 的一组基。令 $p=Cx$，则正交条件给出</p>\n$$\\begin{pmatrix}2&1\\\\1&3\\end{pmatrix}x=\\begin{pmatrix}3\\\\3\\end{pmatrix}.$$\n<p>方程组解为 $x=(6/5,3/5)^T$，所以 $p=\\frac15(6,9,3,3)^T$，$r=b-p=\\frac15(4,-4,-3,7)^T$。</p>\n<p>验算：$p$ 是基的组合，$r$ 与两列的点积分别为 $(4-4)/5=0$、$(-4-3+7)/5=0$。故 $p$ 是投影，最近距离是 $\\|r\\|=\\sqrt{90}/5=3\\sqrt{10}/5$。</p>"
+      },
+      {
         "id": "eu2-p1",
         "lv": "基础",
-        "src": "自编：第20讲QR常规预习练习",
+        "src": "自编 · 薄 QR 分解",
         "stmt": "<p>对 $$A=\\begin{pmatrix}1&0\\\\1&1\\\\0&1\\end{pmatrix}$$ 求薄QR分解，规定R对角元为正；核对QᵀQ=I与QR=A。</p>",
         "hints": [
           "$A$ 的两列正是 eu1 练习 1 中的 $a_1=(1,1,0)^T,\\ a_2=(0,1,1)^T$，可直接用那里施密特的结果。",
@@ -1073,37 +1170,50 @@ const LESSONS = {
         ],
         "method": "m-eu2",
         "sol": "<p><b>1. 施密特（见 eu1 练习 1）：</b>$q_1=\\frac1{\\sqrt2}(1,1,0)^T$，$q_2=\\frac1{\\sqrt6}(-1,1,2)^T$。</p><p><b>2. 求 $R$：</b></p><ul><li>$r_{11}=q_1^Ta_1=\\frac{1+1+0}{\\sqrt2}=\\sqrt2$；</li><li>$r_{12}=q_1^Ta_2=\\frac{0+1+0}{\\sqrt2}=\\frac1{\\sqrt2}$；</li><li>$r_{22}=q_2^Ta_2=\\frac{0+1+2}{\\sqrt6}=\\frac{3}{\\sqrt6}=\\frac{\\sqrt6}2$；$r_{21}=0$。</li></ul><p>$$Q=\\begin{pmatrix}1/\\sqrt2&-1/\\sqrt6\\\\1/\\sqrt2&1/\\sqrt6\\\\0&2/\\sqrt6\\end{pmatrix},\\qquad R=\\begin{pmatrix}\\sqrt2&1/\\sqrt2\\\\0&\\sqrt6/2\\end{pmatrix}.$$</p><p><b>3. 核对 $Q^TQ=I_2$：</b>$\\|q_1\\|=\\|q_2\\|=1$，$q_1^Tq_2=\\frac{-1+1+0}{\\sqrt{12}}=0$ ✓。</p><p><b>4. 核对 $QR=A$：</b>第一列 $\\sqrt2\\,q_1=(1,1,0)^T$ ✓；第二列 $\\frac1{\\sqrt2}q_1+\\frac{\\sqrt6}2q_2=(\\frac12,\\frac12,0)^T+(-\\frac12,\\frac12,1)^T=(0,1,1)^T$ ✓。$R$ 的对角元都为正。</p><p><b>提醒：</b>$Q$ 是 $3\\times2$ 矩阵，不是三阶正交矩阵。</p>"
-      },
-      {
-        "id": "eu2-p2",
-        "lv": "训练",
-        "src": "自编：第21讲*投影与最小二乘补充选做",
-        "stmt": "<p><b>补充选做。</b>对同一矩阵A和 $b=(1,2,2)^T$，求最小二乘系数x、最佳拟合向量Ax、残差r=b−Ax和最小残差平方。证明系数解唯一。</p>",
-        "hints": [
-          "算 $A^TA=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix}$，$A^Tb=(1+2,\\ 2+2)^T=(3,4)^T$。",
-          "解正规方程 $2x_1+x_2=3$，$x_1+2x_2=4$。",
-          "得 $x=(\\frac23,\\frac53)^T$。算 $Ax$ 和 $r=b-Ax$，检查 $A^Tr=0$，最小值 $=\\|r\\|^2$。"
-        ],
-        "method": "m-eu2",
-        "sol": "<p><b>1. 正规方程：</b>$$A^TA=\\begin{pmatrix}1&1&0\\\\0&1&1\\end{pmatrix}\\begin{pmatrix}1&0\\\\1&1\\\\0&1\\end{pmatrix}=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix},\\qquad A^Tb=\\begin{pmatrix}1+2\\\\2+2\\end{pmatrix}=\\begin{pmatrix}3\\\\4\\end{pmatrix}.$$</p><p><b>2. 求解：</b>$2x_1+x_2=3$，$x_1+2x_2=4$。第一式乘 2 减第二式：$3x_1=2$，$x_1=\\frac23$；$x_2=3-\\frac43=\\frac53$。<b>$x=(\\frac23,\\frac53)^T$。</b></p><p><b>3. 拟合与残差：</b>$Ax=(\\frac23,\\ \\frac23+\\frac53,\\ \\frac53)^T=$<b>$(\\frac23,\\frac73,\\frac53)^T$</b>；$r=b-Ax=$<b>$(\\frac13,-\\frac13,\\frac13)^T$</b>。</p><p><b>4. 检验：</b>$A^Tr=(\\frac13-\\frac13,\\ -\\frac13+\\frac13)^T=0$ ✓。最小残差平方 $\\|r\\|^2=\\frac19\\cdot3=$<b>$\\frac13$</b>。</p><p><b>5. 唯一性：</b>$A$ 两列无关；对非零 $z$，$z^TA^TAz=\\|Az\\|^2\\gt0$，所以 $A^TA$ 正定可逆（也可直接算 $\\det=4-1=3\\ne0$），正规方程解唯一。另一种看法：对任意 $h$，$\\|A(x+h)-b\\|^2=\\|r\\|^2+\\|Ah\\|^2$（因为 $Ah$ 在列空间、与 $r$ 正交），只有 $Ah=0$ 即 $h=0$ 时取最小。</p>"
       }
     ],
     "variants": [
       {
+        "id": "eu2-householder",
+        "lv": "训练",
+        "src": "自编 · 由外积构造 Householder 反射",
+        "stmt": "<p>令 $v=(2,-1,2)^T$，定义 $H=I-\\frac{2vv^T}{v^Tv}$。写出 $H$ 并证明其正交。计算 $Hv$ 和 $H(1,2,0)^T$，解释这个映射对两个方向的作用。</p>",
+        "hints": [
+          "先算 $v^Tv=9$。令 $P=vv^T/9$，识别它所投影到的直线。",
+          "$P^T=P$，且 $P^2=v(v^Tv)v^T/81=P$。用它展开 $(I-2P)^2$。",
+          "$Pv=v$，而 $v^T(1,2,0)^T=0$，所以在这两个方向上的结果分别为取反与原样保留。"
+        ],
+        "method": "m-eu2-orth",
+        "sol": "<p>$v^Tv=9$，所以令 $P=vv^T/9$ 后，$P^T=P$ 且 $P^2=P$。因此 $H^TH=(I-2P)^2=I-4P+4P^2=I$，$H$ 正交。外积代入得到</p>\n$$H=\\frac19\\begin{pmatrix}1&4&-8\\\\4&7&4\\\\-8&4&1\\end{pmatrix}.$$\n<p>因为 $Pv=v$，有 $Hv=-v$。因为 $(2,-1,2)\\cdot(1,2,0)=0$，$H(1,2,0)^T=(1,2,0)^T$。一般而言，法向 $v$ 上的分量变号，平面 $v^\\perp$ 中的分量保持，所以这是关于该平面的反射。</p>"
+      },
+      {
         "id": "eu2-v1",
         "lv": "变种",
-        "src": "自编：投影矩阵与补空间（补充选做）",
-        "stmt": "<p><b>补充选做。</b>令 $n=(1,-1,1)^T$，$W=\\{v:n^Tv=0\\}$。写出投影到W的矩阵P，核对Pᵀ=P、P²=P，并求它作用于 $b=(1,2,2)^T$ 的结果。</p>",
+        "src": "自编 · 投影矩阵与正交补",
+        "stmt": "<p>令 $n=(1,-1,1)^T$，$W=\\{v:n^Tv=0\\}$。写出投影到W的矩阵P，核对Pᵀ=P、P²=P，并求它作用于 $b=(1,2,2)^T$ 的结果。</p>",
         "hints": [
           "$W$ 是法向量为 $n$ 的平面。先写“投影到 $n$ 所在直线”的矩阵 $\\frac{nn^T}{n^Tn}$。",
           "投影到垂直平面 $=I-$（投影到法线）：$P=I-\\frac{nn^T}{3}$（$n^Tn=1+1+1=3$）。",
           "$n^Tb=1-2+2=1$，所以 $Pb=b-\\frac{n^Tb}{3}n=b-\\frac13n$。"
         ],
-        "method": "m-eu2",
-        "sol": "<p><b>1. 投影矩阵：</b>$n^Tn=3$，$nn^T=\\begin{pmatrix}1&-1&1\\\\-1&1&-1\\\\1&-1&1\\end{pmatrix}$，$$P=I-\\frac{nn^T}3=\\frac13\\begin{pmatrix}2&1&-1\\\\1&2&1\\\\-1&1&2\\end{pmatrix}.$$</p><p><b>2. 核对性质：</b></p><ul><li>$P^T=P$：矩阵对称，显然。</li><li>$P^2=P$：$(nn^T)^2=n(n^Tn)n^T=3nn^T$，所以 $P^2=I-\\frac23nn^T+\\frac19\\cdot3nn^T=I-\\frac13nn^T=P$。</li><li>确实投影到 $W$：$n^TPv=n^Tv-\\frac{3}{3}n^Tv=0$，所以 $Pv\\in W$；若 $w\\in W$（$n^Tw=0$），$Pw=w$。</li></ul><p><b>3. 作用于 $b$：</b>$n^Tb=1-2+2=1$，$$Pb=b-\\frac13n=\\left(1-\\tfrac13,\\ 2+\\tfrac13,\\ 2-\\tfrac13\\right)^T=\\left(\\tfrac23,\\tfrac73,\\tfrac53\\right)^T.$$</p><p><b>说明：</b>这和上一题的最佳拟合向量相同，因为上一题 $A$ 的两列 $(1,1,0)^T,(0,1,1)^T$ 都与 $n$ 正交，列空间恰好是平面 $W$。$Pn=0$，所以 $P\\ne I$。</p>"
+        "method": "m-eu2-proj",
+        "sol": "<p><b>1. 投影矩阵：</b>$n^Tn=3$，$nn^T=\\begin{pmatrix}1&-1&1\\\\-1&1&-1\\\\1&-1&1\\end{pmatrix}$，$$P=I-\\frac{nn^T}3=\\frac13\\begin{pmatrix}2&1&-1\\\\1&2&1\\\\-1&1&2\\end{pmatrix}.$$</p><p><b>2. 核对性质：</b></p><ul><li>$P^T=P$：矩阵对称，显然。</li><li>$P^2=P$：$(nn^T)^2=n(n^Tn)n^T=3nn^T$，所以 $P^2=I-\\frac23nn^T+\\frac19\\cdot3nn^T=I-\\frac13nn^T=P$。</li><li>确实投影到 $W$：$n^TPv=n^Tv-\\frac{3}{3}n^Tv=0$，所以 $Pv\\in W$；若 $w\\in W$（$n^Tw=0$），$Pw=w$。</li></ul><p><b>3. 作用于 $b$：</b>$n^Tb=1-2+2=1$，$$Pb=b-\\frac13n=\\left(1-\\tfrac13,\\ 2+\\tfrac13,\\ 2-\\tfrac13\\right)^T=\\left(\\tfrac23,\\tfrac73,\\tfrac53\\right)^T.$$</p><p><b>说明：</b>这与最小二乘补充题的最佳拟合向量相同，因为那道题的 $A$ 的两列 $(1,1,0)^T,(0,1,1)^T$ 都与 $n$ 正交，列空间恰好是平面 $W$。$Pn=0$，所以 $P\\ne I$。</p>"
       }
     ],
     "extensions": [
+      {
+        "id": "eu2-p2",
+        "lv": "训练",
+        "src": "自编：第21讲*投影与最小二乘补充选做",
+        "stmt": "<p><b>补充选做。</b>对 $A=\\begin{pmatrix}1&0\\\\1&1\\\\0&1\\end{pmatrix}$ 和 $b=(1,2,2)^T$，求最小二乘系数 $x$、最佳拟合向量 $Ax$、残差 $r=b-Ax$ 和最小残差平方。证明系数解唯一。</p>",
+        "hints": [
+          "算 $A^TA=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix}$，$A^Tb=(1+2,\\ 2+2)^T=(3,4)^T$。",
+          "解正规方程 $2x_1+x_2=3$，$x_1+2x_2=4$。",
+          "得 $x=(\\frac23,\\frac53)^T$。算 $Ax$ 和 $r=b-Ax$，检查 $A^Tr=0$，最小值 $=\\|r\\|^2$。"
+        ],
+        "method": "m-eu2-least",
+        "sol": "<p><b>1. 正规方程：</b>$$A^TA=\\begin{pmatrix}1&1&0\\\\0&1&1\\end{pmatrix}\\begin{pmatrix}1&0\\\\1&1\\\\0&1\\end{pmatrix}=\\begin{pmatrix}2&1\\\\1&2\\end{pmatrix},\\qquad A^Tb=\\begin{pmatrix}1+2\\\\2+2\\end{pmatrix}=\\begin{pmatrix}3\\\\4\\end{pmatrix}.$$</p><p><b>2. 求解：</b>$2x_1+x_2=3$，$x_1+2x_2=4$。第一式乘 2 减第二式：$3x_1=2$，$x_1=\\frac23$；$x_2=3-\\frac43=\\frac53$。<b>$x=(\\frac23,\\frac53)^T$。</b></p><p><b>3. 拟合与残差：</b>$Ax=(\\frac23,\\ \\frac23+\\frac53,\\ \\frac53)^T=$<b>$(\\frac23,\\frac73,\\frac53)^T$</b>；$r=b-Ax=$<b>$(\\frac13,-\\frac13,\\frac13)^T$</b>。</p><p><b>4. 检验：</b>$A^Tr=(\\frac13-\\frac13,\\ -\\frac13+\\frac13)^T=0$ ✓。最小残差平方 $\\|r\\|^2=\\frac19\\cdot3=$<b>$\\frac13$</b>。</p><p><b>5. 唯一性：</b>$A$ 两列无关；对非零 $z$，$z^TA^TAz=\\|Az\\|^2\\gt0$，所以 $A^TA$ 正定可逆（也可直接算 $\\det=4-1=3\\ne0$），正规方程解唯一。另一种看法：对任意 $h$，$\\|A(x+h)-b\\|^2=\\|r\\|^2+\\|Ah\\|^2$（因为 $Ah$ 在列空间、与 $r$ 正交），只有 $Ah=0$ 即 $h=0$ 时取最小。</p>"
+      },
       {
         "id": "eu2-e1",
         "lv": "延伸",
@@ -1114,14 +1224,14 @@ const LESSONS = {
           "$c=\\frac{a^Tb}{a^Ta}=\\frac12$。（也可展开 $\\|ca-b\\|^2=(c-1)^2+c^2$ 求最小。）",
           "所以只需 $x_1+2x_2=\\frac12$。令 $x_2=t$，$x_1=\\frac12-2t$，有无穷多个解。"
         ],
-        "method": "m-eu2",
+        "method": "m-eu2-least",
         "sol": "<p><b>1. 化简：</b>$Ax=x_1a+x_2(2a)=(x_1+2x_2)a$。令 $c=x_1+2x_2$，$$\\|ca-b\\|^2=\\|(c-1,\\ c,\\ 0)\\|^2=(c-1)^2+c^2=2\\left(c-\\tfrac12\\right)^2+\\tfrac12.$$</p><p><b>2. 最小值：</b>$c=\\frac12$ 时最小，<b>最小残差平方 $\\frac12$</b>。</p><p><b>3. 全部最小二乘解：</b>$x_1+2x_2=\\frac12$，令 $x_2=t$：$$x=\\left(\\tfrac12-2t,\\ t\\right)^T,\\quad t\\in\\mathbb R.$$</p><p><b>4. 拟合向量唯一：</b>无论 $t$ 取什么，$Ax=\\frac12a=$<b>$(\\frac12,\\frac12,0)^T$</b>，残差 $(\\frac12,-\\frac12,0)^T$。</p><p><b>5. 为什么不能求逆：</b>$A^TA=\\begin{pmatrix}a^Ta&2a^Ta\\\\2a^Ta&4a^Ta\\end{pmatrix}=\\begin{pmatrix}2&4\\\\4&8\\end{pmatrix}$，行列式 $16-16=0$，不可逆。不同的解相差 $t(-2,1)^T$，它满足 $A(-2,1)^T=-2a+2a=0$，是核里的向量。</p><p><b>结论：</b>列相关时，最佳拟合向量唯一，但系数 $x$ 不唯一。</p>"
       },
       {
         "id": "eu2-past1",
         "lv": "往年选题",
         "src": "2023秋线性代数（书院）期末A卷 PDF第2页题12（相关旧卷，不冒称本班原卷）",
-        "stmt": "<p>求矩阵 $$A=\\begin{pmatrix}1&2&2\\\\2&1&2\\\\1&2&1\\end{pmatrix}$$ 的QR分解，约定R的对角元为正。</p><p>QR在本班教学日历第20讲，属于常规后续内容；不是第21讲带星号的最小二乘补充。</p>",
+        "stmt": "<p>求矩阵 $$A=\\begin{pmatrix}1&2&2\\\\2&1&2\\\\1&2&1\\end{pmatrix}$$ 的QR分解，约定R的对角元为正。</p><p>本班第20讲 QR 同类往年选题。</p>",
         "hints": [
           "对三列 $a_1=(1,2,1)^T,\\ a_2=(2,1,2)^T,\\ a_3=(2,2,1)^T$ 依次做施密特。$q_1=a_1/\\|a_1\\|=\\frac1{\\sqrt6}(1,2,1)^T$。",
           "$b_2=a_2-\\frac{a_2\\cdot a_1}{6}a_1=a_2-a_1=(1,-1,1)^T$，$q_2=\\frac1{\\sqrt3}(1,-1,1)^T$；同理 $q_3=\\frac1{\\sqrt2}(1,0,-1)^T$。",
@@ -3905,8 +4015,17 @@ function unitOf(lid) { return UNITS.find(u => u.lessons.includes(lid)); }
 function viewHome() {
  const weeks=SCHEDULE.map(([w,days])=>`<div class="week"><div class="wk">${esc(w)}</div><div class="days">${days.map(([d,t,l])=>`<span class="live">${esc(d)} · <a href="#${l}">${esc(t)}</a></span>`).join('')}</div></div>`).join('');
  const cards=LIVE.map(lid=>{const L=LESSONS[lid];return `<a href="#${lid}"><span class="n">${esc(unitOf(lid).title)} · 第${L.n}课</span><b>${L.title}</b><div class="progress"><div data-lp="${lid}"></div></div></a>`;}).join('');
- return `<section class="stack"><span class="eyebrow">2026秋 · 线性代数10421324-3 · 鲁自群</span><h1>从新课开始，六周连成一条线</h1><p class="lede">先跟当前“线性空间”，再回补消元、秩与矩阵基础，把几何、特征值和二次型连起来。21节教学课与3套自编模拟已备好；普通课每天约30分钟，延伸选做，模拟每套120分钟，可分4次30分钟暂停练习。</p><p>教材主线：《线性代数与几何（上）》第2版。后续预习依据本课已提供的章总结与教学日历，不能据此认定课堂已讲完或期末一定考。<b>QR为常规内容；投影、最小二乘为带星号补充。</b></p><div class="row"><a class="btn primary" href="#sp4/sp4-s0">先做新课：第19讲 →</a><a class="btn" href="#sy1">从消元基础回补 →</a><a class="btn" href="#exams">查本课题与往年选题</a></div><p class="small muted"><a href="../">高微复习</a> · <a href="../discrete/">离散复习</a> · 本页作答单独保存，可导出进度与同步码。</p></section>
- <section class="block"><div class="sec-head"><h2>今天学：第19讲 线性空间同构，欧几里得空间</h2></div><p>各用约 15 分钟。先练取坐标找极大无关组，再学用内积定义长度和夹角，最后做施密特正交化。</p><div class="days"><span class="live"><a href="#sp4/sp4-s0">上半：线性空间同构</a></span><span class="live"><a href="#sp4/p-sp4-coordinate-rank">练习：坐标与极大无关组</a></span><span class="live"><a href="#eu1/eu1-s0">下半：欧几里得空间</a></span><span class="live"><a href="#eu1/p-eu1-inner-parameter">练习：内积与夹角</a></span><span class="live"><a href="#eu1/p-eu1-schmidt-three">练习：施密特正交化</a></span><span class="live"><a href="#eu1/p-eu1-orth-coordinates">练习：标准正交坐标</a></span></div></section>
+ return `<section class="stack"><span class="eyebrow">2026秋 · 线性代数10421324-3 · 鲁自群</span><h1>从新课开始，六周连成一条线</h1><p class="lede">先跟当前“线性空间”，再回补消元、秩与矩阵基础，把几何、特征值和二次型连起来。21节教学课与3套自编模拟已备好；普通课每天约30分钟，延伸选做，模拟每套120分钟，可分4次30分钟暂停练习。</p><p>教材主线：《线性代数与几何（上）》第2版。后续预习依据本课已提供的章总结与教学日历，不能据此认定课堂已讲完或期末一定考。<b>第20讲已讲到正交投影。最小二乘为后续补充。</b></p><div class="row"><a class="btn primary" href="#eu2/eu2-s0">先做新课：第20讲 →</a><a class="btn" href="#sy1">从消元基础回补 →</a><a class="btn" href="#exams">查本课题与往年选题</a></div><p class="small muted"><a href="../">高微复习</a> · <a href="../discrete/">离散复习</a> · 本页作答单独保存，可导出进度与同步码。</p></section>
+ <section class="block"><div class="sec-head"><h2>今天学：第20讲 正交矩阵、QR、正交补与投影</h2></div>
+ <p>先学正交矩阵和逐列 QR，再学正交补与最近点。每半段约 15 分钟。</p>
+ <div class="days">
+  <span class="live"><a href="#eu2/eu2-s0">正交矩阵</a></span>
+  <span class="live"><a href="#eu2/p-eu2-qr-square">三列 QR</a></span>
+  <span class="live"><a href="#eu2/p-eu2-householder">Householder 反射</a></span>
+  <span class="live"><a href="#eu2/p-eu2-col-complement">矩形矩阵的正交补</a></span>
+  <span class="live"><a href="#eu2/p-eu2-nonbasis-projection">列空间投影</a></span>
+ </div></section>
+ <section class="block"><div class="sec-head"><h2>回看第19讲：线性空间同构与欧几里得空间</h2></div><p>各用约 15 分钟。先练取坐标找极大无关组，再学用内积定义长度和夹角，最后做施密特正交化。</p><div class="days"><span class="live"><a href="#sp4/sp4-s0">上半：线性空间同构</a></span><span class="live"><a href="#sp4/p-sp4-coordinate-rank">练习：坐标与极大无关组</a></span><span class="live"><a href="#eu1/eu1-s0">下半：欧几里得空间</a></span><span class="live"><a href="#eu1/p-eu1-inner-parameter">练习：内积与夹角</a></span><span class="live"><a href="#eu1/p-eu1-schmidt-three">练习：施密特正交化</a></span><span class="live"><a href="#eu1/p-eu1-orth-coordinates">练习：标准正交坐标</a></span></div></section>
  <section class="block"><div class="sec-head"><h2>回看第18讲：子空间及其运算</h2></div><p>按顺序点：先看导览，再学交与和、维数公式，然后直和与四个子空间，最后做练习。约两次 30 分钟。</p><div class="days"><span class="live"><a href="#sp3/sp3-s0">① 导览：子空间判定与生成子空间</a></span><span class="live"><a href="#sp3/sp3-s1">② 交与和怎么求</a></span><span class="live"><a href="#sp3/sp3-s2">③ 维数公式</a></span><span class="live"><a href="#sp3/sp3-s3">④ 直和</a></span><span class="live"><a href="#sp3/sp3-s4">⑤ 矩阵的四个子空间</a></span><span class="live"><a href="#sp3/sp3-s5">⑥ 直和等价条件与补空间</a></span><span class="live"><a href="#sp3/p-sp3-p2">练习：两个平面的交与和</a></span><span class="live"><a href="#sp3/p-sp3-sym-skew">练习：对称⊕反对称</a></span><span class="live"><a href="#sp3/p-sp3-four-subspaces">练习：四个子空间</a></span><span class="live"><a href="#sp3/p-sp3-complement">练习：补空间</a></span></div></section>
  <section class="block"><div class="sec-head"><h2>跟课堂：线性空间与基</h2></div><p>先练矩阵空间、基与坐标，再回补 Cramer 法则。</p><div class="days"><span class="live"><a href="#sp1/p-sp1-ops">矩阵空间与自定义运算</a></span><span class="live"><a href="#sp2">基与坐标</a></span><span class="live"><a href="#sp2/p-sp2-basis">自然基与过渡矩阵</a></span><span class="live"><a href="#sp2/p-sp2-shift">平移多项式基</a></span><span class="live"><a href="#sp2/p-sp2-matrix">矩阵基坐标</a></span><span class="live"><a href="#sy3">Cramer 法则</a></span><span class="live"><a href="#sp4">线性空间同构</a></span></div></section>
   <section class="block"><div class="sec-head"><h2>线性空间补练</h2></div><div class="days"><span class="live"><a href="#sp1/p-sp1-odd-operations">自定义运算与坐标</a></span><span class="live"><a href="#sp2/p-sp2-two-bases">两个非标准基之间换基</a></span><span class="live"><a href="#sp3/p-sp3-polynomial-intersection">子空间的和与交</a></span></div></section>
