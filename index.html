@@ -603,6 +603,7 @@ const EXTRA_MUST = [
   ["Beta 型积分", R`<p>$\alpha,\beta\gt0$ 时：</p>$$B(\alpha,\beta)=\int_0^\infty\frac{t^{\alpha-1}}{(1+t)^{\alpha+\beta}}dt=\int_0^1x^{\alpha-1}(1-x)^{\beta-1}dx,$$ $$B(\alpha+1,\beta)=\frac\alpha{\alpha+\beta}B(\alpha,\beta).$$<p>两端分别检查；第一种表达式恰在 $\alpha,\beta\gt0$ 时收敛。</p>`],
   ["平面与极坐标面积", R`<p>直角坐标先找交点并判上、下函数：$A=\int_a^b(f_{\rm 上}-f_{\rm 下})dx$。极坐标区域被区间 $[\alpha,\beta]$ 单次覆盖，且 $0\le r_{\rm 内}\le r_{\rm 外}$ 时：</p>$$A=\frac12\int_\alpha^\beta(r_{\rm 外}^2-r_{\rm 内}^2)d\theta.$$<p>必须核对参数区间及覆盖次数。</p>`],
   ["旋转体体积", R`<p>垂直旋转轴的截面是外半径 $R$、内半径 $r$ 的圆环时，$V=\pi\int_a^b(R^2-r^2)dx$，其中 $0\le r\le R$。圆柱壳法用 $V=2\pi\int(\text{半径})(\text{壳高})dt$，半径与壳高均取非负量。</p><p>体积函数先写积分，再用基本定理求导；拐点须检查二阶导数变号。</p>`],
+  ["弧长、旋转曲面与曲率", R`<p>参数曲线 $ds=\sqrt{x'^2+y'^2}\,dt$。极坐标 $ds=\sqrt{r^2+r'^2}\,d\theta$。旋转侧面积 $S=2\pi\int d\,ds$，$d$ 为到旋转轴的距离，先确认表面只覆盖一次。</p><p>速度非零时 $\kappa=|x'y''-y'x''|/(x'^2+y'^2)^{3/2}$。曲率非零才有有限曲率半径 $1/\kappa$。</p>`],
   ["一致连续：统一的 delta", R`<p>定义的量词为 $\forall\varepsilon\gt0\ \exists\delta\gt0\ \forall x,y\in D$：$|x-y|\lt\delta\Rightarrow|f(x)-f(y)|\lt\varepsilon$。$\delta$ 不能依赖所选点。</p><p>若区间上 $|f'|\le L$，$L\gt0$，可取 $\delta=\varepsilon/L$；若 $L=0$，函数为常数。闭有界区间上的连续函数一致连续。</p>`],
   ["数列极限：先反解再给 N", R`<p>若 $|a_n-A|\le C/n^p$（$C\ge0,p\gt0$），可取</p>$$N(\varepsilon)=\left\lfloor(C/\varepsilon)^{1/p}\right\rfloor+1.$$<p>$n\ge N$ 时误差严格小于 $\varepsilon$。若估计只从 $n_0$ 起成立，还须把 $N$ 与 $n_0$ 取较大值。</p>`],
   ["可能不考·一阶微分方程", R`<p><b>选做准备，考纲未确认。</b>$y'+py=q$：取 $\mu=e^{\int p}$，得 $(\mu y)'=\mu q$。$y'=a(x)b(y)$ 先补 $b(c)=0$ 的常值解，再对非平衡解分离变量。</p><p>反代对数、指数时检查值域与解区间；$z=e^{-y}$ 必须满足 $z\gt0$。</p>`],
@@ -4366,8 +4367,184 @@ LESSONS.ip2 = {
   ]
 };
 
-UNITS.unshift({id:"current-int",title:"跟课堂：Week 9–11 积分",lessons:["ir1","ip1","ir2","ip2"]});
-SCHEDULE.push(["课堂补练",[["Week 9–10","黎曼积分与可积性","ir1"],["Week 10","不定积分","ip1"],["作业回炉","积分估计五类题","ir2"],["Week 11","积分计算与 Taylor 积分余项","ip2"]]]);
+/* ---------------- Week 12 积分应用 ---------------- */
+LESSONS.ip3 = {
+  unit: "current-int",
+  n: 5,
+  title: "Week 12｜面积、体积、弧长与曲率",
+  goal: "按《学习材料（11）》把定积分用于五类几何量，并用两个模型认识反常积分。30 分钟先读讲解、做概念题，并选做弧长和旋转曲面各一问。",
+  sections: [
+    {
+      id: "ip3-area",
+      h: "1. 平面面积取决于怎样扫过区域",
+      html: R`<p>若参数曲线 $(x(t),y(t))$ 一次走完 $x$ 轴上方的一段边界，且 $x(t)$ 在区间上单调，把每个竖条的高 $y(t)$ 乘宽 $|x'(t)|dt$。曲线和 $x$ 轴围成的面积就是 $\int y(t)|x'(t)|dt$。例如 $x=2-t$、$y=t$、$0\le t\le2$，曲线从右往左走，面积是 $\int_0^2t\,dt=2$。</p>
+<p>若每个角度的射线从原点扫到唯一的外边界 $r(\theta)\ge0$，小扇形面积为 $\tfrac12r(\theta)^2d\theta$，所以 $A=\tfrac12\int r^2\,d\theta$。有内边界就减去内半径的平方。若参数回头或曲线重复描绘，先分段并核对区域是否重叠。</p>`
+    },
+    {
+      id: "ip3-volume",
+      h: "2. 旋转体体积从垂直于轴的截面算起",
+      html: R`<p>每片体积约为截面面积乘厚度。绕 $x$ 轴，圆盘或圆环厚度为 $dx$，半径是到轴的竖直距离。绕 $y$ 轴，用水平截面，厚度为 $dy$，半径是水平距离。</p>
+$$V_x=\pi\int(R(x)^2-r(x)^2)\,dx,\qquad V_y=\pi\int(R(y)^2-r(y)^2)\,dy.$$
+<p>例如矩形 $1\le x\le2$、$0\le y\le3$ 绕 $y$ 轴，每片都是内半径 1、外半径 2 的圆环，体积 $3\pi(2^2-1^2)=9\pi$。曲线围成的区域也先写当前高度的左右端点，再决定截面有没有孔。</p>`
+    },
+    {
+      id: "ip3-length",
+      h: "3. 弧长把折线长度推到极限",
+      html: R`<p>把参数区间分小段，相邻点的弦长为 $\sqrt{(\Delta x)^2+(\Delta y)^2}$。让最大分段宽度趋于零，弦长和的极限就是弧长。对分段光滑曲线，每一段把参数速度 $v=\sqrt{x'^2+y'^2}$ 积起来：</p>
+$$L=\int_a^b\sqrt{x'(t)^2+y'(t)^2}\,dt.$$
+<p>直角坐标 $y=f(x)$ 取 $t=x$，于是 $ds=\sqrt{1+f'(x)^2}\,dx$。例如线段 $y=2x$、$0\le x\le1$ 的长度为 $\sqrt5$，与两端点距离一致。</p>
+<p>极坐标用 $(x,y)=(r\cos\theta,r\sin\theta)$。求导后平方相加，交叉项抵消，于是</p>
+$$ds=\sqrt{r(\theta)^2+r'(\theta)^2}\,d\theta.$$
+<p>速度和弧长都非负。若参数把一段曲线走了两遍，积分会计入两次经过的长度。</p>`
+    },
+    {
+      id: "ip3-surface",
+      h: "4. 旋转曲面面积用圆周长乘弧长",
+      html: R`<p>一条弦绕轴形成圆台侧面。若两端到轴的距离是 $d_0,d_1$、弦长是 $\ell$，侧面积为 $\pi(d_0+d_1)\ell$。对轴一侧的简单曲线逐段求和并取极限，就得到</p>
+$$S=2\pi\int d\,ds\quad(d\text{ 是曲线到旋转轴的距离}).$$
+<p>绕 $x$ 轴取 $d=|y|$，绕 $y$ 轴取 $d=|x|$。极坐标下分别是 $|r\sin\theta|$ 和 $|r\cos\theta|$。例如 $y=2$、$0\le x\le3$ 绕 $x$ 轴，面积是 $2\pi\cdot2\cdot3=12\pi$，正是圆柱侧面积；若题目问带底面的总面积，还要另算底面。若曲线生成的表面有重叠，先找能单次覆盖表面的弧段。</p>`
+    },
+    {
+      id: "ip3-curvature",
+      h: "5. 曲率度量切向转角随弧长变化的快慢",
+      html: R`<p>设曲线二阶连续可导，且速度 $v=\sqrt{x'^2+y'^2}\gt0$。记 $\varphi$ 为切向量在所求点附近的连续方向角，弧长满足 $ds/dt=v$。曲率 $\kappa=|d\varphi/ds|$。由 $\varphi'=(x'y''-y'x'')/v^2$，得到</p>
+$$\kappa=\frac{|x'y''-y'x''|}{(x'^2+y'^2)^{3/2}}.$$
+<p>图像 $y=f(x)$ 对应 $x'=1$、$x''=0$，所以 $\kappa=|f''|/(1+f'^2)^{3/2}$。参数式公式也适用于速度非零的竖直切线。直线的曲率为 0。半径 $R$ 的圆，每走弧长 $s$ 就转过 $s/R$，所以曲率是 $1/R$。</p>
+<p>当 $\kappa\gt0$ 时，曲率半径是 $1/\kappa$，曲率中心沿曲线弯向的单位法线移动这一距离。对图像 $y=f(x)$，从所求点 $P=(x,f(x))$ 出发可直接用</p>
+$$C=P+\frac{1+f'(x)^2}{f''(x)}(-f'(x),1).$$
+<p>这是因为 $(-f',1)/\sqrt{1+f'^2}$ 指向上方，再根据 $f''$ 的符号选择方向，移动距离 $1/\kappa$。$f''=0$ 时没有有限的曲率半径，也不能用上式求中心。</p>`
+    },
+    {
+      id: "ip3-improper",
+      h: "6. 反常积分先截断，再取极限",
+      html: R`<p>第 12 周材料用物理例子引入两种反常情形。距离可以延伸到无穷远，先积到有限的 $R$ 再令 $R\to\infty$。到达某个有限端点前若被积函数无界，就留出一段 $\varepsilon$ 再令 $\varepsilon\to0^+$。</p>
+<p>例如 $\int_1^\infty x^{-2}\,dx=\lim_{R\to\infty}(1-1/R)=1$，而 $\int_0^1x^{-1/2}\,dx=\lim_{\varepsilon\to0^+}(2-2\sqrt\varepsilon)=2$。两种限制都可以得出有限值。若一道题有多个反常端点，应在每个端点分别取极限。</p>`
+    }
+  ],
+  widget: null,
+  concepts: [
+    {
+      id: "ip3-c-area", sec: "ip3-area", q: R`曲线始终在 $x$ 轴上方，且 $x(t)$ 从右往左单调减小。沿参数正向，哪个积分给出围成的面积？`,
+      opts: [R`$\int yx'\,dt$`, R`$\int y|x'|\,dt$`, R`$\int y|y'|\,dt$`, R`$\int |x'|\,dt$`], a: 1,
+      ex: R`选 $\int y|x'|\,dt$，高是 $y$，宽是 $|x'|dt$。若直接用 $yx'$ 且不换积分方向，会得到带负号的值。`
+    },
+    {
+      id: "ip3-c-length", sec: "ip3-length", q: R`极坐标曲线 $r=r(\theta)$ 的弧长微元是什么？`,
+      opts: [R`$\tfrac12r^2d\theta$`, R`$|r'|d\theta$`, R`$\sqrt{r^2+(r')^2}\,d\theta$`, R`$r^2d\theta$`], a: 2,
+      ex: R`选 $\sqrt{r^2+(r')^2}\,d\theta$。角度改变会带来切向位移，即使半径恒定也有弧长。$\tfrac12r^2d\theta$ 是扇形面积。`
+    },
+    {
+      id: "ip3-c-surface", sec: "ip3-surface", q: R`在第一象限，极坐标曲线绕 $x$ 轴旋转时，侧面积公式里的旋转半径是什么？`,
+      opts: [R`$r\sin\theta$`, R`$r\cos\theta$`, R`$r$`, R`$r'$`], a: 0,
+      ex: R`选 $r\sin\theta=y$。绕 $x$ 轴的距离由纵坐标确定。选 $r\cos\theta=x$ 对应的是到 $y$ 轴的距离。`
+    },
+    {
+      id: "ip3-c-curvature", sec: "ip3-curvature", q: R`对图像 $y=f(x)$，若在所求点 $f''(x)\lt0$，曲率中心沿哪边的法线？`,
+      opts: ["纵分量为正的法线", "沿切线", "在所求点本身", "纵分量为负的法线"], a: 3,
+      ex: R`选纵分量为负的法线。向上的法向量是 $(-f',1)$，公式中乘的系数带有 $f''$ 的符号。曲率和曲率半径都为正，方向需另行判断。`
+    },
+    {
+      id: "ip3-c-improper", sec: "ip3-improper", q: R`对 $\int_0^1x^{-1/2}\,dx$，应如何定义它的值？`,
+      opts: [R`$\lim_{R\to\infty}\int_0^R x^{-1/2}dx$`, R`$\lim_{\varepsilon\to0^+}\int_\varepsilon^1 x^{-1/2}dx$`, R`$\lim_{\varepsilon\to0^+}\int_0^{1-\varepsilon}x^{-1/2}dx$`, R`在 $x=0$ 补一个值就成普通黎曼积分`], a: 1,
+      ex: R`坏点在左端 $0$，先在 $[\varepsilon,1]$ 上积，再让 $\varepsilon\to0^+$。只给 $x=0$ 补值，函数仍在它附近无界。`
+    }
+  ],
+  methods: [
+    {
+      id: "m-ip3-measure", title: "从几何量写出正确的微元",
+      steps: [
+        R`先写对象和参数区间。平面面积看竖条或扇形，体积取垂直于轴的圆盘或圆环。`,
+        R`先算弧长微元 $ds$。曲面面积再乘圆周长 $2\pi d$，其中 $d$ 为到轴的距离。`,
+        R`检查区间有无回头或重叠，换轴后重新确定半径与积分变量。`
+      ]
+    },
+    {
+      id: "m-ip3-bend", title: "用两阶导数和法线求曲率中心",
+      steps: [
+        R`先求所给点的一二阶导数；参数曲线要确认速度非零。`,
+        R`代曲率公式。$\kappa\gt0$ 时，半径为 $1/\kappa$。`,
+        R`对图像曲线，沿 $(-f',1)$ 或其反向取中心，由 $f''$ 的符号决定；核对中心在法线上且距离等于曲率半径。`
+      ]
+    },
+    {
+      id: "m-ip3-limit", title: "反常积分按端点选择截断",
+      steps: [
+        "先认清区间无穷远，还是函数在有限端点无界。",
+        R`在正常的有限区间上积分，保留截断量，再取 $R\to\infty$ 或 $\varepsilon\to0^+$。`,
+        "最后回到原问题，说明所求的量及极限是否有限。"
+      ]
+    }
+  ],
+  problems: [
+    {
+      id: "ip3-p-polar", lv: "基础", src: "自编 · 极坐标的面积与弧长",
+      stmt: R`<p>令 $r=2\sin\theta$，$0\le\theta\le\pi/2$。求这段弧的长度，以及弧和边界射线围出的扇形区域面积（半径从 $0$ 到 $r(\theta)$）。</p>`,
+      hints: [R`面积用 $\tfrac12r^2d\theta$，弧长要先求 $r'$。`, R`$r'=2\cos\theta$，故 $\sqrt{r^2+(r')^2}=2$。`, R`面积积分化成 $\int_0^{\pi/2}(1-\cos2\theta)d\theta$。`],
+      method: "m-ip3-measure",
+      sol: R`<p>$r$ 在给定角区间非负，射线逐一扫过区域，不会重复计面积。</p>
+$$A=\tfrac12\int_0^{\pi/2}4\sin^2\theta\,d\theta=\int_0^{\pi/2}(1-\cos2\theta)d\theta=\frac\pi2.$$
+<p>弧长的速度为 $\sqrt{4\sin^2\theta+4\cos^2\theta}=2$，所以 $L=2\cdot\pi/2=\pi$。验算时可将 $r=2\sin\theta$ 写成 $x^2+(y-1)^2=1$，给定区间恰好走过该圆的右半圆。</p>`
+    },
+    {
+      id: "ip3-p-surface", lv: "基础", src: "自编 · 同一段弧换旋转轴",
+      stmt: R`<p>极坐标圆弧 $r=2$、$0\le\theta\le\pi/3$ 分别绕 $x$ 轴与 $y$ 轴转一整圈，求生成的两个曲面面积。</p>`,
+      hints: [R`半径恒为 2，所以 $ds=2\,d\theta$。`, R`绕 $x$ 轴取 $d=y=2\sin\theta$，绕 $y$ 轴取 $d=x=2\cos\theta$。`, R`两个面积分别为 $8\pi\int_0^{\pi/3}\sin\theta\,d\theta$ 和 $8\pi\int_0^{\pi/3}\cos\theta\,d\theta$。`],
+      method: "m-ip3-measure",
+      sol: R`<p>圆弧在第一象限，所得两个曲面都单次覆盖。极坐标速度为 $2$，所以 $ds=2\,d\theta$。到两轴的距离分别为 $2\sin\theta$ 和 $2\cos\theta$。</p>
+$$S_x=8\pi(1-\cos(\pi/3))=4\pi,$$
+$$S_y=8\pi\sin(\pi/3)=4\pi\sqrt3.$$
+<p>验算时也可用半径为 2 的球带面积 $2\pi\cdot2\,h$。沿 $x$ 轴的带宽 $h=2-1=1$，沿 $y$ 轴的带宽 $h=\sqrt3-0=\sqrt3$。</p>`
+    }
+  ],
+  variants: [
+    {
+      id: "ip3-v-area", lv: "变种", src: "自编 · 参数反向与平面面积",
+      stmt: R`<p>参数曲线 $x=1-t^3$、$y=1-t$，$0\le t\le1$，从 $(1,1)$ 走到 $(0,0)$。求 $0\le x\le1$ 内曲线与 $x$ 轴之间的面积。</p>`,
+      hints: [R`曲线从 $(1,1)$ 走到 $(0,0)$，确认 $x$ 变化的方向。`, R`因为 $x'=-3t^2$，竖条宽为 $3t^2dt$。`, R`积分为 $3\int_0^1(t^2-t^3)dt$。`],
+      method: "m-ip3-measure",
+      sol: R`<p>曲线在 $x$ 轴上方，而且 $x(t)$ 从 1 单调降到 0，同一竖条只扫一次。按参数正向取宽 $|x'|dt$，于是</p>
+$$A=\int_0^1(1-t)\,3t^2\,dt=3\left(\frac13-\frac14\right)=\frac14.$$
+<p>也可写成 $y=1-(1-x)^{1/3}$，从 $x=0$ 积到 $x=1$ 得到 $1-3/4=1/4$。</p>`
+    },
+    {
+      id: "ip3-v-volume", lv: "变种", src: "自编 · 同一区域绕两轴",
+      stmt: R`<p>第一象限内，直线 $y=3-\frac32x$ 与两坐标轴围成一个三角形。求它分别绕 $x$ 轴和 $y$ 轴旋转一周的体积。</p>`,
+      hints: [R`截距分别为 $(2,0)$、$(0,3)$。两种切法都是圆盘。`, R`绕 $x$ 轴用半径 $3-\frac32x$，取 $0\le x\le2$。`, R`绕 $y$ 轴改写为 $x=2-\frac23y$，取 $0\le y\le3$。`],
+      method: "m-ip3-measure",
+      sol: R`<p>绕 $x$ 轴时，竖直截面半径为 $3-\frac32x$，厚度为 $dx$。绕 $y$ 轴时，水平截面半径为 $2-\frac23y$，厚度为 $dy$。分别积分：</p>
+$$V_x=\pi\int_0^2(3-\tfrac32x)^2dx=6\pi,$$
+$$V_y=\pi\int_0^3(2-\tfrac23y)^2dy=4\pi.$$
+<p>两个结果也分别等于半径 3 高 2、半径 2 高 3 的圆锥体积。</p>`
+    },
+    {
+      id: "ip3-v-curvature", lv: "变种", src: "自编 · 曲率中心与法线方向",
+      stmt: R`<p>求曲线 $y=-x^2$ 在 $x=1$ 处的曲率、曲率半径与曲率中心，并核对中心位于所求点的哪一侧。</p>`,
+      hints: [R`所求点为 $(1,-1)$，该处 $f'=-2$、$f''=-2$。`, R`曲率为 $2/5^{3/2}$，半径为 $5\sqrt5/2$。`, R`上方法向量是 $(2,1)$，中心应沿其反向。将 $(1,-1)$ 加上 $-\tfrac52(2,1)$。`],
+      method: "m-ip3-bend",
+      sol: R`<p>在 $P=(1,-1)$，$f'(1)=-2$，$f''(1)=-2$。由图像曲率公式，</p>
+$$\kappa=\frac2{5\sqrt5},\qquad R=\frac{5\sqrt5}{2}.$$
+<p>上方单位法线是 $(2,1)/\sqrt5$，但 $f''(1)\lt0$，曲线向下弯，所以取反向。曲率中心为</p>
+$$C=(1,-1)-\frac{5\sqrt5}{2}\frac{(2,1)}{\sqrt5}=(-4,-7/2).$$
+<p>验算：$C-P=(-5,-5/2)$ 与切向量 $(1,-2)$ 的点积为 0，长度等于 $R$，纵分量为负。</p>`
+    }
+  ],
+  extensions: [
+    {
+      id: "ip3-e-endpoints", lv: "延伸", src: "自编 · 无穷远与有限端点的两种截断",
+      stmt: R`<p>（1）单位质量物体在 $s\ge2$ 处受到大小为 $8/s^2$、指向原点的力。从 $s=2$ 向外缓慢移动到无穷远，求所需的功。</p><p>（2）在一个理想容器模型里，液面高度满足 $dh/dt=-2\sqrt h$（$h\gt0$），初始高度为 4。从 $h=4$ 降到 $0$ 需要多久？两问均写出截断极限。</p>`,
+      hints: [R`功先积到 $s=R$；时间先算到液面降到 $h=\varepsilon\gt0$。`, R`第（2）问由 $dt=-dh/(2\sqrt h)$，把高度的积分方向反过来可得正时间。`, R`两式分别是 $\lim_{R\to\infty}(4-8/R)$ 和 $\lim_{\varepsilon\to0^+}(2-\sqrt\varepsilon)$。`],
+      method: "m-ip3-limit",
+      sol: R`<p>（1）向外缓慢移动时，外力抵消指向原点的力，故外力做正功。先算有限距离的功，再取无穷远极限：</p>
+$$W=\lim_{R\to\infty}\int_2^R\frac8{s^2}\,ds=\lim_{R\to\infty}(4-8/R)=4.$$
+<p>（2）在 $h\gt0$ 时分离变量。从 $4$ 降到 $\varepsilon$ 的时间为 $\int_\varepsilon^4 dh/(2\sqrt h)$，于是</p>
+$$T=\lim_{\varepsilon\to0^+}\int_\varepsilon^4\frac{dh}{2\sqrt h}=\lim_{\varepsilon\to0^+}(2-\sqrt\varepsilon)=2.$$
+<p>验算（2）：对 $h\gt0$ 有 $d(\sqrt h)/dt=-1$，所以从 $\sqrt h=2$ 降到 $0$ 正好需要 2 个时间单位。</p>`
+    }
+  ]
+};
+
+UNITS.unshift({id:"current-int",title:"跟课堂：Week 9–12 积分",lessons:["ir1","ip1","ir2","ip2","ip3"]});
+SCHEDULE.push(["课堂补练",[["Week 9–10","黎曼积分与可积性","ir1"],["Week 10","不定积分","ip1"],["作业回炉","积分估计五类题","ir2"],["Week 11","积分计算与 Taylor 积分余项","ip2"],["Week 12","面积、体积、弧长与曲率","ip3"]]]);
 
 LESSONS.i4.variants.push(
   {"id":"i4-integrate-order","lv":"变种","src":"自编练习 · 积分升阶","stmt":"<p>设 $A(x)=\\int_0^x[\\ln(1+t^2)-t^2]\\,dt$。求 $A(x)$ 在 $0$ 处第一个非零项，证明余项估计，并计算 $\\lim_{x\\to0}A(x)/x^5$。<\/p>","hints":["先展开被积函数：$\\ln(1+u)=u-\\frac{u^2}2+o(u^2)$，令 $u=t^2$。被积式里的 $t^2$ 会被抵消。","被积式 $=-\\frac{t^4}2+r(t)$，$r(t)=o(t^4)$。$t^4$ 积分后变成 $\\frac{x^5}5$，所以首项是 $-\\frac{x^5}{10}$。","余项：给定 $\\varepsilon\\gt0$，$|t|$ 足够小时 $|r(t)|\\le\\varepsilon t^4$，于是 $\\bigl|\\int_0^xr(t)\\,dt\\bigr|\\le\\varepsilon\\frac{|x|^5}5$（正负 $x$ 都成立）。"],"method":"m-int-limit","sol":"<p><b>第 1 步：展开被积函数<\/b>。$\\ln(1+u)=u-\\frac{u^2}2+o(u^2)$，代 $u=t^2$：$$\\ln(1+t^2)-t^2=t^2-\\frac{t^4}2+o(t^4)-t^2=-\\frac{t^4}2+r(t),\\quad r(t)=o(t^4).$$<\/p>\n<p><b>第 2 步：余项估计<\/b>。$r(t)=o(t^4)$ 的意思是：对任意 $\\varepsilon\\gt0$，存在 $\\delta\\gt0$，当 $|t|\\lt\\delta$ 时 $|r(t)|\\le\\varepsilon t^4$。于是对 $|x|\\lt\\delta$（无论 $x$ 正负，$t$ 都在 0 与 $x$ 之间）：$$\\Big|\\int_0^xr(t)\\,dt\\Big|\\le\\Big|\\int_0^x\\varepsilon t^4\\,dt\\Big|=\\frac{\\varepsilon|x|^5}5.$$ 所以 $\\int_0^xr(t)\\,dt=o(x^5)$。<\/p>\n<p><b>第 3 步：积分<\/b>。$$A(x)=\\int_0^x\\Big(-\\frac{t^4}2\\Big)dt+\\int_0^xr(t)\\,dt=-\\frac{x^5}{10}+o(x^5).$$ 首个非零项为 $-\\frac{x^5}{10}$（四次项积分升为五次，系数 $-\\frac12$ 再除以 5）。<\/p>\n<p><b>第 4 步：极限<\/b>。$\\frac{A(x)}{x^5}=-\\frac1{10}+\\frac{o(x^5)}{x^5}\\to-\\frac1{10}$。<\/p>\n<p><b>答案：首项 $-\\frac{x^5}{10}$，$\\lim_{x\\to0}A(x)/x^5=-\\frac1{10}$。<\/b><\/p>"},
@@ -4902,6 +5079,19 @@ function viewHome() {
     <span class="eyebrow">2026 秋 · 高等微积分(1) · 期末复习</span>
     <h1>六周，每天 30 分钟</h1>
     <p class="lede">这一页按往年期末题型安排复习顺序，不按讲义章节。每一课 30 分钟：讲解 8 分钟 → 概念检测 5 分钟 → 做题 15 分钟 → 把方法卡抄进速查表。${IN_CLAUDE ? "你写的作答会自动保存，Claude 可以直接读到并批改。" : "你写的作答会自动保存在这个浏览器里。"}</p>
+  </section>
+  <section class="block">
+    <div class="sec-head"><h2>课堂 Week 12｜定积分的应用</h2></div>
+    <p>接《学习材料（11）》。第 4 节不定积分可接 <a href="#ip2">Week 11 补练</a>，第 5 节和第 6.1 节从这里开始。</p>
+    <div class="days">
+      <span class="live"><a href="#ip3/ip3-area">参数与极坐标面积</a></span>
+      <span class="live"><a href="#ip3/ip3-volume">旋转体体积</a></span>
+      <span class="live"><a href="#ip3/ip3-length">弧长</a></span>
+      <span class="live"><a href="#ip3/ip3-surface">旋转曲面面积</a></span>
+      <span class="live"><a href="#ip3/ip3-curvature">曲率与曲率中心</a></span>
+      <span class="live"><a href="#ip3/ip3-improper">反常积分入门</a></span>
+    </div>
+    <p class="small muted">继续练可看 <a href="#ap1">平面面积</a>、<a href="#ap2">旋转体体积</a> 和 <a href="#im1">反常积分的判敛</a>。</p>
   </section>
   <section class="block"><div class="sec-head"><h2>Week 11｜不定积分补练</h2></div><div class="days"><span class="live"><a href="#ip2/p-ip2-long-division">同次分式先长除</a></span><span class="live"><a href="#ip2/p-ip2-odd-power-root">奇次幂换元</a></span><span class="live"><a href="#ip2/p-ip2-square-and-split">配方拆分子</a></span><span class="live"><a href="#ip2/p-ip2-whole-radical">直接设整个根号</a></span><span class="live"><a href="#ip2/p-ip2-repeat-integral">循环分部与移项</a></span><span class="live"><a href="#ip1/ip1-s4">分段原函数</a></span><span class="live"><a href="#m1/p-m1-e1">导数介值定理</a></span></div></section>
   <section class="block"><div class="sec-head"><h2>课堂 Week 11</h2></div><div class="days"><span class="live"><a href="#ip2">积分计算与 Taylor 积分余项</a></span><span class="live"><a href="#i4/i4-s4">习题课：变限积分</a></span><span class="live"><a href="#i6/i6-s4">带权积分中值</a></span><span class="live"><a href="#ir1/p-ir1-week11-error">黎曼和误差</a></span><span class="live"><a href="#c1/p-c1-week11-bounds">用凸性估积分</a></span><span class="live"><a href="#i1">定积分换元与分部复练</a></span><span class="live"><a href="#i2">分部积分递推复练</a></span></div></section>
