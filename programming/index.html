@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="C 语言程序设计专题：结构体的定义、数组与指针、函数传参和对齐，含自编示例与练习。">
+<meta name="theme-color" content="#f5f4f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131116" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="程序设计">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>html,body{margin:0}html{-webkit-text-size-adjust:100%;text-size-adjust:100%}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>程序设计专题｜C 语言结构体</title>
+<style>
+:root {
+  --bg: #f5f4f7; --surface: #fff; --ink: #1e1a24; --muted: #675f70;
+  --line: #e1dce8; --accent: #6a2477; --accent-bg: #f1e6f4;
+  --code: #f6f3f8; --good: #266641; --bad: #a23b29;
+  --body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --display: "Noto Serif SC", "Songti SC", "STSong", serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: #131116; --surface: #1c1a21; --ink: #ece8f2; --muted: #b9b0c4;
+    --line: #3d3546; --accent: #e1b1ee; --accent-bg: #36243d;
+    --code: #25212b; --good: #8dd6a7; --bad: #f8ac9e;
+  }
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.7 var(--body); }
+a { color: var(--accent); text-underline-offset: .2em; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+p, h1, h2, h3, pre, fieldset { margin: 0; }
+h1, h2, h3 { line-height: 1.3; text-wrap: balance; }
+h1, h2 { font-family: var(--display); }
+h1 { font-size: clamp(2.2rem, 5.5vw, 3.35rem); }
+h2 { font-size: clamp(1.35rem, 3vw, 1.7rem); }
+h3 { font-size: 1rem; }
+code, pre, output { font-family: var(--mono); }
+:not(pre) > code { background: var(--code); padding: .1em .25em; border-radius: 4px; overflow-wrap: anywhere; }
+pre { max-width: 100%; overflow: auto; background: var(--code); border: 1px solid var(--line); border-radius: 8px; padding: 13px 15px; font-size: .84rem; line-height: 1.6; }
+button, select { font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; min-height: 42px; }
+button { cursor: pointer; }
+button:hover, select:hover { border-color: var(--accent); }
+button:disabled { opacity: .53; cursor: default; }
+.shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); width: min(100%, 1110px); min-height: 100vh; margin: 0 auto; }
+.rail { position: sticky; top: 0; align-self: start; padding: 32px 20px 18px; }
+.brand { color: var(--ink); font: 700 1.25rem var(--display); text-decoration: none; }
+nav { display: grid; gap: 5px; margin-top: 22px; }
+nav a { padding: 5px 8px; border-radius: 6px; color: var(--muted); text-decoration: none; font-size: .91rem; }
+nav a:hover { background: var(--accent-bg); color: var(--accent); }
+main { min-width: 0; border-left: 1px solid var(--line); padding: 36px 30px 64px; display: grid; gap: 17px; }
+main > *, .panel > *, .practice > * { min-width: 0; }
+.hero { display: grid; gap: 12px; padding: 0 1px 8px; }
+.eyebrow { color: var(--accent); font-size: .82rem; font-weight: 700; }
+.muted { color: var(--muted); }
+.panel { display: grid; gap: 13px; border: 1px solid var(--line); border-radius: 10px; padding: 19px 22px; background: var(--surface); scroll-margin-top: 12px; }
+.panel > h2 { padding-bottom: 9px; border-bottom: 1px solid var(--line); }
+.subpanel { display: grid; gap: 9px; background: var(--accent-bg); padding: 13px 14px; border-radius: 8px; }
+.controls { display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap; }
+.controls label { font-size: .93rem; }
+.trace-result { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.trace-result p { background: var(--surface); border-radius: 6px; padding: 8px 10px; }
+.trace-result output { display: block; color: var(--accent); font-size: 1.12rem; font-weight: 700; }
+.table-wrap { overflow: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { border-bottom: 1px solid var(--line); padding: 6px 9px; text-align: left; }
+#layout-bytes { display: flex; flex-wrap: wrap; gap: 4px; }
+.byte { display: grid; justify-items: center; min-width: 38px; border: 1px solid var(--line); background: var(--surface); border-radius: 5px; padding: 2px 3px; font: .75rem/1.5 var(--mono); }
+.byte.padding { border-style: dashed; color: var(--muted); }
+.practice { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; display: grid; gap: 8px; }
+fieldset { min-width: 0; border: 0; padding: 0; }
+legend { margin-bottom: 6px; font-weight: 700; }
+fieldset label { display: block; padding: 4px 0; }
+fieldset input { accent-color: var(--accent); }
+.feedback { min-height: 1.6em; margin-top: 5px; font-size: .92rem; color: var(--muted); }
+.feedback[data-result="correct"] { color: var(--good); }
+.feedback[data-result="wrong"] { color: var(--bad); }
+details { border-top: 1px solid var(--line); padding-top: 7px; }
+details > p, details > pre { margin-top: 8px; }
+summary { cursor: pointer; color: var(--accent); }
+@media (max-width: 720px) {
+  .shell { display: block; }
+  .rail { position: static; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+  nav { display: flex; flex-wrap: wrap; margin-top: 7px; gap: 3px; }
+  nav a { font-size: .84rem; padding: 5px 6px; }
+  main { border-left: 0; padding: 20px 12px 42px; gap: 12px; }
+  .panel { padding: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <a class="brand" href="../index.html">期末复习首页</a>
+    <nav aria-label="专题目录">
+      <a href="#define">定义与初始化</a>
+      <a href="#functions">指针与传参</a>
+      <a href="#arrays">结构体数组</a>
+      <a href="#layout">内存对齐</a>
+      <a href="#practice">自检与练习</a>
+    </nav>
+  </aside>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">程序设计专题 · C 语言第 11A 讲</p>
+      <h1>结构体、数组与指针</h1>
+      <p class="muted">把一条记录的字段放在一起，写出能修改记录的函数，再看多条记录如何遍历、排序和存放。</p>
+    </header>
+
+    <section class="panel" id="define" aria-labelledby="define-title">
+      <h2 id="define-title">定义一条记录</h2>
+      <p>同一组读数有标签、数值和采集时间。<code>struct Reading</code> 定义这些成员的类型与顺序，<code>sample</code> 才是变量。<code>struct Clock</code> 也可以作为一个成员。</p>
+      <pre tabindex="0"><code>struct Clock {
+    int hour;
+    int minute;
+};
+
+struct Reading {
+    char label[12];
+    int value;
+    struct Clock collected;
+};
+
+struct Reading sample = {"Lab-A", 20, {9, 30}};</code></pre>
+      <p>用点号读成员。<code>sample.value</code> 是 <code>20</code>，<code>sample.collected.minute</code> 是 <code>30</code>。嵌套成员的初值用内层花括号括起来，读起来更清楚。</p>
+      <p><code>label</code> 是字符数组，字符串字面量可用于初始化。之后要改内容，可逐个改字符或使用做了容量检查的复制方式；不能写 <code>sample.label = "B"</code>。整个结构体同类型赋值时，数组成员会随结构体一起复制。</p>
+    </section>
+
+    <section class="panel" id="functions" aria-labelledby="functions-title">
+      <h2 id="functions-title">看形参类型，判断改的是谁</h2>
+      <p>传入整数成员或整条结构体，形参各自得到副本。传入 <code>&amp;sample</code> 时，形参复制的是地址，通过这个地址就能修改原变量。<code>p-&gt;value</code> 等价于 <code>(*p).value</code>，括号表示先解引用。</p>
+      <div class="subpanel" aria-labelledby="trace-title">
+        <h3 id="trace-title">逐步跟踪一次函数调用</h3>
+        <div class="controls">
+          <label for="trace-mode">调用方式</label>
+          <select id="trace-mode">
+            <option value="copy">adjusted(sample)</option>
+            <option value="address">raise_value(&amp;sample)</option>
+          </select>
+          <button type="button" id="trace-next">下一步</button>
+          <button type="button" id="trace-reset">重新开始</button>
+        </div>
+        <div class="trace-result" aria-live="polite">
+          <p>调用者的 <code>sample.value</code><output id="trace-original">20</output></p>
+          <p>通过形参读到的数<output id="trace-parameter">—</output></p>
+        </div>
+        <p id="trace-step" role="status"></p>
+      </div>
+      <details>
+        <summary>查看完整 C 程序与输出</summary>
+        <pre tabindex="0"><code id="c-transfer">#include &lt;stdio.h&gt;
+
+struct Clock {
+    int hour;
+    int minute;
+};
+
+struct Reading {
+    char label[12];
+    int value;
+    struct Clock collected;
+};
+
+struct Reading adjusted(struct Reading item)
+{
+    item.value += 3;
+    return item;
+}
+
+void raise_value(struct Reading *item)
+{
+    item-&gt;value += 3;
+}
+
+int main(void)
+{
+    struct Reading sample = {"Lab-A", 20, {9, 30}};
+    struct Reading result = adjusted(sample);
+    printf("%d %d\n", sample.value, result.value);
+
+    raise_value(&amp;sample);
+    printf("%d\n", sample.value);
+    return 0;
+}</code></pre>
+        <p>第一行是 <code>20 23</code>，因为返回的副本存在了 <code>result</code> 里。第二行是 <code>23</code>，因为 <code>raise_value</code> 经由地址改了原记录。</p>
+      </details>
+    </section>
+
+    <section class="panel" id="arrays" aria-labelledby="arrays-title">
+      <h2 id="arrays-title">用数组存多条记录</h2>
+      <p><code>struct Reading readings[3]</code> 有三条实际记录。用 <code>readings[i].value</code> 访问第 <code>i</code> 条里的数值，下标从 0 开始。</p>
+      <pre tabindex="0"><code>void normalize(struct Reading readings[], size_t count)
+{
+    for (size_t i = 0; i &lt; count; ++i) {
+        if (readings[i].value &lt; 0) {
+            readings[i].value = 0;
+        }
+    }
+}</code></pre>
+      <p>函数参数声明中的 <code>readings[]</code> 会调整成 <code>struct Reading *readings</code>。调用处另传条数 <code>count</code>。即使函数参数写成 <code>readings[3]</code>，<code>sizeof readings</code> 在函数内仍得到指针大小。</p>
+      <h3>排序时可以只换指针</h3>
+      <p><code>struct Reading *order[3]</code> 有三个指针槽。先令 <code>order[i] = &amp;readings[i]</code>，再按 <code>order[i]-&gt;value</code> 比较并交换指针。若原数组的数值依次为 <code>31, 18, 25</code>，升序的访问顺序就是 <code>1 → 2 → 0</code>，原数组的下标和记录对应关系保留。</p>
+      <details>
+        <summary>查看指针选择排序的完整示例</summary>
+        <pre tabindex="0"><code id="c-sort">#include &lt;stdio.h&gt;
+
+struct Reading {
+    int value;
+};
+
+void sort_view(struct Reading *order[], size_t count)
+{
+    for (size_t i = 0; i &lt; count; ++i) {
+        size_t smallest = i;
+        for (size_t j = i + 1; j &lt; count; ++j) {
+            if (order[j]-&gt;value &lt; order[smallest]-&gt;value) {
+                smallest = j;
+            }
+        }
+        struct Reading *temp = order[i];
+        order[i] = order[smallest];
+        order[smallest] = temp;
+    }
+}
+
+int main(void)
+{
+    struct Reading data[] = {{31}, {18}, {25}};
+    struct Reading *order[] = {&amp;data[0], &amp;data[1], &amp;data[2]};
+    sort_view(order, sizeof order / sizeof order[0]);
+    printf("%d %d %d\n", order[0]-&gt;value,
+           order[1]-&gt;value, order[2]-&gt;value);
+    printf("%d %d %d\n", data[0].value, data[1].value, data[2].value);
+    return 0;
+}</code></pre>
+        <p>输出先是 <code>18 25 31</code>，再是 <code>31 18 25</code>。这段短程序只保留了排序要用的 <code>value</code> 字段。</p>
+      </details>
+    </section>
+
+    <section class="panel" id="layout" aria-labelledby="layout-title">
+      <h2 id="layout-title">算偏移和填充，再求大小</h2>
+      <p>在常见的 C 内存布局中，成员按声明顺序存放。下一个成员从满足其对齐要求的位置开始，结构体末尾也可能填充，使结构体数组中的下一条记录仍满足对齐。</p>
+      <div class="subpanel" aria-labelledby="layout-demo-title">
+        <h3 id="layout-demo-title">交换成员，观察每个字节的位置</h3>
+        <p>模型假设 <code>char</code> 的大小与自然对齐都是 1，<code>int</code> 都是 4。对齐上限模拟支持 <code>pack</code> 的编译器。</p>
+        <div class="controls">
+          <label for="member-order">成员顺序</label>
+          <select id="member-order">
+            <option value="original">tag, count, state</option>
+            <option value="grouped">tag, state, count</option>
+          </select>
+          <label for="alignment-cap">对齐上限</label>
+          <select id="alignment-cap">
+            <option value="4">4 字节</option>
+            <option value="2">2 字节</option>
+            <option value="1">1 字节</option>
+          </select>
+        </div>
+        <div id="layout-bytes" aria-hidden="true"></div>
+        <p id="layout-result" role="status"></p>
+        <div class="table-wrap">
+          <table aria-label="结构体成员偏移和对齐">
+            <thead><tr><th scope="col">成员</th><th scope="col">偏移</th><th scope="col">大小</th><th scope="col">对齐</th></tr></thead>
+            <tbody id="layout-offsets"></tbody>
+          </table>
+        </div>
+      </div>
+      <p>实际布局由平台 ABI 和编译器设置决定。用 <code>sizeof</code> 查大小、用 <code>offsetof</code> 查偏移，输出这两种 <code>size_t</code> 值用 <code>%zu</code>。<code>#pragma pack</code> 是编译器扩展，使用前看目标编译器的规则。</p>
+      <details>
+        <summary>在本机检查默认布局</summary>
+        <pre tabindex="0"><code id="c-layout">#include &lt;stddef.h&gt;
+#include &lt;stdio.h&gt;
+
+struct Packet {
+    char tag;
+    int count;
+    char state;
+};
+
+int main(void)
+{
+    printf("size=%zu align=%zu\n",
+           sizeof(struct Packet), _Alignof(struct Packet));
+    printf("tag=%zu count=%zu state=%zu\n",
+           offsetof(struct Packet, tag), offsetof(struct Packet, count),
+           offsetof(struct Packet, state));
+    return 0;
+}</code></pre>
+        <p>可用 <code>cc -std=c11 layout.c -o layout</code> 编译，再运行 <code>./layout</code> 查看你的平台结果。</p>
+      </details>
+    </section>
+
+    <section class="panel" id="practice" aria-labelledby="practice-title">
+      <h2 id="practice-title">自检与练习</h2>
+      <div class="practice">
+        <fieldset data-quiz="copy">
+          <legend>1. <code>adjusted(sample);</code> 忽略返回值后，原记录的 <code>value</code> 是多少？</legend>
+          <label><input type="radio" name="copy" value="20"> 20</label>
+          <label><input type="radio" name="copy" value="23"> 23</label>
+          <p class="feedback" role="status"></p>
+        </fieldset>
+      </div>
+      <div class="practice">
+        <fieldset data-quiz="sort">
+          <legend>2. 交换 <code>order[0]</code> 与 <code>order[1]</code> 后，哪样东西变了？</legend>
+          <label><input type="radio" name="sort" value="pointers"> 两个指针槽各自保存的地址</label>
+          <label><input type="radio" name="sort" value="records"> 原数组里两条记录的位置</label>
+          <p class="feedback" role="status"></p>
+        </fieldset>
+      </div>
+      <div class="practice">
+        <h3>3. 给两条成绩记录补上平均分</h3>
+        <p>每条 <code>struct Result</code> 有 <code>int parts[2]</code> 和 <code>double average</code>。写 <code>set_averages</code>，在原数组上填回平均数。两条记录的分数分别是 <code>{75, 84}</code> 和 <code>{88, 93}</code>，试着先手算预期输出。</p>
+        <details><summary>提示 1 · 找到第 i 条</summary><p>读两项原始成绩用 <code>items[i].parts[0]</code> 与 <code>items[i].parts[1]</code>。</p></details>
+        <details><summary>提示 2 · 让除法保留小数</summary><p>用两个分数分别除以 <code>2.0</code> 再相加。若写成两个整数之和除以 <code>2</code>，小数在赋给 <code>double</code> 之前已被截掉。</p></details>
+        <details><summary>提示 3 · 在原位置写回</summary><p>形参中接收首元素指针与条数。循环从 <code>0</code> 到 <code>count - 1</code>，写入 <code>items[i].average</code>。</p></details>
+        <details>
+          <summary>完整参考解与预期输出</summary>
+          <pre tabindex="0"><code id="c-average">#include &lt;stdio.h&gt;
+
+struct Result {
+    int parts[2];
+    double average;
+};
+
+void set_averages(struct Result items[], size_t count)
+{
+    for (size_t i = 0; i &lt; count; ++i) {
+        items[i].average = items[i].parts[0] / 2.0
+                         + items[i].parts[1] / 2.0;
+    }
+}
+
+int main(void)
+{
+    struct Result rows[] = {{{75, 84}, 0}, {{88, 93}, 0}};
+    set_averages(rows, sizeof rows / sizeof rows[0]);
+    printf("%.1f %.1f\n", rows[0].average, rows[1].average);
+    return 0;
+}</code></pre>
+          <p>输出 <code>79.5 90.5</code>。测试时再用一条两项相同的记录，核对平均值等于该分数。</p>
+        </details>
+      </div>
+      <p class="muted">11A 课件末页对应教材 P315 第 1、2 题。</p>
+    </section>
+  </main>
+</div>
+<script>
+const byId = id => document.getElementById(id);
+const modes = {
+  copy: [
+    [20, '—', '第 1 步 · 准备调用，把 sample 作为实参。'],
+    [20, '20', '第 2 步 · item 是一条独立的结构体副本。'],
+    [20, '23', '第 3 步 · item.value += 3 修改了副本。'],
+    [20, '—', '第 4 步 · 函数返回 value 为 23 的副本，调用者的 sample 仍是 20。']
+  ],
+  address: [
+    [20, '—', '第 1 步 · 准备调用，把 &sample 作为实参。'],
+    [20, '20', '第 2 步 · item 保存 sample 的地址。'],
+    [23, '23', '第 3 步 · item->value += 3 通过地址写回原记录。'],
+    [23, '—', '第 4 步 · 函数返回后，调用者的 sample 保留修改后的 23。']
+  ]
+};
+let step = 0;
+function renderTrace() {
+  const steps = modes[byId('trace-mode').value];
+  const [original, parameter, description] = steps[step];
+  byId('trace-original').textContent = original;
+  byId('trace-parameter').textContent = parameter;
+  byId('trace-step').textContent = description;
+  byId('trace-next').disabled = step === steps.length - 1;
+}
+function resetTrace() {
+  step = 0;
+  renderTrace();
+}
+byId('trace-next').addEventListener('click', () => { ++step; renderTrace(); });
+byId('trace-reset').addEventListener('click', resetTrace);
+byId('trace-mode').addEventListener('change', resetTrace);
+renderTrace();
+
+const fields = { tag: [1, 1], count: [4, 4], state: [1, 1] };
+const orders = { original: ['tag', 'count', 'state'], grouped: ['tag', 'state', 'count'] };
+const roundUp = (offset, align) => Math.ceil(offset / align) * align;
+function renderLayout() {
+  const limit = Number(byId('alignment-cap').value);
+  const names = orders[byId('member-order').value];
+  const bytes = [];
+  let structAlignment = 1;
+  const rows = names.map(name => {
+    const [size, naturalAlignment] = fields[name];
+    const alignment = Math.min(naturalAlignment, limit);
+    const offset = roundUp(bytes.length, alignment);
+    while (bytes.length < offset) bytes.push('填充');
+    for (let i = 0; i < size; ++i) bytes.push(name);
+    structAlignment = Math.max(structAlignment, alignment);
+    return [name, offset, size, alignment];
+  });
+  const totalSize = roundUp(bytes.length, structAlignment);
+  const memberSize = rows.reduce((total, [, , size]) => total + size, 0);
+  while (bytes.length < totalSize) bytes.push('填充');
+  byId('layout-bytes').replaceChildren(...bytes.map((name, index) => {
+    const box = document.createElement('span');
+    box.className = name === '填充' ? 'byte padding' : 'byte';
+    const offset = document.createElement('span');
+    offset.textContent = index;
+    box.append(offset, name);
+    return box;
+  }));
+  byId('layout-offsets').replaceChildren(...rows.map(values => {
+    const row = document.createElement('tr');
+    for (const value of values) row.insertCell().textContent = value;
+    return row;
+  }));
+  byId('layout-result').textContent = `大小 ${totalSize} 字节 · 对齐 ${structAlignment} 字节 · 填充 ${totalSize - memberSize} 字节`;
+}
+byId('member-order').addEventListener('change', renderLayout);
+byId('alignment-cap').addEventListener('change', renderLayout);
+renderLayout();
+
+const quiz = {
+  copy: {
+    correct: '20',
+    yes: '答对了。修改发生在副本上，返回值也没有写回。',
+    no: '再看看形参。23 是返回的副本中的值，调用者没有接收它。'
+  },
+  sort: {
+    correct: 'pointers',
+    yes: '答对了。换的是地址，所以从 order 看到的顺序变了。',
+    no: '再看赋值左侧。写的是 order[i]，没有向原数组元素赋值。'
+  }
+};
+for (const fieldset of document.querySelectorAll('[data-quiz]')) {
+  fieldset.addEventListener('change', event => {
+    const answer = quiz[fieldset.dataset.quiz];
+    const correct = event.target.value === answer.correct;
+    const feedback = fieldset.querySelector('.feedback');
+    feedback.dataset.result = correct ? 'correct' : 'wrong';
+    feedback.textContent = correct ? answer.yes : answer.no;
+  });
+}
+</script>
+</body>
+</html>
