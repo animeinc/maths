@@ -57,6 +57,8 @@ main > *, .panel > *, .practice > * { min-width: 0; }
 .hero { display: grid; gap: 12px; padding: 0 1px 8px; }
 .eyebrow { color: var(--accent); font-size: .82rem; font-weight: 700; }
 .muted { color: var(--muted); }
+.primer .note { border-left: 3px solid var(--accent); background: var(--accent-bg); padding: 10px 14px; border-radius: 0 8px 8px 0; }
+.primer ul, .primer ol { padding-left: 1.3em; display: grid; gap: 4px; }
 .panel { display: grid; gap: 13px; border: 1px solid var(--line); border-radius: 10px; padding: 19px 22px; background: var(--surface); scroll-margin-top: 12px; }
 .panel > h2 { padding-bottom: 9px; border-bottom: 1px solid var(--line); }
 .subpanel { display: grid; gap: 9px; background: var(--accent-bg); padding: 13px 14px; border-radius: 8px; }
@@ -97,6 +99,7 @@ summary { cursor: pointer; color: var(--accent); }
   <aside class="rail">
     <a class="brand" href="../index.html">期末复习首页</a>
     <nav aria-label="专题目录">
+      <a href="#primer">零基础先看</a>
       <a href="#define">定义与初始化</a>
       <a href="#functions">指针与传参</a>
       <a href="#arrays">结构体数组</a>
@@ -110,6 +113,33 @@ summary { cursor: pointer; color: var(--accent); }
       <h1>结构体、数组与指针</h1>
       <p class="muted">把一条记录的字段放在一起，写出能修改记录的函数，再看多条记录如何遍历、排序和存放。</p>
     </header>
+
+    <section class="panel primer" id="primer" aria-labelledby="primer-title">
+      <h2 id="primer-title">零基础先看（约 3 分钟）</h2>
+      <p><b>这课一句话</b>：结构体就是“自己造一种类型”，把描述同一件东西的几个数据捆成一个整体，像表格里的一整行。学会它，才能写“学生成绩表”“传感器读数表”这类程序。</p>
+      <p><b>先补这几个词</b></p>
+      <ul>
+        <li><b>类型</b>：告诉编译器一块内存怎么解释。<code>int</code> 是整数，<code>double</code> 是小数，<code>char</code> 是一个字符。</li>
+        <li><b>数组</b>：同一类型的一排格子，<code>int a[3]</code> 有 <code>a[0]</code>、<code>a[1]</code>、<code>a[2]</code> 三个，下标从 0 开始。<code>char label[12]</code> 就是能放 11 个字母外加结尾 <code>'\0'</code> 的字符串。</li>
+        <li><b>结构体 <code>struct</code></b>：不同类型的格子捆在一起。<code>struct Point { int x; int y; };</code> 只是“设计图”，写 <code>struct Point p;</code> 才真正造出一个变量 <code>p</code>。</li>
+        <li><b>成员与点号</b>：结构体里的每个格子叫成员，用点号取：<code>p.x</code>。</li>
+        <li><b>地址与指针</b>：每个变量都住在内存里某个门牌号上。<code>&amp;p</code> 取门牌号（地址）；<code>struct Point *q = &amp;p;</code> 让 <code>q</code> 记住这个门牌号；<code>*q</code> 表示“按门牌号找到的那个变量”。</li>
+        <li><b>箭头 <code>-&gt;</code></b>：<code>q-&gt;x</code> 就是 <code>(*q).x</code> 的简写：先按地址找到结构体，再取成员。</li>
+        <li><b>传值 / 传地址</b>：C 调用函数时总是把实参<b>复印</b>一份给形参。复印的是结构体本身，函数改的是复印件；复印的是地址，函数能顺着地址改到原件。</li>
+        <li><b><code>sizeof</code></b>：一个类型或变量占多少字节。</li>
+        <li><b>对齐与填充</b>：CPU 喜欢 4 字节的 <code>int</code> 从 4 的倍数地址开始放，所以编译器可能在成员之间塞几个空字节（填充），结构体总大小也会补成最大对齐的倍数。</li>
+      </ul>
+      <p><b>用数字走一遍</b>：</p>
+      <ol>
+        <li>定义 <code>struct Point { int x; int y; };</code> 再写 <code>struct Point p = {3, 4};</code>，此时 <code>p.x</code> 是 3，<code>p.y</code> 是 4。</li>
+        <li>函数 <code>void f(struct Point a) { a.x = 100; }</code>，调用 <code>f(p);</code> 后 <code>p.x</code> 仍是 3：函数改的是复印件 <code>a</code>。</li>
+        <li>函数 <code>void g(struct Point *a) { a-&gt;x = 100; }</code>，调用 <code>g(&amp;p);</code> 后 <code>p.x</code> 变成 100：复印的是地址，顺着地址改到了原件。</li>
+        <li>常见平台上 <code>int</code> 占 4 字节，两个 <code>int</code> 之间不用填充，所以 <code>sizeof(struct Point)</code> 是 8。若改成 <code>struct { char c; int n; }</code>，<code>c</code> 占 1 字节，后面补 3 个空字节让 <code>n</code> 从偏移 4 开始，总大小为 8 而不是 5。</li>
+      </ol>
+      <p><b>和学过的东西是一回事</b>：数组是“同类型的一排”，结构体是“不同类型的一组”；结构体数组就是一张表，每个元素是一行。指针你在数组传参时已经见过：把数组名传进函数，函数拿到的就是首元素地址。</p>
+      <p><b>本课怎么学</b>：按顺序读“定义一条记录”→“看形参类型”（把两种调用方式各点一遍“下一步”）→“用数组存多条记录”→“内存对齐”（先自己算偏移，再看答案）；最后做“自检与练习”，编程题先只看提示 1。</p>
+      <p class="note"><b>卡住时问自己</b>：① 这里写的是“设计图”还是“变量”？② 函数拿到的是复印件还是地址？③ 这个成员从第几个字节开始，前面需要补几个空字节？</p>
+    </section>
 
     <section class="panel" id="define" aria-labelledby="define-title">
       <h2 id="define-title">定义一条记录</h2>
